@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="晨飞小窝" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://blog.ichenfei.com').hostname,
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Ubuntu 终端使用shadowsocks全局代理">
+<meta name="keywords" content="编程学习|算法学习|Linux学习|Python学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu 终端使用shadowsocks全局代理		">
+<meta property="og:url" content="http://blog.ichenfei.com/2017/11/16/Ubuntu 终端使用shadowsocks全局代理/index.html">
+<meta property="og:site_name" content="晨飞小窝">
+<meta property="og:description" content="Ubuntu 终端使用shadowsocks全局代理">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://www.ichenfei.com/wp-content/uploads/2017/11/2449c06687ad793c5b742df6dcfc6b70.png">
+<meta property="og:image" content="https://www.ichenfei.com/wp-content/uploads/2017/11/025b2a1366ab09d083610fd104729a60.png">
+<meta property="og:updated_time" content="2019-11-24T06:56:20.958Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ubuntu 终端使用shadowsocks全局代理		">
+<meta name="twitter:description" content="Ubuntu 终端使用shadowsocks全局代理">
+<meta name="twitter:image" content="https://www.ichenfei.com/wp-content/uploads/2017/11/2449c06687ad793c5b742df6dcfc6b70.png">
+
+<link rel="canonical" href="http://blog.ichenfei.com/2017/11/16/Ubuntu 终端使用shadowsocks全局代理/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Ubuntu 终端使用shadowsocks全局代理		 | 晨飞小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">晨飞小窝</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.ichenfei.com/2017/11/16/Ubuntu 终端使用shadowsocks全局代理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/image/avatar.gif">
+      <meta itemprop="name" content="lovehhf">
+      <meta itemprop="description" content="种一棵树最好的时间是十年前, 其次是现在">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="晨飞小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ubuntu 终端使用shadowsocks全局代理		
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-16 10:29:24" itemprop="dateCreated datePublished" datetime="2017-11-16T10:29:24+08:00">2017-11-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-24 14:56:20" itemprop="dateModified" datetime="2019-11-24T14:56:20+08:00">2019-11-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index">
+                    <span itemprop="name">tools</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span></span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>NaN:aN</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Ubuntu 终端使用shadowsocks全局代理</p>
+<a id="more"></a>
+<h2 id="配置-ShadowSocks-客户端"><a href="#配置-ShadowSocks-客户端" class="headerlink" title="配置 ShadowSocks 客户端"></a>配置 ShadowSocks 客户端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python-pip</span><br><span class="line">sudo pip install shadowsocks</span><br><span class="line">sudo vim /etc/ssclient.conf</span><br></pre></td></tr></table></figure>
+<p>配置文件如下:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"server"</span>:<span class="string">"serverip"</span>,</span><br><span class="line">    <span class="attr">"server_port"</span>:<span class="number">12345</span>,</span><br><span class="line">    <span class="attr">"local_address"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="attr">"local_port"</span>:<span class="number">1080</span>,</span><br><span class="line">    <span class="attr">"password"</span>:<span class="string">"ss密码"</span>,</span><br><span class="line">    <span class="attr">"timeout"</span>:<span class="number">300</span>,</span><br><span class="line">    <span class="attr">"method"</span>:<span class="string">"aes-256-cfb"</span>,</span><br><span class="line">    <span class="attr">"fast_open"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"workers"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置说明:</p>
+<ul>
+<li>“server”<ul>
+<li>服务端ip</li>
+</ul>
+</li>
+<li>“method”<ul>
+<li>加密方式</li>
+</ul>
+</li>
+<li>“password”<ul>
+<li>服务端密码</li>
+</ul>
+</li>
+<li>“fast_open”<ul>
+<li>可选 true 或 false。如果你的服务器 Linux 内核在3.7+，可以开启 fast_open 以降低延迟。开启方法： echo 3 &gt; /proc/sys/net/ipv4/tcp_fastopen 开启之后，将 fast_open 的配置设置为 true 即可</li>
+</ul>
+</li>
+</ul>
+<p>开启shadowsocks:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tmux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 SS</span></span><br><span class="line">sudo nohup sslocal -c /etc/ssclient.conf &gt;/dev/null 2&gt;&amp;1 &amp;</span><br><span class="line"><span class="comment"># 查看进程</span></span><br><span class="line">sudo ps aux |grep sslocal |grep -v <span class="string">"grep"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"nohup /usr/local/bin/sslocal -c /etc/ssclient.conf /dev/null 2&gt;&amp;1 &amp;"</span> &gt;&gt; /etc/rc.local</span><br></pre></td></tr></table></figure>
+<p>如果启动<code>sslocal</code>出现错误:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AttributeError: /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1: undefined symbol: EVP_CIPHER_CTX_cleanup</span><br></pre></td></tr></table></figure></p>
+<p>参考解决方法: <a href="https://github.com/shadowsocks/shadowsocks/issues/646#issuecomment-267977330" target="_blank" rel="noopener">run sslocal raise error</a>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -U git+https://github.com/shadowsocks/shadowsocks.git@master</span><br></pre></td></tr></table></figure>
+<h2 id="使用-privoxy-将Sock5代理转化为Http代理"><a href="#使用-privoxy-将Sock5代理转化为Http代理" class="headerlink" title="使用 privoxy 将Sock5代理转化为Http代理"></a>使用 privoxy 将Sock5代理转化为Http代理</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install privoxy -y</span><br></pre></td></tr></table></figure>
+<p>修改配置文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /etc/privoxy/config /etc/privoxy/config.bak     <span class="comment"># 备份配置文件</span></span><br><span class="line">sed -i <span class="string">'/^#/d'</span> /etc/privoxy/config                      <span class="comment"># 删除#开头的注释行(太多了,看着累)</span></span><br><span class="line">sudo vim /etc/privoxy/config                            <span class="comment"># 修改配置文件</span></span><br></pre></td></tr></table></figure>
+<p>找到 <code>listen-address</code> 确保有这行代码 <code>listen-address 127.0.0.1:8118</code><br>找到 <code>forward-socks5</code> 确保有这行代码(没有自己加) <code>forward-socks5 / 127.0.0.1:1080 .</code></p>
+<p>配置文件如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">user-manual /usr/share/doc/privoxy/user-manual</span><br><span class="line">confdir /etc/privoxy</span><br><span class="line">logdir /var/log/privoxy</span><br><span class="line">actionsfile match-all.action # Actions that are applied to all sites and maybe overruled later on.</span><br><span class="line">actionsfile default.action   # Main actions file</span><br><span class="line">actionsfile user.action      # User customizations</span><br><span class="line">filterfile default.filter</span><br><span class="line">filterfile user.filter      # User customizations</span><br><span class="line">logfile logfile</span><br><span class="line">listen-address  127.0.0.1:8118</span><br><span class="line">listen-address  [::1]:8118</span><br><span class="line">toggle  1</span><br><span class="line">enable-remote-toggle  0</span><br><span class="line">enable-remote-http-toggle  0</span><br><span class="line">enable-edit-actions 0</span><br><span class="line">enforce-blocks 0</span><br><span class="line">buffer-limit 4096</span><br><span class="line">enable-proxy-authentication-forwarding 0</span><br><span class="line">forwarded-connect-retries  0</span><br><span class="line">accept-intercepted-requests 0</span><br><span class="line">allow-cgi-request-crunching 0</span><br><span class="line">split-large-forms 0</span><br><span class="line">keep-alive-timeout 5</span><br><span class="line">tolerate-pipelining 1</span><br><span class="line">socket-timeout 300</span><br><span class="line">forward-socks5 / 127.0.0.1:1080 .</span><br></pre></td></tr></table></figure></p>
+<p>启动<code>privoxy</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service privoxy start</span><br><span class="line">sudo service privoxy status</span><br></pre></td></tr></table></figure>
+<p>配置转发</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8118"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:8118"</span></span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~<span class="comment"># curl 4.icanhazip.com</span></span><br><span class="line">35.201.129.180</span><br></pre></td></tr></table></figure>
+<h2 id="也可以使用-Polipo-代替-Privoxy"><a href="#也可以使用-Polipo-代替-Privoxy" class="headerlink" title="也可以使用 Polipo 代替 Privoxy"></a>也可以使用 Polipo 代替 Privoxy</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install polipo -y</span><br><span class="line"></span><br><span class="line">cp /etc/polipo/config /etc/polipo/config.bak</span><br><span class="line"></span><br><span class="line">cat &gt; /etc/polipo/config&lt;&lt;EOF</span><br><span class="line">logSyslog = <span class="literal">true</span></span><br><span class="line">logFile = /var/<span class="built_in">log</span>/polipo/polipo.log</span><br><span class="line">proxyAddress = <span class="string">"0.0.0.0"</span></span><br><span class="line">socksParentProxy = <span class="string">"127.0.0.1:1080"</span></span><br><span class="line">socksProxyType = socks5</span><br><span class="line">chunkHighMark = 50331648</span><br><span class="line">objectHighMark = 16384</span><br><span class="line">serverMaxSlots = 64</span><br><span class="line">serverSlots = 16</span><br><span class="line">serverSlots1 = 32</span><br><span class="line">EOF</span><br><span class="line">sudo /etc/init.d/polipo restart</span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/2449c06687ad793c5b742df6dcfc6b70.png" alt></p>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/025b2a1366ab09d083610fd104729a60.png" alt><br>服务器重启后，下面两句需要重新执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo sslocal -c /etc/ssclient.conf -d start</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br></pre></td></tr></table></figure>
+<p>取消代理:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unset http_proxy</span><br><span class="line">unset https_proxy</span><br></pre></td></tr></table></figure>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><ul>
+<li><a href="http://blog.forecho.com/ubuntu-use-shadowsocks-and-privoxy.html" target="_blank" rel="noopener">Ubuntu 使用 ShadowSocks + Privoxy 代理</a></li>
+<li><a href="https://linux.cn/article-7119-1.html" target="_blank" rel="noopener">五大开源 Web 代理服务器横评：Squid、Privoxy、Varnish、Polipo、Tinyproxy</a></li>
+<li><a href="https://jingsam.github.io/2016/05/08/setup-shadowsocks-http-proxy-on-ubuntu-server.html" target="_blank" rel="noopener">Ubuntu server命令行配置shadowsocks全局代理</a></li>
+<li><a href="https://www.igfw.net/archives/947" target="_blank" rel="noopener">使用Privoxy、Polipo、3proxy转化Sock5代理为Http代理</a></li>
+</ul>
+<h2 id="使用supervisor管理shadowsocks进程"><a href="#使用supervisor管理shadowsocks进程" class="headerlink" title="使用supervisor管理shadowsocks进程"></a>使用<code>supervisor</code>管理<code>shadowsocks</code>进程</h2><p>安装supervisor<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install supervisor</span><br></pre></td></tr></table></figure></p>
+<p>添加ss配置文件</p>
+<p>vim /etc/supervisor/conf.d/ss.conf<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[program:ss]</span><br><span class="line"><span class="built_in">command</span>=/usr/<span class="built_in">local</span>/bin/sslocal -c /etc/ssclient.conf</span><br><span class="line">user=root</span><br><span class="line">directory=/root</span><br><span class="line">stdout_logfile=/var/<span class="built_in">log</span>/supervisor/%(program_name)s-stdout.log</span><br><span class="line">stderr_logfile=/var/<span class="built_in">log</span>/supervisor/%(program_name)s-stderr.log</span><br><span class="line">killasgroup=<span class="literal">true</span></span><br><span class="line">stopasgroup=<span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
+<p>使用<code>supervisor</code>启动ss:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo service supervisor restart</span><br><span class="line">sudo supervisorctl restart ss</span><br><span class="line"></span><br><span class="line">root@huang:~<span class="comment"># lsof -i :1080</span></span><br><span class="line">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sslocal 3148 root    3u  IPv4  33691      0t0  TCP localhost:socks (LISTEN)</span><br><span class="line">sslocal 3148 root    4u  IPv4  33692      0t0  UDP localhost:socks</span><br></pre></td></tr></table></figure></p>
+<h2 id="为git协议设置代理"><a href="#为git协议设置代理" class="headerlink" title="为git协议设置代理"></a>为git协议设置代理</h2><h3 id="使用ProxyChains-NG"><a href="#使用ProxyChains-NG" class="headerlink" title="使用ProxyChains-NG"></a>使用ProxyChains-NG</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/rofl0r/proxychains-ng.git</span><br><span class="line"><span class="built_in">cd</span> proxychains-ng</span><br><span class="line">sudo ./configure</span><br><span class="line">sudo make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<!--
+cp ./src/proxychains.conf /etc/proxychains.conf
+
+sed -i -e '/^#/d' -e '/^$/d' /etc/proxychains.conf
+
+将`socks4 127.0.0.1 9095`改为`socks5 127.0.0.1 1080`
+-->
+<p>sudo vim /etc/proxychains.conf</p>
+<p>添加如下配置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">strict_chain</span><br><span class="line">proxy_dns </span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0/255.0.0.0</span><br><span class="line">quiet_mode</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1080</span><br></pre></td></tr></table></figure></p>
+<p>在需要代理的命令前加上 <code>proxychains4</code> ，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br><span class="line"></span><br><span class="line">proxychains4 git clone git://github.com/WordPress/WordPress.git</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用tsocks"><a href="#使用tsocks" class="headerlink" title="使用tsocks"></a>使用tsocks</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install tsocks</span><br><span class="line">vim /etc/tsocks.conf</span><br></pre></td></tr></table></figure>
+<p>配置如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">local = 192.168.0.0/255.255.255.0</span><br><span class="line">local = 10.0.0.0/255.0.0.0</span><br><span class="line">path &#123;</span><br><span class="line">	reaches = 150.0.0.0/255.255.0.0</span><br><span class="line">	reaches = 150.1.0.0:80/255.255.0.0</span><br><span class="line">	server = 10.1.7.25</span><br><span class="line">	server_type = 5</span><br><span class="line">	default_user = delius</span><br><span class="line">	default_pass = hello</span><br><span class="line">&#125;</span><br><span class="line">server = 127.0.0.1</span><br><span class="line">server_type = 5</span><br><span class="line">server_port = 1080</span><br></pre></td></tr></table></figure></p>
+<p>使用:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsocks curl ip.sb</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/15/Ubuntu16.04搭建ngrok服务/" rel="prev" title=" Ubuntu16.04搭建ngrok服务		">
+      <i class="fa fa-chevron-left"></i>  Ubuntu16.04搭建ngrok服务		
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/07/解决supervisor无法启动es的问题/" rel="next" title=" 解决supervisor无法启动es的问题		">
+       解决supervisor无法启动es的问题		 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置-ShadowSocks-客户端"><span class="nav-number">1.</span> <span class="nav-text">配置 ShadowSocks 客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-privoxy-将Sock5代理转化为Http代理"><span class="nav-number">2.</span> <span class="nav-text">使用 privoxy 将Sock5代理转化为Http代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#也可以使用-Polipo-代替-Privoxy"><span class="nav-number">3.</span> <span class="nav-text">也可以使用 Polipo 代替 Privoxy</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考链接"><span class="nav-number">3.0.1.</span> <span class="nav-text">参考链接:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用supervisor管理shadowsocks进程"><span class="nav-number">4.</span> <span class="nav-text">使用supervisor管理shadowsocks进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为git协议设置代理"><span class="nav-number">5.</span> <span class="nav-text">为git协议设置代理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用ProxyChains-NG"><span class="nav-number">5.1.</span> <span class="nav-text">使用ProxyChains-NG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用tsocks"><span class="nav-number">5.2.</span> <span class="nav-text">使用tsocks</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">lovehhf</p>
+  <div class="site-description" itemprop="description">种一棵树最好的时间是十年前, 其次是现在</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lovehhf" title="GitHub → https://github.com/lovehhf" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lovehhf</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">NaNm</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">NaN:aN</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.5.0
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
