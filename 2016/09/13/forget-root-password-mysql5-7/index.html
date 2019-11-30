@@ -334,6 +334,7 @@
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
         </div>
           
@@ -534,6 +535,24 @@ show_date_time();
   
 
   
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: 'ff2a76f1d905e6db0b70',
+      clientSecret: '90af96b5c09c562a2b6d8e86108b7f7db4733069',
+      repo: 'gitalk-comments',
+      owner: 'lovehhf',
+      admin: ['lovehhf'],
+      id: 'e358c8b4018c87c495884cb11d59924a',
+        language: '',
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
 
 </body>
 </html>
