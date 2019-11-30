@@ -47,18 +47,18 @@
   };
 </script>
 
-  <meta name="description" content="Linux常用的解压缩命令">
+  <meta name="description" content="tar.gz/tgzlinux自带123解压: tar -zxvf FileName.tar.gz               //解压FileName.tar.gz文件  压缩：tar -zcvf DirName.tar.gz  DirName       //将文件夹DirdName压缩为 DirName.tar.gz    tar -zcvf FileName.tar.gz FileName">
 <meta name="keywords" content="linux命令">
 <meta property="og:type" content="article">
 <meta property="og:title" content=" Linux常用的解压缩命令(.tar.gz .zip .rar .7z)		">
 <meta property="og:url" content="http://blog.ichenfei.com/2015/12/12/linux-decode-and-code/index.html">
 <meta property="og:site_name" content="晨飞小窝">
-<meta property="og:description" content="Linux常用的解压缩命令">
+<meta property="og:description" content="tar.gz/tgzlinux自带123解压: tar -zxvf FileName.tar.gz               //解压FileName.tar.gz文件  压缩：tar -zcvf DirName.tar.gz  DirName       //将文件夹DirdName压缩为 DirName.tar.gz    tar -zcvf FileName.tar.gz FileName">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-23T18:39:57.492Z">
+<meta property="og:updated_time" content="2019-11-30T12:02:12.339Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content=" Linux常用的解压缩命令(.tar.gz .zip .rar .7z)		">
-<meta name="twitter:description" content="Linux常用的解压缩命令">
+<meta name="twitter:description" content="tar.gz/tgzlinux自带123解压: tar -zxvf FileName.tar.gz               //解压FileName.tar.gz文件  压缩：tar -zcvf DirName.tar.gz  DirName       //将文件夹DirdName压缩为 DirName.tar.gz    tar -zcvf FileName.tar.gz FileName">
 
 <link rel="canonical" href="http://blog.ichenfei.com/2015/12/12/linux-decode-and-code/">
 
@@ -243,7 +243,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-24 02:39:57" itemprop="dateModified" datetime="2019-11-24T02:39:57+08:00">2019-11-24</time>
+                <time title="修改时间：2019-11-30 20:02:12" itemprop="dateModified" datetime="2019-11-30T20:02:12+08:00">2019-11-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,14 +270,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span></span>
+              <span>675</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>NaN:aN</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -289,13 +289,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Linux常用的解压缩命令</p>
-<a id="more"></a>
-<p>tar.gz linux自带 [code] 解压: tar -zxvf FileName.tar.gz //解压FileName.tar.gz文件 压缩：tar -zcvf DirName.tar.gz DirName //将文件夹DirdName压缩为 DirName.tar.gz tar -zcvf FileName.tar.gz FileName1 FileName2 … //将FileName1,FileName2…压缩为FileName.tar.gz [/code]</p>
-<p>.zip 需要安装zip以及unzip [code] 解压：unzip FileName.zip //解压FileName.zip 压缩：zip -r DirName.zip DirName //将文件夹DirName压缩为DirName.tar.gz [/code]</p>
-<p>.rar 需要下载rar [code] 解压：rar x FileName.rar //解压FileName.rar 压缩：rar a FileName.rar DirName //将DirName压缩为DirName.rar [/code]</p>
-<p>.7z 需要下载p7zip-full [code] 解压：7z x FileName.7z //解压FileName.7z 压缩：7z a DirName.7z DirName.7z //将DirName压缩为DirName.7z [/code]</p>
-<p>安装命令示例： Redhat、Fedora、Centos下安装zip、unzip： [bash] yum install -y zip unzip [/bash] Debian、Ubuntu下安装zip、unzip： [bash] apt-get install -y zip unzip [/bash]</p>
+        <h3 id="tar-gz-tgz"><a href="#tar-gz-tgz" class="headerlink" title="tar.gz/tgz"></a>tar.gz/tgz</h3><p>linux自带<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">解压: tar -zxvf FileName.tar.gz               //解压FileName.tar.gz文件  </span><br><span class="line">压缩：tar -zcvf DirName.tar.gz  DirName       //将文件夹DirdName压缩为 DirName.tar.gz</span><br><span class="line">    tar -zcvf FileName.tar.gz FileName1 FileName2 … //将FileName1,FileName2…压缩为FileName.tar.gz</span><br></pre></td></tr></table></figure></p><a id="more"></a>
+<h3 id="tar-xz"><a href="#tar-xz" class="headerlink" title="tar.xz"></a>tar.xz</h3><p>解压：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xz -d xxx.tar.xz</span><br><span class="line">tar -xavf xxx.tar</span><br></pre></td></tr></table></figure></p>
+<h3 id="zip"><a href="#zip" class="headerlink" title=".zip"></a>.zip</h3><p>需要安装zip以及unzip</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">解压：unzip FileName.zip           //解压FileName.zip</span><br><span class="line">压缩：zip -r DirName.zip DirName   //将文件夹DirName压缩为DirName.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="rar"><a href="#rar" class="headerlink" title=".rar"></a>.rar</h3><p>需要下载rar</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">解压：rar x FileName.rar           //解压FileName.rar</span><br><span class="line">压缩：rar a FileName.rar DirName   //将DirName压缩为DirName.rar</span><br></pre></td></tr></table></figure>
+<h3 id="7z"><a href="#7z" class="headerlink" title=".7z"></a>.7z</h3><p>需要下载p7zip-full</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">解压：7z x FileName.7z        //解压FileName.7z</span><br><span class="line">压缩：7z a DirName.7z DirName.7z  //将DirName压缩为DirName.7z</span><br></pre></td></tr></table></figure>
+<p>安装命令示例：<br>Redhat、Fedora、Centos下安装zip、unzip：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y zip unzip</span><br></pre></td></tr></table></figure>
+<p>Debian、Ubuntu下安装zip、unzip：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install -y zip unzip</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -318,8 +323,8 @@
       <i class="fa fa-chevron-left"></i>  ubuntu service 12.04安装edx记录		
     </a></div>
       <div class="post-nav-item">
-    <a href="/2015/12/17/solve-wordpress-cannot-sent-register-email/" rel="next" title=" 代码解决Wordpress注册收不到邮件的问题		">
-       代码解决Wordpress注册收不到邮件的问题		 <i class="fa fa-chevron-right"></i>
+    <a href="/2015/12/18/setup-swap-file-on-linux/" rel="next" title=" linux设置开启swap交换分区(虚拟内存)		">
+       linux设置开启swap交换分区(虚拟内存)		 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -358,6 +363,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#tar-gz-tgz"><span class="nav-number">1.</span> <span class="nav-text">tar.gz/tgz</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tar-xz"><span class="nav-number">2.</span> <span class="nav-text">tar.xz</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zip"><span class="nav-number">3.</span> <span class="nav-text">.zip</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rar"><span class="nav-number">4.</span> <span class="nav-text">.rar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7z"><span class="nav-number">5.</span> <span class="nav-text">.7z</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -371,17 +377,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
         <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">分类</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
         <span class="site-state-item-count">34</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -436,6 +446,33 @@
   <span class="post-meta-divider">|</span>
   <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.5.0
   </div>
+
+<div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("11/24/2019 12:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="本站已安全运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
 
         
 <div class="busuanzi-count">

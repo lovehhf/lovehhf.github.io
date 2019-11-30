@@ -55,24 +55,12 @@
 <meta property="og:site_name" content="晨飞小窝">
 <meta property="og:description" content="ubuntu 14.04服务器上使用nginx搭建wordpress博客">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/nginx安装.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/配置php.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/原始ngin配置.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/nginx配置1.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/nginx配置2.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/phpmyadmin首页.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/创建wordpress数据库.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/wordpress安装1.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/wordpress安装2.png">
 <meta property="og:image" content="http://www.ichenfei.com/wp-content/uploads/2015/12/QQ截图20160115103946-2.jpg">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/wordpress完成安装.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/nginx404.png">
-<meta property="og:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/nginx%20rewrite规则.png">
-<meta property="og:updated_time" content="2019-11-23T18:38:33.478Z">
+<meta property="og:updated_time" content="2019-11-30T12:06:07.215Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content=" ubuntu 14.04服务器上使用nginx搭建wordpress博客详解		">
 <meta name="twitter:description" content="ubuntu 14.04服务器上使用nginx搭建wordpress博客">
-<meta name="twitter:image" content="http://7xlbe9.com1.z0.glb.clouddn.com/nginx安装.png">
+<meta name="twitter:image" content="http://www.ichenfei.com/wp-content/uploads/2015/12/QQ截图20160115103946-2.jpg">
 
 <link rel="canonical" href="http://blog.ichenfei.com/2015/12/08/ubuntu 14.04服务器上使用nginx搭建wordpress博客详解/">
 
@@ -257,7 +245,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-24 02:38:33" itemprop="dateModified" datetime="2019-11-24T02:38:33+08:00">2019-11-24</time>
+                <time title="修改时间：2019-11-30 20:06:07" itemprop="dateModified" datetime="2019-11-30T20:06:07+08:00">2019-11-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -290,14 +278,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span></span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>NaN:aN</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -310,42 +298,48 @@
 
       
         <p>ubuntu 14.04服务器上使用nginx搭建wordpress博客<br><a id="more"></a></p>
-<h2 id="过程详解"><a href="#过程详解" class="headerlink" title="过程详解"></a>过程详解</h2><p>1. 更新apt-get</p>
-<p>[bash] sudo apt-get update [/bash]</p>
+<p></p><h2>过程详解</h2><p></p>
+<p>1. 更新apt-get</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
 <p>2.安装nginx</p>
-<p>[bash] sudo apt-get install nginx [/bash]</p>
-<p>3.启动nginx [bash] sudo service nginx start [/bash]</p>
-<p>此时浏览器输入你的服务器ip会看到如下界面</p>
-<p><img src="http://7xlbe9.com1.z0.glb.clouddn.com/nginx安装.png" alt="安装nginx"></p>
-<p>4. 安装mysql</p>
-<p>[bash] sudo apt-get install mysql-server php5-mysql [/bash]</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nginx</span><br></pre></td></tr></table></figure>
+<p>3.启动nginx<br><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure><br><br></p><p>此时浏览器输入你的服务器ip会看到如下界面</p><br><p>4. 安装mysql</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mysql-server php5-mysql</span><br></pre></td></tr></table></figure>
 <p>5. 安装php</p>
-<p>[bash] sudo apt-get install php5-fpm [/bash]</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install php5-fpm</span><br></pre></td></tr></table></figure>
 <p>6. 配置PHP</p>
-<p>[bash] sudo vi /etc/php5/fpm/php.ini [/bash] 找到cgi.fix_pathinfo=1,把1改成0,并去掉；号(如果vim编辑器的上下左右键变成了ABCD可以使用下面的命令重装vim解决) [bash] sudo apt-get remove vim-common sudo apt-get install vim [/bash]</p>
-<p><img src="http://7xlbe9.com1.z0.glb.clouddn.com/配置php.png" alt="配置PHP"></p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/php5/fpm/php.ini</span><br></pre></td></tr></table></figure>
+<p>找到cgi.fix_pathinfo=1,把1改成0,并去掉；号<span style="color:#66ccff;">(如果vim编辑器的上下左右键变成了ABCD可以使用下面的命令重装vim解决)</span></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove vim-common </span><br><span class="line">sudo apt-get install vim</span><br></pre></td></tr></table></figure>
+<p></p><p></p>
 <p>7. 启动php-fpm</p>
-<p>[bash] sudo service php5-fpm restart [/bash]</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service php5-fpm restart</span><br></pre></td></tr></table></figure>
 <p>8. 配置nginx</p>
-<p>[bash] sudo vi /etc/nginx/sites-available/default [/bash] 打开后如图： <img src="http://7xlbe9.com1.z0.glb.clouddn.com/原始ngin配置.png" alt="原始nginx配置"> 改为 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/nginx配置1.png" alt="nginx配置1"> 取消一些注释如图： <img src="http://7xlbe9.com1.z0.glb.clouddn.com/nginx配置2.png" alt="nginx配置2"> 保存退出并重启nginx [bash] sudo service nginx restart [/bash]</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
+<p>打开后如图：<br>改为<br>取消一些注释如图：<br>保存退出并重启nginx</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
 <p>9. 安装phpmyadmin,并建立软链接</p>
-<p>[bash] sudo apt-get install phpmyadmin sudo ln -s /usr/share/phpmyadmin/ /usr/share/nginx/html/phpmyadmin [/bash] 安装中会要求输入密码 浏览器访问phpmyadmin:ip/phpmyadmin <img src="http://7xlbe9.com1.z0.glb.clouddn.com/phpmyadmin首页.png" alt="phpmyadmin首页"> 登录账号为root，密码为设置的密码</p>
-<p>10 建立名为wordpress的数据库</p>
-<p><img src="http://7xlbe9.com1.z0.glb.clouddn.com/创建wordpress数据库.png" alt="创建wordpress数据库"> (如果你擅长SQL语句，可以直接用SQL语句创建数据库 create database wordpress;)</p>
-<p>11. 下载wordpress,解压，转移到nginx目录,更改文件所有者</p>
-<p>[bash] cd /usr/share/nginx/html/ #有的是www而不是html sudo wget <a href="https://cn.wordpress.org/wordpress-4.3.1-zh_CN.tar.gz" target="_blank" rel="noopener">https://cn.wordpress.org/wordpress-4.3.1-zh_CN.tar.gz</a> sudo tar -zxvf wordpress-<em>.tar.gz sudo mv wordpress/</em> . sudo rm index.html sudo chown -R www-data:www-data * sudo service nginx restart [/bash]</p>
-<p>12. 此时浏览器输入ip访问会出现如下页面</p>
-<p><img src="http://7xlbe9.com1.z0.glb.clouddn.com/wordpress安装1.png" alt="wordpress安装1"> 点击现在就开始,填表,提交。 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/wordpress安装2.png" alt="wordpress安装2"></p>
-<p>如果提示抱歉，但是向导在您的文件系统中没有足够的权限写入wp-config.php文件。,使用下面的命令可直接修改写入wp-config.php</p>
-<p>[bash] sudo cp wp-config-sample.php wp-config.php sudo vi wp-config.php [/bash] <img src="http://www.ichenfei.com/wp-content/uploads/2015/12/QQ截图20160115103946-2.jpg" alt="QQ截图20160115103946"></p>
-<p>填写站点信息完成安装</p>
-<p><img src="http://7xlbe9.com1.z0.glb.clouddn.com/wordpress完成安装.png" alt="wordpress完成安装"></p>
-<p>13. 此时nginx更改固定链接会提示404,在nginx配置文件加入rewrite规则可解决.</p>
-<p><img src="http://7xlbe9.com1.z0.glb.clouddn.com/nginx404.png" alt="404notfound"></p>
-<p>解决：</p>
-<p>[bash] sudo vi /etc/nginx/sites-available/default 写入 if (-f $request_filename/index.html){ rewrite (.<em>) $1/index.html break; } if (-f $request_filename/index.php){ rewrite (.</em>) $1/index.php; } if (!-f $request_filename){ rewrite (.*) /index.php; } [/bash] <img src="http://7xlbe9.com1.z0.glb.clouddn.com/nginx%20rewrite规则.png" alt="nginx加rewrite规则"></p>
-<p>此时固定链接就正常了。</p>
-<p>至此wordpress安装完成。</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install phpmyadmin  </span><br><span class="line">sudo ln -s /usr/share/phpmyadmin/ /usr/share/nginx/html/phpmyadmin</span><br></pre></td></tr></table></figure>
+<p>安装中会要求输入密码<br>浏览器访问phpmyadmin:ip/phpmyadmin<br>登录账号为root，密码为设置的密码</p>
+<p>10 建立名为wordpress的数据库</p><br><span style="color:#66ccff;">(如果你擅长SQL语句，可以直接用SQL语句创建数据库 create database wordpress;)</span><br><p>11. 下载wordpress,解压，转移到nginx目录,更改文件所有者</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/share/nginx/html/    <span class="comment">#有的是www而不是html</span></span><br><span class="line">sudo wget https://cn.wordpress.org/wordpress-4.3.1-zh_CN.tar.gz</span><br><span class="line">sudo tar -zxvf wordpress-*.tar.gz </span><br><span class="line">sudo mv wordpress/* .</span><br><span class="line">sudo rm index.html</span><br><span class="line">sudo chown -R www-data:www-data *</span><br><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
+<p>12. 此时浏览器输入ip访问会出现如下页面</p><br>点击现在就开始,填表,提交。<br><p>如果提示<span style="color:red">抱歉，但是向导在您的文件系统中没有足够的权限写入wp-config.php文件。</span>,使用下面的命令可直接修改写入wp-config.php</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cp  wp-config-sample.php wp-config.php </span><br><span class="line">sudo vi  wp-config.php</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2015/12/QQ截图20160115103946-2.jpg" alt="QQ截图20160115103946" width="675" height="280" class="aligncenter size-full wp-image-293"></p>
+<p style="color:#red;">填写站点信息完成安装</p><br><p>13. 此时nginx更改固定链接会提示404,在nginx配置文件加入rewrite规则可解决.</p><br><p>解决：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/nginx/sites-available/default</span><br><span class="line">写入</span><br><span class="line">        <span class="keyword">if</span> (-f <span class="variable">$request_filename</span>/index.html)&#123;</span><br><span class="line">                rewrite (.*) <span class="variable">$1</span>/index.html <span class="built_in">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (-f <span class="variable">$request_filename</span>/index.php)&#123;</span><br><span class="line">                rewrite (.*) <span class="variable">$1</span>/index.php;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!-f <span class="variable">$request_filename</span>)&#123;</span><br><span class="line">                rewrite (.*) /index.php;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p></p><p>此时固定链接就正常了。</p><br>至此wordpress安装完成。<p></p>
 
     </div>
 
@@ -405,7 +399,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#过程详解"><span class="nav-number">1.</span> <span class="nav-text">过程详解</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">1.</span> <span class="nav-text">过程详解</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -419,17 +413,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
         <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">分类</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
         <span class="site-state-item-count">34</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -484,6 +482,33 @@
   <span class="post-meta-divider">|</span>
   <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.5.0
   </div>
+
+<div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("11/24/2019 12:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="本站已安全运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
 
         
 <div class="busuanzi-count">

@@ -47,22 +47,20 @@
   };
 </script>
 
-  <meta name="description" content="分清楚是传的是值还是引用">
+  <meta name="description" content="使用scrapyd部署scrapy爬虫">
 <meta name="keywords" content="编程学习|算法学习|Linux学习|Python学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content=" Python的列表乘法问题		">
-<meta property="og:url" content="http://blog.ichenfei.com/2019/04/28/Python的列表乘法问题/index.html">
+<meta property="og:title" content=" 使用scrapyd部署scrapy爬虫		">
+<meta property="og:url" content="http://blog.ichenfei.com/2017/10/30/how-to-use-scrapyd/index.html">
 <meta property="og:site_name" content="晨飞小窝">
-<meta property="og:description" content="分清楚是传的是值还是引用">
+<meta property="og:description" content="使用scrapyd部署scrapy爬虫">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://www.ichenfei.com/wp-content/uploads/2019/04/f8670646faaf32805ee52d158a5a7242.png">
-<meta property="og:updated_time" content="2019-11-23T18:21:10.175Z">
+<meta property="og:updated_time" content="2019-11-30T10:43:58.644Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content=" Python的列表乘法问题		">
-<meta name="twitter:description" content="分清楚是传的是值还是引用">
-<meta name="twitter:image" content="https://www.ichenfei.com/wp-content/uploads/2019/04/f8670646faaf32805ee52d158a5a7242.png">
+<meta name="twitter:title" content=" 使用scrapyd部署scrapy爬虫		">
+<meta name="twitter:description" content="使用scrapyd部署scrapy爬虫">
 
-<link rel="canonical" href="http://blog.ichenfei.com/2019/04/28/Python的列表乘法问题/">
+<link rel="canonical" href="http://blog.ichenfei.com/2017/10/30/how-to-use-scrapyd/">
 
 
 <script id="page-configurations">
@@ -76,7 +74,7 @@
   };
 </script>
 
-  <title> Python的列表乘法问题		 | 晨飞小窝</title>
+  <title> 使用scrapyd部署scrapy爬虫		 | 晨飞小窝</title>
   
 
 
@@ -215,7 +213,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.ichenfei.com/2019/04/28/Python的列表乘法问题/">
+    <link itemprop="mainEntityOfPage" href="http://blog.ichenfei.com/2017/10/30/how-to-use-scrapyd/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/image/avatar.gif">
@@ -228,7 +226,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-           Python的列表乘法问题		
+           使用scrapyd部署scrapy爬虫		
         </h1>
 
         <div class="post-meta">
@@ -238,14 +236,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-04-28 14:41:58" itemprop="dateCreated datePublished" datetime="2019-04-28T14:41:58+08:00">2019-04-28</time>
+              <time title="创建时间：2017-10-30 21:39:49" itemprop="dateCreated datePublished" datetime="2017-10-30T21:39:49+08:00">2017-10-30</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-24 02:21:10" itemprop="dateModified" datetime="2019-11-24T02:21:10+08:00">2019-11-24</time>
+                <time title="修改时间：2019-11-30 18:43:58" itemprop="dateModified" datetime="2019-11-30T18:43:58+08:00">2019-11-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,14 +270,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span></span>
+              <span>2.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>NaN:aN</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -291,19 +289,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>分清楚是传的是值还是引用</p>
+        <p>使用scrapyd部署scrapy爬虫</p>
 <a id="more"></a>
-<p>Python在对列表的初始化过程中会经常用到列表的乘法生成一个含有重复元素的列表,例如 <code>l = [0]*10</code> 但是如果列表中包含有可变数据类型(列表、字典)的话使用<code>*</code>操作符便会有很大问题。 <code>*</code>操作符在实现上是复制了值的引用，而不是创建了新的对象。如果其中一个数据改变，其他的也会跟着改变。 如下代码:</p>
-<pre><code>m = 2
-n = 3
-dp = [[0 for _ in range(n+1)] for _ in range(m+1)]
-dp2 = [[0] * (n + 1)] * (m + 1)
-dp2[1][1] = 1
-dp[1][1] = 1
-
-print(dp)
-print(dp2)
-</code></pre><p>在<code>pythontutor</code>中可视化代码运行过程，可以看出使用dp2中的使用<code>*</code>操作符生成的列表中的3个元素都指向的同一个<code>list</code>。而使用列表生成式生成的二维列表指向的都是不同的<code>list</code>。 故python在初始化列表中尽量要使用列表生成器，而尽量少使用列表乘法。 <img src="https://www.ichenfei.com/wp-content/uploads/2019/04/f8670646faaf32805ee52d158a5a7242.png" alt> 参考链接: - <a href="https://blog.csdn.net/wangxinginnlp/article/details/53201450" target="_blank" rel="noopener">小心python的list乘法</a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Scrapyd is a service for running Scrapy spiders. It allows you to deploy your Scrapy projects and control their spiders using a HTTP JSON API.</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>安装<code>scrapyd</code>服务端(需要scrapy项目环境)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install scrapyd</span><br></pre></td></tr></table></figure>
+<p>安装 <code>scrapyd-deploy</code> (无需scrapy环境)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pip install scrapyd-client </span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">windows系统，在`c:\python27\Scripts`下生成的是`scrapyd-deploy`，无法直接在命令行里运行`scrapd-deploy` 配置文件位置: </span><br><span class="line"></span><br><span class="line">##### 解决办法：</span><br><span class="line"></span><br><span class="line">在`C:\python27\Scripts`下新建一个`scrapyd-deploy.bat`，文件内容如下：</span><br></pre></td></tr></table></figure>
+<p>@echo off C:\Python27\python C:\Python27\Scripts\scrapyd-deploy %*<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">使用</span><br><span class="line">--</span><br><span class="line"></span><br><span class="line">### 开启scrapyd</span><br><span class="line"></span><br><span class="line">终端运行:`scrapyd`开启`scrapyd`服务</span><br><span class="line"></span><br><span class="line">### 发布工程到scrapyd</span><br><span class="line"></span><br><span class="line">切换至到`scrapy`项目根目录,编辑`scrapy.cfg`,</span><br></pre></td></tr></table></figure></p>
+<p>取消 # url = <a href="http://localhost:6800/前面的注释#" target="_blank" rel="noopener">http://localhost:6800/前面的注释#</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">![](https://www.ichenfei.com/wp-content/uploads/2017/10/0678af8c66e671232462916041dee39d.png) </span><br><span class="line"></span><br><span class="line">打包发布`scrapyd`项目:</span><br></pre></td></tr></table></figure></p>
+<p>scrapyd-deploy <target> -p <project><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">*   `&lt;target&gt;`就是配置文件的`deploy`的名字，针对上面的配置就是`scearticle`</span><br><span class="line">*   `&lt;project&gt;`是项目名`scrapyd`项目名,不输入则默认为`deploy`的名字</span><br><span class="line"></span><br><span class="line">部署完成之后，创建的scrapy项目中可以看到多了一个eggs的文件夹，以及里面的一些内容，里面所存放的就是scrapyd-deploy的工程打包成.egg的文件 </span><br><span class="line"></span><br><span class="line">![](https://www.ichenfei.com/wp-content/uploads/2017/10/2e3e75aea3ef2cde9615576f22ee531e.png)</span><br><span class="line"></span><br><span class="line">API</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 查看`scrapyd`运行状态</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">curl http://localhost:6800/daemonstatus.json 返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;running&quot;: 0, &quot;finished&quot;: 42, &quot;pending&quot;: 0, &quot;node_name&quot;: &quot;VM-42-98-ubuntu&quot;&#125;</span><br></pre></td></tr></table></figure></project></target></p>
+<h3 id="创建爬虫任务"><a href="#创建爬虫任务" class="headerlink" title="创建爬虫任务"></a>创建爬虫任务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/schedule.json -d project=myproject -d spider=somespider </span><br><span class="line"></span><br><span class="line">参数: </span><br><span class="line"></span><br><span class="line">project (string, required) - 项目名 </span><br><span class="line">spider (string, required) - 项目中的爬虫名 </span><br><span class="line">setting (string, optional) - 指定使用Scrapy设置 </span><br><span class="line">jobid (string, optional) - 指定jobid </span><br><span class="line">_version (string, optional) - 指定项目版本 </span><br><span class="line"></span><br><span class="line">示例: curl http://localhost:6800/schedule.json -d project=SecArticleSpider -d spider=freebuf 返回: &#123;<span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"jobid"</span>: <span class="string">"7ea5ddc0bd7d11e7b256525400dc407e"</span>, <span class="string">"node\_name"</span>: <span class="string">"VM-42-98-ubuntu"</span>&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="取消正在运行的job"><a href="#取消正在运行的job" class="headerlink" title="取消正在运行的job"></a>取消正在运行的job</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/cancel.json -d project=myproject -d job=6487ec79947edab326d6db28a2d86511e8247444 </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;prevstate&quot;: &quot;running&quot;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="列出项目"><a href="#列出项目" class="headerlink" title="列出项目:"></a>列出项目:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/listprojects.json </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;projects&quot;: \[&quot;myproject&quot;, &quot;otherproject&quot;\]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="列出爬虫"><a href="#列出爬虫" class="headerlink" title="列出爬虫:"></a>列出爬虫:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/listspiders.json?project=myproject </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;spiders&quot;: \[&quot;spider1&quot;, &quot;spider2&quot;, &quot;spider3&quot;\]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="列出job："><a href="#列出job：" class="headerlink" title="列出job："></a>列出job：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/listjobs.json?project=myproject </span><br><span class="line">示例返回: <span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"pending"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"78391cc0fcaf11e1b0090800272a6d06"</span>, <span class="string">"spider"</span>: <span class="string">"spider1"</span>&#125;\], <span class="string">"running"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"422e608f9f28cef127b3d5ef93fe9399"</span>, <span class="string">"spider"</span>: <span class="string">"spider2"</span>, <span class="string">"start\_time"</span>: <span class="string">"2012-09-12 10:14:03.594664"</span>&#125;\], <span class="string">"finished"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"2f16646cfcaf11e1b0090800272a6d06"</span>, <span class="string">"spider"</span>: <span class="string">"spider3"</span>, <span class="string">"start\_time"</span>: <span class="string">"2012-09-12 10:14:03.594664"</span>, <span class="string">"end_time"</span>: <span class="string">"2012-09-12 10:24:03.594664"</span>&#125;\]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除项目"><a href="#删除项目" class="headerlink" title="删除项目:"></a>删除项目:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/delproject.json -d project=myproject 示例返回: &#123;<span class="string">"status"</span>: <span class="string">"ok"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>更多支持的api： <a href="http://scrapyd.readthedocs.io/en/stable/api.html" target="_blank" rel="noopener">Scrapyd 官方支持手册</a></p>
 
     </div>
 
@@ -319,12 +321,12 @@ print(dp2)
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/03/29/Python zip函数使用技巧/" rel="prev" title=" Python zip函数使用技巧		">
-      <i class="fa fa-chevron-left"></i>  Python zip函数使用技巧		
+    <a href="/2016/10/21/python-error-coding-problem/" rel="prev" title=" Python抓取中文网页乱码问题		">
+      <i class="fa fa-chevron-left"></i>  Python抓取中文网页乱码问题		
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/05/02/二叉树的前中后序遍历的非递归实现(Python)/" rel="next" title=" 二叉树的前中后序遍历的非递归实现(Python)		">
-       二叉树的前中后序遍历的非递归实现(Python)		 <i class="fa fa-chevron-right"></i>
+    <a href="/2017/10/31/使用Python 进行各进制间转换/" rel="next" title=" 使用Python 进行各进制间转换		">
+       使用Python 进行各进制间转换		 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -363,6 +365,7 @@ print(dp2)
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建爬虫任务"><span class="nav-number">2.1.</span> <span class="nav-text">创建爬虫任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取消正在运行的job"><span class="nav-number">2.2.</span> <span class="nav-text">取消正在运行的job</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列出项目"><span class="nav-number">2.3.</span> <span class="nav-text">列出项目:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列出爬虫"><span class="nav-number">2.4.</span> <span class="nav-text">列出爬虫:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列出job："><span class="nav-number">2.5.</span> <span class="nav-text">列出job：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除项目"><span class="nav-number">2.6.</span> <span class="nav-text">删除项目:</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

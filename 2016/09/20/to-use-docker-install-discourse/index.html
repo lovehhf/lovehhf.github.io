@@ -47,22 +47,22 @@
   };
 </script>
 
-  <meta name="description" content="使用Docker安装Discourse">
+  <meta name="description" content="Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。">
 <meta name="keywords" content="Docker,Discourse">
 <meta property="og:type" content="article">
 <meta property="og:title" content=" 使用Docker安装Discourse		">
 <meta property="og:url" content="http://blog.ichenfei.com/2016/09/20/to-use-docker-install-discourse/index.html">
 <meta property="og:site_name" content="晨飞小窝">
-<meta property="og:description" content="使用Docker安装Discourse">
+<meta property="og:description" content="Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse配置.jpg">
 <meta property="og:image" content="http://www.ichenfei.com/wp-content/uploads/2016/09/创建Discourse账号.jpg">
 <meta property="og:image" content="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse验证邮箱.jpg">
 <meta property="og:image" content="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse_admin-1024x504.jpg">
-<meta property="og:updated_time" content="2019-11-23T18:38:41.795Z">
+<meta property="og:updated_time" content="2019-11-30T11:57:06.076Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content=" 使用Docker安装Discourse		">
-<meta name="twitter:description" content="使用Docker安装Discourse">
+<meta name="twitter:description" content="Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。">
 <meta name="twitter:image" content="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse配置.jpg">
 
 <link rel="canonical" href="http://blog.ichenfei.com/2016/09/20/to-use-docker-install-discourse/">
@@ -248,7 +248,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-24 02:38:41" itemprop="dateModified" datetime="2019-11-24T02:38:41+08:00">2019-11-24</time>
+                <time title="修改时间：2019-11-30 19:57:06" itemprop="dateModified" datetime="2019-11-30T19:57:06+08:00">2019-11-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -281,14 +281,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span></span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>NaN:aN</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -300,28 +300,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>使用Docker安装Discourse</p>
+        <p>Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。</p>
 <a id="more"></a>
-<h2 id="关于Discourse"><a href="#关于Discourse" class="headerlink" title="关于Discourse"></a>关于Discourse</h2><blockquote>
-<p>Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。 —— From 百度百科</p>
-</blockquote>
-<blockquote>
-<p>Discourse is the 100% open source discussion platform built for the next decade of the Internet. It works as:*   a mailing list  </p>
-<ul>
-<li>a discussion forum</li>
-<li>a long-form chat room</li>
-</ul>
-</blockquote>
-<p>官网: <a href="http://www.discourse.org/" target="_blank" rel="noopener">www.discourse.org</a> 源码: <a href="https://github.com/discourse/discourse" target="_blank" rel="noopener">github.com/discourse/discourse</a></p>
-<h2 id="安装要求"><a href="#安装要求" class="headerlink" title="安装要求"></a>安装要求</h2><ul>
-<li><p>Linux服务器(内核版本&gt;=3.1)  </p>
-</li>
-<li><p>官方建议2G以上内存(可以使用虚拟内存)  </p>
-</li>
-<li><p>基本的Linux命令行操作</p>
-</li>
-</ul>
-<h2 id="安装配置Discourse"><a href="#安装配置Discourse" class="headerlink" title="安装配置Discourse"></a>安装配置Discourse</h2><p>1.安装Docker(这里使用官方提供的脚本) [bash] wget -qO- <a href="https://get.docker.io/" target="_blank" rel="noopener">https://get.docker.io/</a> | sh [/bash] 2.从github克隆discourse docker安装源码 [bash] sudo mkdir /var/discourse sudo git clone <a href="https://github.com/discourse/discourse\_docker.git" target="_blank" rel="noopener">https://github.com/discourse/discourse\_docker.git</a> /var/discourse [/bash] 3.安装前配置(有两种方法) 手动配置：(推荐) [bash] cd /var/discourse cp samples/standalone.yml containers/app.yml sudo vim containers/app.yml [/bash] 修改下面字段的对应值: [code] DISCOURSE_HOSTNAME: ‘discourse.ichenfei.com’ ###配置域名,可用ip代替 DISCOURSE_DEVELOPER_EMAILS: <a href="mailto:&#39;853885165@qq.com" target="_blank" rel="noopener">&#39;853885165@qq.com</a>‘ ###开发者邮箱地址 ## 配置SMTP邮箱 DISCOURSE_SMTP_ADDRESS: smtp.qq.com # smtp地址 DISCOURSE_SMTP_PORT: 25 # 端口(可选, 默认 587) DISCOURSE_SMTP_USER_NAME: <a href="mailto:853885165@qq.com" target="_blank" rel="noopener">853885165@qq.com</a> # 必选 DISCOURSE_SMTP_PASSWORD: PASSSWORD # 必选 DISCOURSE_SMTP_ENABLE_START_TLS: false # 加密(可选, 默认为true) [/code] 启动Discourse： [bash] ./launcher bootstrap app #初始化 ./launcher start app #启动discourse容器 [/bash] 自动配置: [bash] sudo ./discourse-setup #交互式,填入对应值就行，填错删除使用 Ctrl+Backspace [/bash] <img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse配置.jpg" alt="Discourse配置"> 4.维护Discourse(使用launcher) [bash] launcher COMMAND CONFIG [–skip-prereqs] [–docker-args STRING] COMMAND: start: 启动/初始化一个容器 stop: 停止一个正在运行的容器 restart: 重启一个容器 destroy: 停止并删除一个容器 enter: 使用 nsenter 进入容器 logs: 容器的Docker日志 bootstrap: 基于配置模版来引导一个容器 rebuild: 重建一个容器（摧毁旧的,初始化,启动新的） cleanup: 清理所有停止了超过24小时的容器 Options: –skip-prereqs 不检查前置需求 –docker-args 当运行 docker 时，展开并传入参数 –skip-mac-address 不分配mac地址 [/bash] 6.注册管理员账号 这时,通过ip或域名(要解析或修改host)都能访问到discourse,点击 sign up 使用开发者邮箱注册账号(验证登录后默认就是管理员了) <img src="http://www.ichenfei.com/wp-content/uploads/2016/09/创建Discourse账号.jpg" alt="创建Discourse账号"> <img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse验证邮箱.jpg" alt="Discourse验证邮箱"> ps: 系统默认有个system账号,google也不知道密码，也不知道Discourse是用什么方式加密的。 手动修改数据库设置账号active字段为true也好像没什么卵用，只好通过smtp,嗯，要确定smtp账号是有效的。。。 7.管理Discourse站点 登录后访问 http://域名/admin 就能访问discourse管理界面了。 <img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse_admin-1024x504.jpg" alt="Discourse_admin"></p>
+<p><blockquote><br>Discourse is the 100% open source discussion platform built for the next decade of the Internet. It works as:</blockquote></p>
+<li>a mailing list<br><br></li><li>a discussion forum</li><br><li>a long-form chat room</li><br><br>官网:<a href="http://www.discourse.org/" target="_blank" rel="noopener"> www.discourse.org</a><br>源码:<a href="https://github.com/discourse/discourse" target="_blank" rel="noopener"> github.com/discourse/discourse</a><br><br><br><h2>安装要求</h2><br><br><li>Linux服务器(内核版本&gt;=3.1)<br><br></li><li>官方建议2G以上内存(可以使用虚拟内存)<br><br></li><li>基本的Linux命令行操作</li>
+
+<h2>安装配置Discourse</h2>
+
+<p>1.安装Docker(这里使用官方提供的脚本)<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -qO- https://get.docker.io/ | sh</span><br></pre></td></tr></table></figure></p>
+<p>2.从github克隆discourse docker安装源码<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /var/discourse</span><br><span class="line">sudo git <span class="built_in">clone</span> https://github.com/discourse/discourse_docker.git /var/discourse</span><br></pre></td></tr></table></figure></p>
+<p>3.安装前配置(有两种方法)</p>
+<p>手动配置：(推荐)<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/discourse</span><br><span class="line">cp samples/standalone.yml containers/app.yml</span><br><span class="line">sudo vim containers/app.yml</span><br></pre></td></tr></table></figure></p>
+<p>修改下面字段的对应值:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DISCOURSE_HOSTNAME: &apos;discourse.ichenfei.com&apos;     ###配置域名,可用ip代替</span><br><span class="line"></span><br><span class="line">DISCOURSE_DEVELOPER_EMAILS: &apos;853885165@qq.com&apos;   ###开发者邮箱地址</span><br><span class="line"></span><br><span class="line">## 配置SMTP邮箱</span><br><span class="line">DISCOURSE_SMTP_ADDRESS: smtp.qq.com              # smtp地址</span><br><span class="line">DISCOURSE_SMTP_PORT: 25                          # 端口(可选, 默认 587)</span><br><span class="line">DISCOURSE_SMTP_USER_NAME: 853885165@qq.com       # 必选</span><br><span class="line">DISCOURSE_SMTP_PASSWORD: PASSSWORD               # 必选</span><br><span class="line">DISCOURSE_SMTP_ENABLE_START_TLS: false           # 加密(可选, 默认为true)</span><br></pre></td></tr></table></figure>
+<p>启动Discourse：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./launcher bootstrap app   <span class="comment">#初始化</span></span><br><span class="line">./launcher start app       <span class="comment">#启动discourse容器</span></span><br></pre></td></tr></table></figure></p>
+<p>自动配置:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./discourse-setup    <span class="comment">#交互式,填入对应值就行，填错删除使用 Ctrl+Backspace</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse配置.jpg" alt="Discourse配置" width="623" height="354" class="aligncenter size-full wp-image-382"></p>
+<p>4.维护Discourse(使用launcher)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">launcher COMMAND CONFIG [--skip-prereqs] [--docker-args STRING]</span><br><span class="line"></span><br><span class="line">COMMAND:</span><br><span class="line">    start:      启动/初始化一个容器</span><br><span class="line">    stop:       停止一个正在运行的容器</span><br><span class="line">    restart:    重启一个容器</span><br><span class="line">    destroy:    停止并删除一个容器</span><br><span class="line">    enter:      使用 nsenter 进入容器</span><br><span class="line">    logs:       容器的Docker日志</span><br><span class="line">    bootstrap:  基于配置模版来引导一个容器</span><br><span class="line">    rebuild:    重建一个容器（摧毁旧的,初始化,启动新的）</span><br><span class="line">    cleanup:    清理所有停止了超过24小时的容器</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">    --skip-prereqs             不检查前置需求</span><br><span class="line">    --docker-args              当运行 docker 时，展开并传入参数</span><br><span class="line">    --skip-mac-address         不分配mac地址</span><br></pre></td></tr></table></figure>
+<p>6.注册管理员账号</p>
+<p>这时,通过ip或域名(要解析或修改host)都能访问到discourse,点击 sign up 使用开发者邮箱注册账号(验证登录后默认就是管理员了)</p>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/创建Discourse账号.jpg" alt="创建Discourse账号" width="446" height="399" class="aligncenter size-full wp-image-383"><br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse验证邮箱.jpg" alt="Discourse验证邮箱" width="808" height="158" class="aligncenter size-full wp-image-384"></p>
+<p>ps:<br>系统默认有个system账号,google也不知道密码，也不知道Discourse是用什么方式加密的。<br>手动修改数据库设置账号active字段为true也好像没什么卵用，只好通过smtp,嗯，要确定smtp账号是有效的。。。</p>
+<p>7.管理Discourse站点<br>登录后访问 http://域名/admin 就能访问discourse管理界面了。<br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse_admin-1024x504.jpg" alt="Discourse_admin" width="1024" height="504" class="aligncenter size-large wp-image-386"></p>
 
     </div>
 
@@ -345,8 +346,8 @@
       <i class="fa fa-chevron-left"></i>  查看Docker容器日志		
     </a></div>
       <div class="post-nav-item">
-    <a href="/2016/09/21/update-python-in-centos-6/" rel="next" title=" Centos6将Python2.6升级为python2.7		">
-       Centos6将Python2.6升级为python2.7		 <i class="fa fa-chevron-right"></i>
+    <a href="/2016/09/22/use-supervisor-to-manage-process/" rel="next" title=" 使用 Supervisor 管理进程		">
+       使用 Supervisor 管理进程		 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -385,7 +386,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于Discourse"><span class="nav-number">1.</span> <span class="nav-text">关于Discourse</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装要求"><span class="nav-number">2.</span> <span class="nav-text">安装要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装配置Discourse"><span class="nav-number">3.</span> <span class="nav-text">安装配置Discourse</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">1.</span> <span class="nav-text">安装要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">2.</span> <span class="nav-text">安装配置Discourse</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -399,17 +400,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
         <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">分类</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
         <span class="site-state-item-count">34</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -464,6 +469,33 @@
   <span class="post-meta-divider">|</span>
   <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.5.0
   </div>
+
+<div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("11/24/2019 12:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="本站已安全运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
 
         
 <div class="busuanzi-count">
