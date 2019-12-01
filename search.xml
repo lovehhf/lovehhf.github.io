@@ -1,0 +1,1298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>【算法学习】Leetcode 10. 正则表达式匹配</title>
+    <url>/2019/12/01/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91Leetcode-10-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/</url>
+    <content><![CDATA[<p>原题链接: <a href="https://leetcode-cn.com/problems/regular-expression-matching/" target="_blank" rel="noopener">Leetcode 10. 正则表达式匹配</a></p>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 ‘.’ 和 ‘*’ 的正则表达式匹配。</p>
+<p><code>&#39;.&#39;</code> 匹配任意单个字符<br><code>&#39;*&#39;</code> 匹配零个或多个前面的那一个元素</p>
+<p>所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。</p>
+<p>说明:</p>
+<p><code>s</code> 可能为空，且只包含从 <code>a-z</code> 的小写字母。<br><code>p</code> 可能为空，且只包含从 <code>a-z</code> 的小写字母，以及字符 <code>.</code> 和 <code>*</code>。</p>
+<a id="more"></a>
+<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>二维dp</p>
+<ul>
+<li>状态表示:<ul>
+<li><code>dp[i][j]</code>: 字符串<code>s前i个字母</code>能否被<code>p的前j个字母</code>表示</li>
+</ul>
+</li>
+<li>状态计算:<ul>
+<li>枚举<code>p[j]</code>的所有可能的字母</li>
+<li><code>s[i] = p[j]</code> 或 <code>p[j] = &#39;.&#39;</code><ul>
+<li><code>dp[i][j] = dp[i - 1][j - 1]</code></li>
+</ul>
+</li>
+<li><code>p[j] = &#39;*&#39;</code><ul>
+<li>不使用<code>*</code><ul>
+<li>需要s[1~i]与p[1~j]匹配上: </li>
+<li><code>dp[i][j] = dp[i][j - 2]</code></li>
+</ul>
+</li>
+<li>使用<code>*</code><ul>
+<li>需要<code>s[i] = p[j - 1]</code>或者<code>p[j - 1] = .</code>才可以用<code>*</code></li>
+<li>需要<code>s[1 ~ i-1]</code>与<code>p[1~j]</code>匹配上</li>
+<li><code>dp[i][j] = dp[i - 1][j]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="代码："><a href="#代码：" class="headerlink" title="代码："></a>代码：</h3><h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isMatch</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m, n;</span><br><span class="line">        n = s.size(), m = p.size();</span><br><span class="line">        <span class="comment">// 初始化, 先给s和p加' '不用处理边界</span></span><br><span class="line">        s = <span class="string">' '</span> + s;</span><br><span class="line">        p = <span class="string">' '</span> + p;</span><br><span class="line">        <span class="comment">// 定义一个n行m列的bool数组, 初始化为false</span></span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; dp(n + <span class="number">1</span>, <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;(m + <span class="number">1</span>, <span class="literal">false</span>));</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 先把s为空的情况处理了, 就不用在后面的循环加判断条件处理</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= m; i ++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(p[i] == <span class="string">'*'</span>) dp[<span class="number">0</span>][i] = dp[<span class="number">0</span>][i - <span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i ++)</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 正常转移</span></span><br><span class="line">                <span class="keyword">if</span>(p[j] == <span class="string">'.'</span> || s[i] == p[j]) dp[i][j] = dp[i - <span class="number">1</span>][j - <span class="number">1</span>];</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 非正常转移</span></span><br><span class="line">                    <span class="keyword">if</span>(p[j] == <span class="string">'*'</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 没用到*的情况， 从dp[i][j - 2], 表示*和*前面的数都不使用</span></span><br><span class="line">                        dp[i][j] = dp[i][j - <span class="number">2</span>];</span><br><span class="line">                        <span class="comment">// 用到了*的情况, 从dp[i - 1][j]转移</span></span><br><span class="line">                        <span class="keyword">if</span>(p[j - <span class="number">1</span>] == <span class="string">'.'</span> || s[i] == p[j - <span class="number">1</span>]) dp[i][j] = dp[i][j] | dp[i - <span class="number">1</span>][j];</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[n][m];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isMatch</span><span class="params">(self, s: str, p: str)</span> -&gt; bool:</span></span><br><span class="line">        s, p = <span class="string">' '</span> + s, <span class="string">' '</span> + p</span><br><span class="line">        n, m = len(s), len(p)</span><br><span class="line">        dp = [[<span class="number">0</span>] * m <span class="keyword">for</span> _ <span class="keyword">in</span> range(n)]</span><br><span class="line"></span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">        <span class="comment"># p匹配空字符串的特殊情况</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, m):</span><br><span class="line">            <span class="keyword">if</span> p[i] == <span class="string">'*'</span>:</span><br><span class="line">                dp[<span class="number">0</span>][i] = dp[<span class="number">0</span>][i - <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, m):</span><br><span class="line">                <span class="keyword">if</span> (s[i] == p[j] <span class="keyword">or</span> p[j] == <span class="string">'.'</span>):</span><br><span class="line">                    dp[i][j] = dp[i - <span class="number">1</span>][j - <span class="number">1</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">if</span> p[j] == <span class="string">'*'</span>:</span><br><span class="line">                        dp[i][j] = dp[i][j - <span class="number">2</span>]</span><br><span class="line">                        <span class="keyword">if</span> (p[j - <span class="number">1</span>] == <span class="string">'.'</span> <span class="keyword">or</span> s[i] == p[j - <span class="number">1</span>]):</span><br><span class="line">                            dp[i][j] |= dp[i - <span class="number">1</span>][j]</span><br><span class="line">        <span class="keyword">return</span> dp[n - <span class="number">1</span>][m - <span class="number">1</span>] == <span class="number">1</span></span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>dp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【算法学习】AcWing 899. 编辑距离(dp)</title>
+    <url>/2019/11/30/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91AcWing%20899.%20%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%90dp%E3%80%91/</url>
+    <content><![CDATA[<h2 id="AcWing-902-最短编辑距离"><a href="#AcWing-902-最短编辑距离" class="headerlink" title="AcWing 902. 最短编辑距离"></a><a href="https://www.acwing.com/problem/content/904/" target="_blank" rel="noopener">AcWing 902. 最短编辑距离</a></h2><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>给定两个字符串A和B，现在要将A经过若干操作变为B，可进行的操作有：<br>删除–将字符串A中的某个字符删除。<br>插入–在字符串A的某个位置插入某个字符。<br>替换–将字符串A中的某个字符替换为另一个字符。<br>现在请你求出，将A变为B至少需要进行多少次操作。</p>
+<a id="more"></a>
+<p><strong>输入格式</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">第一行包含整数n，表示字符串A的长度。</span><br><span class="line">第二行包含一个长度为n的字符串A。</span><br><span class="line">第三行包含整数m，表示字符串B的长度。</span><br><span class="line">第四行包含一个长度为m的字符串B。</span><br><span class="line">字符串中均只包含大写字母。</span><br></pre></td></tr></table></figure></p>
+<p><strong>输出格式</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输出一个整数，表示最少操作次数。</span><br></pre></td></tr></table></figure></p>
+<p><strong>数据范围</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1≤n,m≤1000</span><br></pre></td></tr></table></figure></p>
+<p><strong>输入样例：</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">10 </span><br><span class="line">AGTCTGACGC</span><br><span class="line">11 </span><br><span class="line">AGTAAGTAGGC</span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">4</span><br></pre></td></tr></table></figure>
+<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>二维dp问题</p>
+<ul>
+<li>状态表示:<ul>
+<li><code>dp[i][j]</code>表示第一个字符串的前i个字母编辑到第二个字符串的前j个字母的最小编辑距离</li>
+</ul>
+</li>
+<li>状态计算:<ul>
+<li>枚举字符串a前i个字母到字符串b前j个字母的最后一步的操作(增/删/改)</li>
+<li>添加一个字母:<ul>
+<li>要先做到<code>a的前i个字母与b的前j - 1个字母匹配</code>, a[1~i]添加一个字母才能与b[1~j]匹配</li>
+<li><code>dp[i][j] = dp[i - 1][j] + 1</code></li>
+</ul>
+</li>
+<li>删除一个字母:<ul>
+<li>要先做到<code>a的前i - 1个字母与b的前j个字母匹配</code>，a[1~i]添加一个字母才能与b[1~j]匹配</li>
+<li><code>dp[i][j] = dp[i][j - 1] + 1</code></li>
+</ul>
+</li>
+<li>修改一个字母<ul>
+<li>要先做到a[1~i-1]与b[1~j-1]匹配</li>
+<li>a[i]与b[j]相同: <code>dp[i][j] = dp[i - 1][j - 1]</code></li>
+<li>a[i]与b[j]不同: <code>dp[i][j] = dp[i - 1][j - 1] + 1</code></li>
+</ul>
+</li>
+<li>状态转移方程：<ul>
+<li><code>dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + (a[i] != b[j]))</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1010</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, m;</span><br><span class="line"><span class="keyword">char</span> a[N], b[N];</span><br><span class="line"><span class="comment">// f[i][j]表示A[1~i]到B[1~j]最小的编辑距离</span></span><br><span class="line"><span class="keyword">int</span> f[N][N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; a[i];</span><br><span class="line">        f[i][<span class="number">0</span>] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; m;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= m; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; b[i];</span><br><span class="line">        f[<span class="number">0</span>][i] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i ++)</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 枚举最后一步的编辑方式(添加/删除/修改), 取最小值</span></span><br><span class="line">            f[i][j] = min(f[i - <span class="number">1</span>][j] + <span class="number">1</span>, f[i][j - <span class="number">1</span>] + <span class="number">1</span>);</span><br><span class="line">            f[i][j] = min(f[i][j], f[i - <span class="number">1</span>][j - <span class="number">1</span>] + <span class="keyword">int</span>(a[i] != b[j]));</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; f[n][m] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Python"><a href="#Python" class="headerlink" title="Python:"></a>Python:</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    n = int(input())</span><br><span class="line">    a = <span class="string">' '</span>+ input()</span><br><span class="line">    m = int(input())</span><br><span class="line">    b = <span class="string">' '</span> + input()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 初始化</span></span><br><span class="line">    f = [[<span class="number">0</span>] * (m + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> range(n + <span class="number">1</span>)]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        f[i][<span class="number">0</span>] = i</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, m + <span class="number">1</span>):</span><br><span class="line">        f[<span class="number">0</span>][i] = i</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, m + <span class="number">1</span>):</span><br><span class="line">            <span class="comment"># 取三种操作的最小值</span></span><br><span class="line">            f[i][j] = min(f[i - <span class="number">1</span>][j] + <span class="number">1</span>, f[i][j - <span class="number">1</span>] + <span class="number">1</span>, f[i - <span class="number">1</span>][j - <span class="number">1</span>] + (a[i] != b[j]))</span><br><span class="line">            </span><br><span class="line">    print(f[n][m])</span><br><span class="line">    </span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="AcWing-899-编辑距离"><a href="#AcWing-899-编辑距离" class="headerlink" title="AcWing 899. 编辑距离"></a><a href="https://www.acwing.com/problem/content/901/" target="_blank" rel="noopener">AcWing 899. 编辑距离</a></h2><p>给定n个长度不超过10的字符串以及m次询问，每次询问给出一个字符串和一个操作次数上限。</p>
+<p>对于每次询问，请你求出给定的n个字符串中有多少个字符串可以在上限操作次数内经过操作变成询问给出的字符串。</p>
+<p>每个对字符串进行的单个字符的插入、删除或替换算作一次操作。</p>
+<p><strong>输入格式</strong></p>
+<p>第一行包含两个整数n和m。</p>
+<p>接下来n行，每行包含一个字符串，表示给定的字符串。</p>
+<p>再接下来m行，每行包含一个字符串和一个整数，表示一次询问。</p>
+<p>字符串中只包含小写字母，且长度均不超过10。</p>
+<p><strong>输出格式</strong></p>
+<p>输出共m行，每行输出一个整数作为结果，表示一次询问中满足条件的字符串个数。</p>
+<p><strong>数据范围</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1≤n,m≤1000,</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例：</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">3 2</span><br><span class="line">abc</span><br><span class="line">acd</span><br><span class="line">bcd</span><br><span class="line">ab 1</span><br><span class="line">acbd 2</span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例：</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">3</span><br></pre></td></tr></table></figure></p>
+<h3 id="解题思路-1"><a href="#解题思路-1" class="headerlink" title="解题思路"></a>解题思路</h3><p>最短编辑距离的应用, 求n次最短编辑距离</p>
+<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><h4 id="C-1"><a href="#C-1" class="headerlink" title="C++"></a>C++</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1010</span>, M = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, m;</span><br><span class="line"><span class="keyword">char</span> s[N][M];</span><br><span class="line"><span class="keyword">int</span> f[M][M];</span><br><span class="line"></span><br><span class="line"><span class="comment">// a是否能在&lt;=t的次数下编辑到b</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">can_solve</span><span class="params">(<span class="keyword">char</span> a[], <span class="keyword">char</span> b[], <span class="keyword">int</span> t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> la = <span class="built_in">strlen</span>(a + <span class="number">1</span>), lb = <span class="built_in">strlen</span>(b + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    f[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= la; i++) f[i][<span class="number">0</span>] = i;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= lb; i++) f[<span class="number">0</span>][i] = i;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//求a最小需要编辑多少次可以到b</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= la; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= lb; j++) &#123;</span><br><span class="line">            f[i][j] = min(f[i - <span class="number">1</span>][j] + <span class="number">1</span>, f[i][j - <span class="number">1</span>] + <span class="number">1</span>);</span><br><span class="line">            f[i][j] = min(f[i][j], f[i - <span class="number">1</span>][j - <span class="number">1</span>] + <span class="keyword">int</span>(a[i] != b[j]));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> f[la][lb] &lt;= t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n &gt;&gt; m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) <span class="built_in">cin</span> &gt;&gt; s[i] + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(m --) &#123;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">char</span> q[M];</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; q + <span class="number">1</span> &gt;&gt; t;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; j++) res += can_solve(s[j], q, t);</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; res &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Python-1"><a href="#Python-1" class="headerlink" title="Python"></a>Python</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">can_solve</span><span class="params">(a, b, t)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    求字符串a是否能在t的次数内编辑到b</span></span><br><span class="line"><span class="string">    为了方便计算, a和b在前面随便加个字符占位</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    a = <span class="string">' '</span> + a</span><br><span class="line">    b = <span class="string">' '</span> + b</span><br><span class="line">    la, lb = len(a), len(b)</span><br><span class="line">    dp = [[<span class="number">0</span>] * lb <span class="keyword">for</span> _ <span class="keyword">in</span> range(la)]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 初始化：a[i]到空字符串的编辑距离为i, 空字符串到b[i]的编辑距离也是i</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(la):</span><br><span class="line">        dp[i][<span class="number">0</span>] = i</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(lb):</span><br><span class="line">        dp[<span class="number">0</span>][i] = i</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, la):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, lb):</span><br><span class="line">            <span class="comment"># dp[i][j]: a的前i个字母到b的前j个字母的最短编辑距离</span></span><br><span class="line">            <span class="comment"># 枚举最后一步的编辑方式: 增 dp[i - 1][j] + 1, 删 dp[i][j - 1] + 1, 改dp[i - 1][j - 1] + 1</span></span><br><span class="line">            <span class="comment"># 如果a[i] == b[j] 不需要编辑, 直接是dp[i - 1][j - 1]</span></span><br><span class="line">            dp[i][j] = min(dp[i - <span class="number">1</span>][j] + <span class="number">1</span>, dp[i][j - <span class="number">1</span>] + <span class="number">1</span>, dp[i - <span class="number">1</span>][j - <span class="number">1</span>] + (a[i] != b[j]))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dp[la - <span class="number">1</span>][lb - <span class="number">1</span>] &lt;= t</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    n, m = [int(x) <span class="keyword">for</span> x <span class="keyword">in</span> input().split()]</span><br><span class="line">    s = []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(n):</span><br><span class="line">        s.append(input())</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(m):</span><br><span class="line">        q, t = input().split()</span><br><span class="line">        t = int(t)</span><br><span class="line">        res = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">            res += can_solve(s[i], q, t)</span><br><span class="line">        print(res)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>算法学习</tag>
+        <tag>dp</tag>
+        <tag>编辑距离</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo deploy配置免输入github账号密码</title>
+    <url>/2019/11/24/hexo-deploy%E9%85%8D%E7%BD%AE%E5%85%8D%E8%BE%93%E5%85%A5github%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<p>每次hexo d都要输入密码太烦了</p>
+<a id="more"></a>
+<h3 id="生成ssh密钥对"><a href="#生成ssh密钥对" class="headerlink" title="生成ssh密钥对"></a>生成ssh密钥对</h3><p>Linux系统:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br><span class="line">cat ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>Windows可以使用Xshell生成秘钥对, 之后导入到 <code>C:\Users\Username\.ssh</code>目录下</p>
+<p>公钥命名为<code>id_rsa.pub</code>, 私钥命名为<code>id_rsa</code></p>
+<h3 id="github添加ssh公钥"><a href="#github添加ssh公钥" class="headerlink" title="github添加ssh公钥"></a>github添加ssh公钥</h3><p>方法一: 在个人profile里添加公钥</p>
+<p><code>Your profile</code> -&gt; <code>SSH and GPG keys</code> -&gt; <code>New SSH key</code> -&gt; 复制生成的公钥 -&gt; </p>
+<p>方法二: 项目的设置里面添加</p>
+<p><code>Settings</code> -&gt;  <code>Deploy keys</code> -&gt; <code>Add Deploy key</code> -&gt; 复制公钥 -&gt; 勾选<code>Allow write access</code> -&gt; <code>Add new</code></p>
+<h3 id="设置远程git地址："><a href="#设置远程git地址：" class="headerlink" title="设置远程git地址："></a>设置远程git地址：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> blog/.deploy_git</span><br><span class="line">git remote rm origin</span><br><span class="line">git remote <span class="built_in">set</span>-url origin git@github.com:lovehhf/lovehhf.github.io.git</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">git remote -v   <span class="comment"># 查看当前传输协议</span></span><br><span class="line">origin    git@github.com:lovehhf/lovehhf.github.io.git (fetch)</span><br><span class="line">origin    git@github.com:lovehhf/lovehhf.github.io.git (push)</span><br></pre></td></tr></table></figure>
+<p>编辑配置文件<code>_config.yml</code>, 将<code>deploy</code>的<code>https</code>协议改为使用<code>git</code>协议:</p>
+<p>vim _config.yml</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line"><span class="attr">  type:</span> <span class="string">git</span></span><br><span class="line"><span class="attr">  repository:</span> <span class="string">git@github.com:lovehhf/lovehhf.github.io.git</span></span><br><span class="line"><span class="attr">  branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>部署到github: <code>hexo d -g</code></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>树莓派配置v2ray客户端</title>
+    <url>/2019/11/24/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/</url>
+    <content><![CDATA[<p>git用起来太慢了, 几乎不能用 , ss又经常被封端口, 并不是很稳, 使用最近很流行的v2ray试试</p>
+<a id="more"></a>
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>使用一键安装脚本安装，参考<a href="https://www.v2ray.com/chapter_00/install.html" target="_blank" rel="noopener">v2ray官方教程-下载安装</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">bash &lt;(curl -L -s https://install.direct/go.sh)</span><br></pre></td></tr></table></figure>
+<p>需要从github下载安装包, 可能会出现网络错误, 可能先从<a href="https://github.com/v2ray/v2ray-core/releases" target="_blank" rel="noopener">v2ray-core/releases</a>将安装包<code>v2ray-linux-arm.zip</code>下载到树莓派, 使用<code>--local</code>参数从本地安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -O v2ray_install.sh  https://install.direct/go.sh</span><br><span class="line">chmod +x v2ray_install.sh </span><br><span class="line">sudo ./v2ray_install.sh --<span class="built_in">local</span> v2ray-linux-arm.zip</span><br></pre></td></tr></table></figure>
+<h2 id="配置v2ray客户端"><a href="#配置v2ray客户端" class="headerlink" title="配置v2ray客户端"></a>配置v2ray客户端</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo su - root</span><br><span class="line">cat &gt; /etc/v2ray/config.json &lt;&lt; EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"inbounds"</span>: [&#123;</span><br><span class="line">    <span class="string">"port"</span>: 1080,</span><br><span class="line">    <span class="string">"listen"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="string">"protocol"</span>: <span class="string">"socks"</span>,</span><br><span class="line">    <span class="string">"settings"</span>: &#123;</span><br><span class="line">      <span class="string">"udp"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;],</span><br><span class="line">  <span class="string">"outbounds"</span>: [&#123;</span><br><span class="line">    <span class="string">"protocol"</span>: <span class="string">"vmess"</span>,</span><br><span class="line">    <span class="string">"settings"</span>: &#123;</span><br><span class="line">      <span class="string">"vnext"</span>: [&#123;</span><br><span class="line">        <span class="string">"address"</span>: <span class="string">"server ip"</span>,</span><br><span class="line">        <span class="string">"port"</span>: 10086,</span><br><span class="line">        <span class="string">"users"</span>: [&#123; <span class="string">"id"</span>: <span class="string">"b831381d-6324-4d53-ad4f-8cda48b30811"</span> &#125;]</span><br><span class="line">      &#125;]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,&#123;</span><br><span class="line">    <span class="string">"protocol"</span>: <span class="string">"freedom"</span>,</span><br><span class="line">    <span class="string">"tag"</span>: <span class="string">"direct"</span>,</span><br><span class="line">    <span class="string">"settings"</span>: &#123;&#125;</span><br><span class="line">  &#125;],</span><br><span class="line">  <span class="string">"routing"</span>: &#123;</span><br><span class="line">    <span class="string">"domainStrategy"</span>: <span class="string">"IPOnDemand"</span>,</span><br><span class="line">    <span class="string">"rules"</span>: [&#123;</span><br><span class="line">      <span class="string">"type"</span>: <span class="string">"field"</span>,</span><br><span class="line">      <span class="string">"ip"</span>: [<span class="string">"geoip:private"</span>],</span><br><span class="line">      <span class="string">"outboundTag"</span>: <span class="string">"direct"</span></span><br><span class="line">    &#125;]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="comment"># address改为服务端ip， port改为服务端端口, id改为服务端用户ID</span></span><br></pre></td></tr></table></figure>
+<h2 id="开启v2ray服务"><a href="#开启v2ray服务" class="headerlink" title="开启v2ray服务"></a>开启v2ray服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl start v2ray</span><br><span class="line">pi@raspberrypi:~ $ ps -ef|grep v2ray</span><br><span class="line">root     18007     1  0 14:20 ?        00:00:00 /usr/bin/v2ray/v2ray -config /etc/v2ray/config.json</span><br></pre></td></tr></table></figure>
+<h2 id="使用ProxyChains-NG配置全局代理"><a href="#使用ProxyChains-NG配置全局代理" class="headerlink" title="使用ProxyChains-NG配置全局代理"></a>使用ProxyChains-NG配置全局代理</h2><p>切换到root用户编译安装proxychains-ng</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/rofl0r/proxychains-ng.git  </span><br><span class="line">sudo su - root</span><br><span class="line"><span class="built_in">cd</span> /home/pi/proxychains-ng-master/</span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p>添加配置:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp ./src/proxychains.conf /etc/proxychains.conf</span><br><span class="line"></span><br><span class="line">vim /etc/proxychains.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将最后的 socks4 127.0.0.1 9095 改为 socks5  127.0.0.1 9050</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> <span class="comment"># 退出root用户</span></span><br></pre></td></tr></table></figure>
+<p>在需要使用代理的命令前面加上<code>proxychains4</code>, 如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pi@raspberrypi:~/proxychains-ng-master $ curl ip.sb</span><br><span class="line">113.xxx.xxx.xxx</span><br><span class="line">pi@raspberrypi:~/proxychains-ng-master $ proxychains4 curl ip.sb</span><br><span class="line">[proxychains] config file found: /etc/proxychains.conf</span><br><span class="line">[proxychains] preloading /usr/<span class="built_in">local</span>/lib/libproxychains4.so</span><br><span class="line">[proxychains] DLL init: proxychains-ng 4.14</span><br><span class="line">[proxychains] Strict chain  ...  127.0.0.1:1080  ...  ip.sb:80  ...  OK</span><br><span class="line">34.92.xxx.xxx</span><br></pre></td></tr></table></figure>]]></content>
+  </entry>
+  <entry>
+    <title>Hello Hexo</title>
+    <url>/2019/11/24/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<a id="more"></a>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>树莓派实现温控风扇</title>
+    <url>/2019/11/23/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%9E%E7%8E%B0%E6%B8%A9%E6%8E%A7%E9%A3%8E%E6%89%87/</url>
+    <content><![CDATA[<p>树莓派风扇声音太大了, 非常影响睡觉， 不开风扇cpu温度又很容易太高了</p>
+<a id="more"></a>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><ul>
+<li>杜邦线母对母2根, 公对母2根, 直接淘宝买40pin的2排</li>
+<li>三极管S85501个，淘宝买2块钱50个包邮<ul>
+<li>S8550为PNP型三极管，基极施加低电平时才导通电路，如果是用的NPN型三极管则与之相反</li>
+</ul>
+</li>
+<li>树莓派小风扇1个</li>
+</ul>
+<p>树莓派引脚:</p>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2019/11/94a0bbf61ddf391db56f1cc23bfd7ef3.png" alt></p>
+<p>三极管引脚:</p>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2019/11/82c6e79943b3e1afd4b2fa97620df019.png" alt></p>
+<ul>
+<li>E: 发射机 <ul>
+<li>正级(接电源正极, 5V)</li>
+<li>可接树莓派4号引脚</li>
+</ul>
+</li>
+<li>B: 基级 <ul>
+<li>信号极控制是否通电(GPIO)</li>
+<li>可以接树莓派8号引脚</li>
+</ul>
+</li>
+<li>C：集电极<ul>
+<li>负极 (接电源负极, Ground)</li>
+<li>可以接树莓派6号引脚</li>
+</ul>
+</li>
+</ul>
+<h2 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h2><ol>
+<li>风扇红线(正极)接树莓派5V，如4号引脚</li>
+<li>风扇黑线(负极)接三极管C(集电集)</li>
+<li>三极管E(发射极)接树莓派Ground, 如6号引脚</li>
+<li>三极管B级, 接树莓派GPIO，如8号引脚</li>
+</ol>
+<p>如图: <img src="https://www.ichenfei.com/wp-content/uploads/2019/11/d2be99357e792fc7968637f9e2d98af7.png" alt></p>
+<h2 id="Python程序风扇"><a href="#Python程序风扇" class="headerlink" title="Python程序风扇"></a>Python程序风扇</h2><p>在python交互式命令行下测试下是否可行<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pi@raspberrypi:~/script $ python</span><br><span class="line">Python 2.7.16 (default, Apr  6 2019, 01:42:57) </span><br><span class="line">[GCC 8.2.0] on linux2</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; import RPi.GPIO as GPIO</span><br><span class="line">&gt;&gt;&gt; GPIO_OUT = 14</span><br><span class="line">&gt;&gt;&gt; GPIO.setmode(GPIO.BCM)</span><br><span class="line">&gt;&gt;&gt; GPIO.setwarnings(False)</span><br><span class="line">&gt;&gt;&gt; GPIO.setup(GPIO_OUT, GPIO.OUT, initial=GPIO.HIGH)</span><br><span class="line">&gt;&gt;&gt; GPIO.output(GPIO_OUT, GPIO.LOW)  # 风扇开</span><br><span class="line">&gt;&gt;&gt; GPIO.output(GPIO_OUT, GPIO.HIGH) # 风扇关闭</span><br><span class="line"></span><br><span class="line">注：PNP型三极管GPIO.LOW是开, HIGH是关， NPN型相反</span><br></pre></td></tr></table></figure></p>
+<h2 id="完整程序"><a href="#完整程序" class="headerlink" title="完整程序:"></a>完整程序:</h2><p><a href="https://raw.githubusercontent.com/lovehhf/raspi_script/master/smartfan.py" target="_blank" rel="noopener">smartfan.py</a></p>
+<p>主要逻辑:</p>
+<ol>
+<li>读取<code>/sys/class/thermal/thermal_zone0/temp</code>内容, 除1000获取CPU温度</li>
+<li>风扇初始状态设置为关闭状态</li>
+<li>温度低于55度且当前处于关闭状态开机风扇</li>
+<li>温度低于45度且当前处于开启状态关闭风扇</li>
+<li>每隔15秒查一下温度并更新状态</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir -p /home/pi/script &amp;&amp; cd /home/pi/script</span><br><span class="line">wget https://raw.githubusercontent.com/lovehhf/raspi_script/master/smartfan.py</span><br></pre></td></tr></table></figure>
+<h2 id="supervisor管理python进程"><a href="#supervisor管理python进程" class="headerlink" title="supervisor管理python进程"></a>supervisor管理python进程</h2><p>添加配置文件: <code>vim /etc/supervisor/conf.d/fan.conf</code>:<br>内容如下:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[program:fan]</span><br><span class="line">command=/usr/bin/python3 /home/pi/script/smartfan.py</span><br><span class="line">user=root</span><br><span class="line">directory=/home/pi/script</span><br><span class="line">stdout_logfile=/var/log/supervisor/%(program_name)s-stdout.log</span><br><span class="line">stderr_logfile=/var/log/supervisor/%(program_name)s-stderr.log</span><br><span class="line">autorestart=true</span><br><span class="line">autostart=true</span><br></pre></td></tr></table></figure></p>
+<p>重启supervisor并查看状态:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pi@raspberrypi:/var/log $ sudo systemctl restart supervisor</span><br><span class="line">pi@raspberrypi:/var/log $ sudo supervisorctl status fan</span><br><span class="line">fan                              RUNNING   pid 3903, uptime 0:01:26</span><br></pre></td></tr></table></figure></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install stress</span><br><span class="line">stress -c 50   # cpu压力测试, 开50个进程不停地sqrt, 一下子风扇就转起来了</span><br><span class="line">tail -f /var/log/fan_control.log  # 查看日志</span><br></pre></td></tr></table></figure>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><ul>
+<li><a href="https://segmentfault.com/a/1190000017225701" target="_blank" rel="noopener">三极管打造树莓派温控风扇</a></li>
+<li><a href="https://blog.newnius.com/raspberry-control-fan-with-transistor.html" target="_blank" rel="noopener">树莓派—利用三极管控制散热风扇</a></li>
+<li><a href="https://www.jianshu.com/p/20fea50cf483" target="_blank" rel="noopener">用Python做一个温控风扇-树莓派</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title> 二叉树的前中后序遍历的非递归实现(Python)		</title>
+    <url>/2019/05/02/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%89%8D%E4%B8%AD%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E7%9A%84%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0(Python)/</url>
+    <content><![CDATA[<p>二叉树的前中后序遍历的非递归实现</p>
+<a id="more"></a>
+<h2 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, x, L=None, R=None)</span>:</span></span><br><span class="line">        self.val = x</span><br><span class="line">        self.left = L</span><br><span class="line">        self.right = R</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">List2TN</span><span class="params">(lst, needs=None)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    lst: a leetcode way tree list</span></span><br><span class="line"><span class="string">    needs: A list of Int. The nodes whose indexes provided in this list would be returned.</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    nit = []</span><br><span class="line">    root = TreeNode(lst[<span class="number">0</span>])</span><br><span class="line">    tnQ = [root]</span><br><span class="line">    i = <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> needs <span class="keyword">and</span> i <span class="keyword">in</span> needs:</span><br><span class="line">        nit.append(root)</span><br><span class="line">    <span class="keyword">while</span> i &lt; len(lst):</span><br><span class="line">        cur = tnQ.pop(<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">if</span> lst[i] != <span class="literal">None</span>:</span><br><span class="line">            cur.left = TreeNode(lst[i])</span><br><span class="line">            tnQ.append(cur.left)</span><br><span class="line">            <span class="keyword">if</span> needs <span class="keyword">and</span> i <span class="keyword">in</span> needs:</span><br><span class="line">                nit.append(cur.left)</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> i &gt;= len(lst):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> lst[i] != <span class="literal">None</span>:</span><br><span class="line">            cur.right = TreeNode(lst[i])</span><br><span class="line">            tnQ.append(cur.right)</span><br><span class="line">            <span class="keyword">if</span> needs <span class="keyword">and</span> i <span class="keyword">in</span> needs:</span><br><span class="line">                nit.append(cur.right)</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> needs:</span><br><span class="line">        <span class="keyword">return</span> root, nit</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> root</span><br></pre></td></tr></table></figure>
+<h2 id="前序遍历"><a href="#前序遍历" class="headerlink" title="前序遍历"></a>前序遍历</h2><ul>
+<li><a href="https://leetcode.com/problems/binary-tree-preorder-traversal/submissions/" target="_blank" rel="noopener">144. 二叉树的前序遍历</a></li>
+</ul>
+<h4 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h4><p>1、首先申请一个新的栈，记为stack。<br>2、然后将头节点head压入stack中。<br>3、每次从stack中弹出栈顶节点，记为cur，然后打印cur节点的值。如果cur右孩子不为空的话，将cur的右孩子先压入stack中。最后如果cur的左孩子不为空的话，将cur的左孩子压入stack中。<br>4、不断重复步骤3，直到stack为空，全部过程结束。</p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preorderTraversal</span><span class="params">(self,root)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        根-&gt;左-&gt;右</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        stack = [root]</span><br><span class="line">        res = []</span><br><span class="line">        <span class="keyword">while</span> stack:</span><br><span class="line">            cur = stack.pop()</span><br><span class="line">            res.append(cur.val)</span><br><span class="line">            <span class="keyword">if</span> cur.right:</span><br><span class="line">                stack.append(cur.right)</span><br><span class="line">            <span class="keyword">if</span> cur.left:</span><br><span class="line">                stack.append(cur.left)</span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<h2 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h2><ul>
+<li><a href="https://leetcode.com/problems/binary-tree-inorder-traversal/" target="_blank" rel="noopener">94. 二叉树的中序遍历</a></li>
+</ul>
+<h4 id="具体过程-1"><a href="#具体过程-1" class="headerlink" title="具体过程"></a>具体过程</h4><ul>
+<li>1、申请一个新的栈，记为<code>stack</code>，申请一个变量<code>cur</code>，初始时令<code>stack</code>为空,<code>cur</code>等于头节点。</li>
+<li>2、先把<code>cur</code>节点压入栈中，对以cur节点为头的整棵子树来说，依次把整棵树的左边界压入栈中，即不断令<code>cur=cur.left</code>，然后重复步骤2。</li>
+<li>3、不断重复步骤2，直到发现<code>cur</code>为空，此时从<code>stack</code>中弹出一个节点，记为<code>node</code>。打印<code>node</code>的值，并让<code>cur=node.right</code>，然后继续重复步骤2。</li>
+<li>4、当<code>stack</code>为空并且<code>cur</code>为空时，整个过程结束。</li>
+</ul>
+<h4 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inorderTraversal</span><span class="params">(self, root)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        左-&gt;根-&gt;右</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        stack = []</span><br><span class="line">        cur = root</span><br><span class="line">        res = []</span><br><span class="line">        <span class="keyword">while</span> stack <span class="keyword">or</span> cur:</span><br><span class="line">            <span class="keyword">if</span> cur:</span><br><span class="line">                stack.append(cur)</span><br><span class="line">                cur = cur.left</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                node = stack.pop()</span><br><span class="line">                res.append(node.val)</span><br><span class="line">                cur = node.right</span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<h2 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h2><ul>
+<li><a href="https://leetcode-cn.com/problems/binary-tree-postorder-traversal/" target="_blank" rel="noopener">145. 二叉树的后序遍历</a> </li>
+</ul>
+<h4 id="具体过程-2"><a href="#具体过程-2" class="headerlink" title="具体过程"></a>具体过程</h4><p><strong>方法一：使用两个栈实现</strong></p>
+<p>1、申请一个栈，记为s1，然后将头节点压入s1中。<br>2、从s1中弹出的节点记为cur，然后先把cur的左孩子压入s1中，然后把cur的右孩子压入s1中。<br>3、在整个过程中，每一个从s1中弹出的节点都放进第二个栈s2中。<br>4、不断重复步骤2和步骤3，直到s1为空，过程停止。<br>5、从s2中依次弹出节点并打印，打印的顺序就是后序遍历的顺序了。</p>
+<p><strong>方法二：使用一个栈实现</strong></p>
+<p>1、申请一个栈，记为stack，将头节点压入stack，同时设置两个变量h和c。在整个流程中，h代表最近一次弹出并打印的节点，c代表当前stack的栈顶节点，初始时令h为头节点，c为null。<br>2、每次令c等于当前stack的栈顶节点，但是不从stack中弹出节点，此时分以下三种情况。<br>（1）如果c的左孩子不为空，并且h不等于c的左孩子，也不等于c的右孩子，则把c的左孩子压入stack中。<br>（2）如果情况1不成立，并且c的右孩子不为空，并且h不等于c的右孩子，则把c的右孩子压入stack中。<br>（3）如果情况1和情况2都不成立，那么从stack中弹出c并打印，然后令h等于c。<br>3、一直重复步骤2，直到stack为空，过程停止。</p>
+<h4 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h4><p>方法一:<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">postorderTraversal</span><span class="params">(self, root)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        左-&gt;右-&gt;根</span></span><br><span class="line"><span class="string">        :type root: TreeNode</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        stack1 = [root]</span><br><span class="line">        stack2 = []</span><br><span class="line">        <span class="keyword">while</span> stack1:</span><br><span class="line">            cur = stack1.pop()</span><br><span class="line">            stack2.append(cur.val)</span><br><span class="line">            <span class="keyword">if</span> cur.left:</span><br><span class="line">                stack1.append(cur.left)</span><br><span class="line">            <span class="keyword">if</span> cur.right:</span><br><span class="line">                stack1.append(cur.right)</span><br><span class="line">        <span class="keyword">return</span> stack2[::<span class="number">-1</span>]</span><br></pre></td></tr></table></figure></p>
+<h2 id="层次遍历"><a href="#层次遍历" class="headerlink" title="层次遍历"></a>层次遍历</h2><h4 id="bfs"><a href="#bfs" class="headerlink" title="bfs"></a>bfs</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def bfs(root):</span><br><span class="line">    queue = []</span><br><span class="line">    # 根节点加入队列中</span><br><span class="line">    queue.append(root)</span><br><span class="line">    res = []</span><br><span class="line">    while queue:</span><br><span class="line">        temp = queue.pop(0)</span><br><span class="line">        l = temp.left</span><br><span class="line">        r = temp.right</span><br><span class="line">        if l:</span><br><span class="line">            queue.append(l)</span><br><span class="line">        if r:</span><br><span class="line">            queue.append(r)</span><br><span class="line">        res.append(temp.val)</span><br><span class="line">    return res</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+        <category>算法学习</category>
+      </categories>
+      <tags>
+        <tag>二叉树</tag>
+        <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> Python的列表乘法问题		</title>
+    <url>/2019/04/28/Python%E7%9A%84%E5%88%97%E8%A1%A8%E4%B9%98%E6%B3%95%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>分清楚是传的是值还是引用</p>
+<a id="more"></a>
+<p>Python在对列表的初始化过程中会经常用到列表的乘法生成一个含有重复元素的列表,例如 <code>l = [0]*10</code> 但是如果列表中包含有可变数据类型(列表、字典)的话使用<code>*</code>操作符便会有很大问题。 <code>*</code>操作符在实现上是复制了值的引用，而不是创建了新的对象。如果其中一个数据改变，其他的也会跟着改变。 如下代码:</p>
+<pre><code>m = 2
+n = 3
+dp = [[0 for _ in range(n+1)] for _ in range(m+1)]
+dp2 = [[0] * (n + 1)] * (m + 1)
+dp2[1][1] = 1
+dp[1][1] = 1
+
+print(dp)
+print(dp2)
+</code></pre><p>在<code>pythontutor</code>中可视化代码运行过程，可以看出使用dp2中的使用<code>*</code>操作符生成的列表中的3个元素都指向的同一个<code>list</code>。而使用列表生成式生成的二维列表指向的都是不同的<code>list</code>。 故python在初始化列表中尽量要使用列表生成器，而尽量少使用列表乘法。 <img src="https://www.ichenfei.com/wp-content/uploads/2019/04/f8670646faaf32805ee52d158a5a7242.png" alt> 参考链接: - <a href="https://blog.csdn.net/wangxinginnlp/article/details/53201450" target="_blank" rel="noopener">小心python的list乘法</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Python zip函数使用技巧		</title>
+    <url>/2019/03/29/Python%20zip%E5%87%BD%E6%95%B0%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>zip() 函数用于将可迭代对象作为参数，将对象中对应的元素打包成一个个元组，然后返回由这些元组组成的对象。 如果各个可迭代对象的元素个数不一致，则返回的对象长度与最短的可迭代对象相同。 利用 <em> 号操作符，与zip相反，进行解压。 zip(a,b…): 将多个列表压缩为一个二维列表 zip(</em>a): 将一个二维列表解压为多个列表</p>
+<a id="more"></a>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>语法:
+zip(iter1 [,iter2 [...]])
+
+参数:
+iter1:一个或多个可迭代对象（字符串、列表、元祖、字典）
+
+返回值:
+--&gt; zip object
+</code></pre><h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例:"></a>使用示例:</h2><p><img src="https://www.ichenfei.com/wp-content/uploads/2019/03/03d295c17556dbd50160ff8f321c8780.png" alt></p>
+<h2 id="使用技巧"><a href="#使用技巧" class="headerlink" title="使用技巧"></a>使用技巧</h2><h2 id="1、将两个列表合并为字典"><a href="#1、将两个列表合并为字典" class="headerlink" title="1、将两个列表合并为字典"></a>1、将两个列表合并为字典</h2><pre><code>a = [chr(ord(&apos;a&apos;)+i) for i in range(0,10)]
+b = list(range(0,26))
+print(a)
+print(b)
+print(dict(zip(a,b)))
+
+
+[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;, &apos;d&apos;, &apos;e&apos;, &apos;f&apos;, &apos;g&apos;, &apos;h&apos;, &apos;i&apos;, &apos;j&apos;]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+{&apos;a&apos;: 0, &apos;b&apos;: 1, &apos;c&apos;: 2, &apos;d&apos;: 3, &apos;e&apos;: 4, &apos;f&apos;: 5, &apos;g&apos;: 6, &apos;h&apos;: 7, &apos;i&apos;: 8, &apos;j&apos;: 9}
+</code></pre><h2 id="2、-旋转矩阵"><a href="#2、-旋转矩阵" class="headerlink" title="2、 旋转矩阵"></a>2、 旋转矩阵</h2><h3 id="示例1-顺时针旋转"><a href="#示例1-顺时针旋转" class="headerlink" title="示例1 顺时针旋转:"></a>示例1 顺时针旋转:</h3><p><a href="https://leetcode-cn.com/problems/rotate-image/" target="_blank" rel="noopener">LeetCode 48. 旋转图像</a></p>
+<blockquote>
+<p>给定一个 <code>n × n</code> 的二维矩阵表示一个图像。将图像顺时针旋转 <code>90</code> 度。</p>
+</blockquote>
+<p>说明： 你必须在原地旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要使用另一个矩阵来旋转图像。</p>
+<pre><code>示例 1:
+
+给定
+matrix = [
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+],
+原地旋转输入矩阵，使其变为:
+[
+  [7,4,1],
+  [8,5,2],
+  [9,6,3]
+]
+</code></pre><p>思路:</p>
+<pre><code>先zip(*)解压为,再对每行翻转
+[[1,2,3],[4,5,6],[7,8,9]] -&gt; [[1,4,7],[2,5,8],[3,6,9]] -&gt; [[7,4,1],[8,5,2],[9,6,3]]
+或者:
+[[1,2,3],[4,5,6],[7,8,9]] -&gt; [[7,8,9],[4,5,6],[1,2,3]] -&gt; [[7,4,1],[8,5,2],[9,6,3]]
+</code></pre><p>代码:</p>
+<pre><code>def rotate(matrix):
+    matrix[:] = list(zip(*matrix[::-1]))
+
+def rotate2(matrix):
+    matrix[:] = [x[::-1] for x in list(zip(*matrix))]
+
+A = [
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+]
+rotate(A)
+print(A)
+
+[(7, 4, 1), (8, 5, 2), (9, 6, 3)]
+</code></pre><h3 id="示例2-逆时针旋转"><a href="#示例2-逆时针旋转" class="headerlink" title="示例2 逆时针旋转:"></a>示例2 逆时针旋转:</h3><p><a href="https://leetcode-cn.com/problems/spiral-matrix/" target="_blank" rel="noopener">LeetCode 54. 螺旋矩阵</a></p>
+<blockquote>
+<p>给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素。</p>
+</blockquote>
+<pre><code>示例 1:
+输入:
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+输出: [1,2,3,6,9,8,7,4,5]
+</code></pre><p>代码:</p>
+<pre><code>def spiralOrder(matrix):
+    &quot;&quot;&quot;
+    :param matrix: 二维列表
+    :return: 顺时针输出的一维数组
+    &quot;&quot;&quot;
+    res = []
+
+    while matrix:
+        &quot;&quot;&quot;
+        删除第一行 然后二维数组逆时针旋转90度 继续再删除第一行 一直这样直到没有可以输出的了
+        [
+          [5, 6, 7, 8],   ===&gt;   [[8,12],[7,11],[6,10],[5,9]]
+          [9,10,11,12]
+        ]
+        &quot;&quot;&quot;
+        res += matrix.pop(0)
+        if matrix:
+            matrix[:] = zip(*list(map(reversed,matrix)))
+    return res
+
+
+print(spiralOrder([
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9,10,11,12]
+]))
+
+[1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+</code></pre>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Jupyter Notebook使用记录		</title>
+    <url>/2019/03/15/Jupyter%20Notebook%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>Jupyter Notebook是基于网页的用于交互计算的应用程序。其可被应用于全过程计算：开发、文档编写、运行代码和展示结果。</p>
+<a id="more"></a>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install jupyterlab</span><br></pre></td></tr></table></figure>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">jupyter --<span class="built_in">help</span></span><br><span class="line">jupyter notebook --<span class="built_in">help</span></span><br><span class="line">jupyter notebook --<span class="built_in">help</span>-all</span><br><span class="line">jupyter notebook --generate-config  生成配置文件</span><br><span class="line">jupyter notebook --port  指定端口,默认888</span><br><span class="line">jupyter notebook --ip    指定ip,默认localhost</span><br><span class="line">jupyter notebook --no-browser  启动时不打开浏览器</span><br><span class="line">jupyter notebook password 设置密码</span><br><span class="line"></span><br><span class="line">jupyter kernelspec list  查看内核</span><br><span class="line">jupyter kernelspec remove &#123;name&#125;  删除内核</span><br></pre></td></tr></table></figure>
+<p>示例:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">jupyter notebook --no-browser --ip 0.0.0.0 --port 8080</span><br></pre></td></tr></table></figure></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>设置访问密码:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; jupyter notebook password</span><br><span class="line"></span><br><span class="line">Enter password:</span><br><span class="line">Verify password:</span><br><span class="line">[NotebookPasswordApp] Wrote hashed password to C:\Users\xxx\.jupyter\jupyter_notebook_config.json</span><br></pre></td></tr></table></figure>
+<p>添加内核:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">workon py36_env</span><br><span class="line">pip install ipykernel</span><br><span class="line">python -m ipykernel install --name <span class="string">"py36env"</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="常用快捷键"><a href="#常用快捷键" class="headerlink" title="常用快捷键"></a>常用快捷键</h2><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>组合键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编辑模式</td>
+<td>Esc</td>
+<td>切换到命令模式</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>A</td>
+<td>在当前Cell上方新建Cell</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>B</td>
+<td>在当前Cell下方新建Cell</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>DD</td>
+<td>删除当前单元</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>Y</td>
+<td>切换到Code状态</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>M</td>
+<td>切换到Markdown状态</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>II</td>
+<td>中断内核运行</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>L</td>
+<td>显示代码框中每行的数字标识</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>shift + v</td>
+<td>粘贴单元格</td>
+</tr>
+<tr>
+<td>命令模式</td>
+<td>shift + L</td>
+<td>显示全部代码框中每行的数字标识</td>
+</tr>
+<tr>
+<td>编辑模式</td>
+<td>shift + Tab</td>
+<td>查看当前函数的说明（光标要在函数的位置内）</td>
+</tr>
+<tr>
+<td>命令/编辑模式</td>
+<td>shift + enter</td>
+<td>运行当前单元后,进入下一单元</td>
+</tr>
+<tr>
+<td>命令/编辑模式</td>
+<td>ctrl + enter</td>
+<td>只运行当前单元,不进入下一单元</td>
+</tr>
+</tbody>
+</table>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><ul>
+<li><a href="https://jupyter.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">Jupyter Documentation</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>tools</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Windows安装Burpsuite过程记录		</title>
+    <url>/2018/11/11/Windows%E5%AE%89%E8%A3%85Burpsuite%E8%BF%87%E7%A8%8B%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>Windows安装Burpsuite</p>
+<a id="more"></a>
+<h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><h2 id="1、官网下载并安装社区版"><a href="#1、官网下载并安装社区版" class="headerlink" title="1、官网下载并安装社区版"></a>1、官网下载并安装社区版</h2><pre><code>https://portswigger.net/burp/communitydownload 
+</code></pre><h2 id="2、吾爱破解下载keygen"><a href="#2、吾爱破解下载keygen" class="headerlink" title="2、吾爱破解下载keygen"></a>2、吾爱破解下载keygen</h2><pre><code>https://down.52pojie.cn/Tools/Network_Analyzer/Burp_Suite_Pro_v1.7.37_Loader_Keygen.zip
+</code></pre><p>到BurpSuite安装目录下,目录下有个<code>burpsuite_community.jar</code>,备份为<code>burpsuite_community.jar.bak</code> 把解压得到的<code>burpsuite_pro_v1.7.37.jar</code>复制到此文件夹并重命名为<code>burpsuite_community.jar</code> <img src="https://www.ichenfei.com/wp-content/uploads/2019/03/be6c7fe93fa087c30a5482c4876e95d3.png" alt> 把解压得到的<code>burp-loader-keygen.jar</code>复制到此文件夹</p>
+<h2 id="破解过程"><a href="#破解过程" class="headerlink" title="破解过程"></a>破解过程</h2><p>打开burp,顺利的话会出现输入license key的界面 双击打开burp-loader-keygen.jar,复制粘贴,点next 点<code>manual activation</code> 复制burp中的request到<code>activation request</code>,自动生成response,粘贴到burp的response中,点next 出现成功界面</p>
+<h2 id="启动脚本"><a href="#启动脚本" class="headerlink" title="启动脚本"></a>启动脚本</h2><p>burpsuite.bat</p>
+<pre><code>@echo off
+java -Xbootclasspath/p:burp-loader-keygen.jar -jar burpsuite_community.jar
+exit
+</code></pre><p>点击启动的时候会有个cmd小窗口,很烦 添加个vbs脚本,去掉cmd窗口的弹框 <code>burpsuite.vbs:</code></p>
+<pre><code>set ws=wscript.createobject(&quot;wscript.shell&quot;)
+ws.run &quot;burpsuite.bat /start&quot;,0
+</code></pre><h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><ul>
+<li><a href="https://www.52pojie.cn/thread-691448-1-1.html" target="_blank" rel="noopener">Burp Suite Pro Loader&amp;Keygen By surferxyz（更新新版，附带v1.7.37原版）</a></li>
+<li><a href="https://blog.csdn.net/hometown5/article/details/79532347" target="_blank" rel="noopener">Burp Suite v1.7.32破解升级pro</a></li>
+<li><a href="http://ximcx.cn/post-110.html" target="_blank" rel="noopener">Burp Suite Pro2.0.07破解版-2018.10.04更新</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>tools</category>
+      </categories>
+      <tags>
+        <tag>Burpsuite</tag>
+        <tag>抓包工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> Sublime Text写markdown粘贴图片问题		</title>
+    <url>/2018/08/08/Sublime%20Text%E5%86%99markdown%E7%B2%98%E8%B4%B4%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>Sublime Text写markdown粘贴图片问题</p>
+<a id="more"></a>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在<code>sulime text</code>里面书写<code>markdown</code>的时候,碰到需要粘贴图片的问题，图片和文本不是一种格式，因此不能直接粘贴,每次图片都需要手动保存文件</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>安装<code>ImagePaste</code>插件,按下ctrl+v的时候，把自动把图片保存的你写的md文件的同级目录，并且会创建一个和md文件同名的文件夹 在md文件类型里面按下ctrl+v的时候，自动生成链接标签。如下：</p>
+<h2 id="sublime-使用-markdown-相关"><a href="#sublime-使用-markdown-相关" class="headerlink" title="sublime 使用 markdown 相关"></a>sublime 使用 markdown 相关</h2><p>插件<code>OmniMarkupPreviewer</code>快捷键</p>
+<ul>
+<li>Ctrl+Alt+O: 在浏览器中预览markdown</li>
+<li>Ctrl+Alt+X: 保存为HTML</li>
+<li>Ctrl+Alt+C: 将Markdown复制HTML源码到剪贴板上</li>
+</ul>
+<p><a href="https://packagecontrol.io/packages/OmniMarkupPreviewer" target="_blank" rel="noopener">OmniMarkupPreviewer-packages地址</a> <a href="https://github.com/timonwong/OmniMarkupPreviewer" target="_blank" rel="noopener">OmniMarkupPreviewer-Github地址</a></p>
+]]></content>
+      <categories>
+        <category>markdown</category>
+      </categories>
+      <tags>
+        <tag>ImagePaste</tag>
+        <tag>markdown</tag>
+        <tag>OmniMarkupPreviewer</tag>
+        <tag>sublime text</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> 解决supervisor无法启动es的问题		</title>
+    <url>/2018/08/07/%E8%A7%A3%E5%86%B3supervisor%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8es%E7%9A%84%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>解决supervisor无法启动es的问题<br><a id="more"></a></p>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>虚拟机<code>ubuntu18.04 es6.3.0</code> 修改<code>network.host: 0.0.0.0</code>后终端能正常启动es,而<code>supervisor</code>却启动失败 报错如下</p>
+<pre><code>[2018-08-07T16:42:03,539][INFO ][o.e.d.DiscoveryModule    ] [jx0BXwT] using discovery type [zen]
+[2018-08-07T16:42:05,009][INFO ][o.e.n.Node               ] [jx0BXwT] initialized
+[2018-08-07T16:42:05,010][INFO ][o.e.n.Node               ] [jx0BXwT] starting ...
+[2018-08-07T16:42:05,247][INFO ][o.e.t.TransportService   ] [jx0BXwT] publish_address {192.168.163.134:9300}, bound_addresses {[::]:9300}
+[2018-08-07T16:42:05,297][INFO ][o.e.b.BootstrapChecks    ] [jx0BXwT] bound or publishing to a non-loopback address, enforcing bootstrap checks
+
+ERROR: [1] bootstrap checks failed
+[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]
+
+[2018-08-07T16:42:05,322][INFO ][o.e.n.Node               ] [jx0BXwT] stopping ...
+[2018-08-07T16:42:05,371][INFO ][o.e.n.Node               ] [jx0BXwT] stopped
+[2018-08-07T16:42:05,372][INFO ][o.e.n.Node               ] [jx0BXwT] closing ...
+[2018-08-07T16:42:05,385][INFO ][o.e.n.Node               ] [jx0BXwT] closed
+[2018-08-07T16:42:05,388][INFO ][o.e.x.m.j.p.NativeController] Native controller process has stopped - no new native processes can be started
+</code></pre><h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><pre><code>sudo vim /etc/supervisor/supervisord.conf 
+</code></pre><p><code>[supervisord]</code>中添加</p>
+<pre><code>minfds=65536
+minprocs=32768
+</code></pre><p><img src="https://www.ichenfei.com/wp-content/uploads/2018/08/d12224319113724d419eb55ec6b1824c.png" alt> 重启 <code>supervisor</code> 服务可解决</p>
+<pre><code>sudo service supervisor restart
+</code></pre><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://www.tech1024.cn/original/2962.html" target="_blank" rel="noopener">Elasticsearch在Centos 7上的安装与配置</a></li>
+<li><a href="https://blog.csdn.net/sinat_21302587/article/details/77645676" target="_blank" rel="noopener">supervisord 启动elasticsearch 失败</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>elasticsearch</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Ubuntu 终端使用shadowsocks全局代理		</title>
+    <url>/2017/11/16/Ubuntu%20%E7%BB%88%E7%AB%AF%E4%BD%BF%E7%94%A8shadowsocks%E5%85%A8%E5%B1%80%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<p>Ubuntu 终端使用shadowsocks全局代理</p>
+<a id="more"></a>
+<h2 id="配置-ShadowSocks-客户端"><a href="#配置-ShadowSocks-客户端" class="headerlink" title="配置 ShadowSocks 客户端"></a>配置 ShadowSocks 客户端</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-pip</span><br><span class="line">sudo pip install shadowsocks</span><br><span class="line">sudo vim /etc/ssclient.conf</span><br></pre></td></tr></table></figure>
+<p>配置文件如下:</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"server"</span>:<span class="string">"serverip"</span>,</span><br><span class="line">    <span class="attr">"server_port"</span>:<span class="number">12345</span>,</span><br><span class="line">    <span class="attr">"local_address"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="attr">"local_port"</span>:<span class="number">1080</span>,</span><br><span class="line">    <span class="attr">"password"</span>:<span class="string">"ss密码"</span>,</span><br><span class="line">    <span class="attr">"timeout"</span>:<span class="number">300</span>,</span><br><span class="line">    <span class="attr">"method"</span>:<span class="string">"aes-256-cfb"</span>,</span><br><span class="line">    <span class="attr">"fast_open"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"workers"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置说明:</p>
+<ul>
+<li>“server”<ul>
+<li>服务端ip</li>
+</ul>
+</li>
+<li>“method”<ul>
+<li>加密方式</li>
+</ul>
+</li>
+<li>“password”<ul>
+<li>服务端密码</li>
+</ul>
+</li>
+<li>“fast_open”<ul>
+<li>可选 true 或 false。如果你的服务器 Linux 内核在3.7+，可以开启 fast_open 以降低延迟。开启方法： echo 3 &gt; /proc/sys/net/ipv4/tcp_fastopen 开启之后，将 fast_open 的配置设置为 true 即可</li>
+</ul>
+</li>
+</ul>
+<p>开启shadowsocks:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tmux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 SS</span></span><br><span class="line">sudo nohup sslocal -c /etc/ssclient.conf &gt;/dev/null 2&gt;&amp;1 &amp;</span><br><span class="line"><span class="comment"># 查看进程</span></span><br><span class="line">sudo ps aux |grep sslocal |grep -v <span class="string">"grep"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"nohup /usr/local/bin/sslocal -c /etc/ssclient.conf /dev/null 2&gt;&amp;1 &amp;"</span> &gt;&gt; /etc/rc.local</span><br></pre></td></tr></table></figure>
+<p>如果启动<code>sslocal</code>出现错误:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">AttributeError: /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1: undefined symbol: EVP_CIPHER_CTX_cleanup</span><br></pre></td></tr></table></figure></p>
+<p>参考解决方法: <a href="https://github.com/shadowsocks/shadowsocks/issues/646#issuecomment-267977330" target="_blank" rel="noopener">run sslocal raise error</a>:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U git+https://github.com/shadowsocks/shadowsocks.git@master</span><br></pre></td></tr></table></figure>
+<h2 id="使用-privoxy-将Sock5代理转化为Http代理"><a href="#使用-privoxy-将Sock5代理转化为Http代理" class="headerlink" title="使用 privoxy 将Sock5代理转化为Http代理"></a>使用 privoxy 将Sock5代理转化为Http代理</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install privoxy -y</span><br></pre></td></tr></table></figure>
+<p>修改配置文件:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp /etc/privoxy/config /etc/privoxy/config.bak     <span class="comment"># 备份配置文件</span></span><br><span class="line">sed -i <span class="string">'/^#/d'</span> /etc/privoxy/config                      <span class="comment"># 删除#开头的注释行(太多了,看着累)</span></span><br><span class="line">sudo vim /etc/privoxy/config                            <span class="comment"># 修改配置文件</span></span><br></pre></td></tr></table></figure>
+<p>找到 <code>listen-address</code> 确保有这行代码 <code>listen-address 127.0.0.1:8118</code><br>找到 <code>forward-socks5</code> 确保有这行代码(没有自己加) <code>forward-socks5 / 127.0.0.1:1080 .</code></p>
+<p>配置文件如下:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">user-manual /usr/share/doc/privoxy/user-manual</span><br><span class="line">confdir /etc/privoxy</span><br><span class="line">logdir /var/log/privoxy</span><br><span class="line">actionsfile match-all.action # Actions that are applied to all sites and maybe overruled later on.</span><br><span class="line">actionsfile default.action   # Main actions file</span><br><span class="line">actionsfile user.action      # User customizations</span><br><span class="line">filterfile default.filter</span><br><span class="line">filterfile user.filter      # User customizations</span><br><span class="line">logfile logfile</span><br><span class="line">listen-address  127.0.0.1:8118</span><br><span class="line">listen-address  [::1]:8118</span><br><span class="line">toggle  1</span><br><span class="line">enable-remote-toggle  0</span><br><span class="line">enable-remote-http-toggle  0</span><br><span class="line">enable-edit-actions 0</span><br><span class="line">enforce-blocks 0</span><br><span class="line">buffer-limit 4096</span><br><span class="line">enable-proxy-authentication-forwarding 0</span><br><span class="line">forwarded-connect-retries  0</span><br><span class="line">accept-intercepted-requests 0</span><br><span class="line">allow-cgi-request-crunching 0</span><br><span class="line">split-large-forms 0</span><br><span class="line">keep-alive-timeout 5</span><br><span class="line">tolerate-pipelining 1</span><br><span class="line">socket-timeout 300</span><br><span class="line">forward-socks5 / 127.0.0.1:1080 .</span><br></pre></td></tr></table></figure></p>
+<p>启动<code>privoxy</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service privoxy start</span><br><span class="line">sudo service privoxy status</span><br></pre></td></tr></table></figure>
+<p>配置转发</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8118"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:8118"</span></span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@kali:~<span class="comment"># curl 4.icanhazip.com</span></span><br><span class="line">35.201.129.180</span><br></pre></td></tr></table></figure>
+<h2 id="也可以使用-Polipo-代替-Privoxy"><a href="#也可以使用-Polipo-代替-Privoxy" class="headerlink" title="也可以使用 Polipo 代替 Privoxy"></a>也可以使用 Polipo 代替 Privoxy</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install polipo -y</span><br><span class="line"></span><br><span class="line">cp /etc/polipo/config /etc/polipo/config.bak</span><br><span class="line"></span><br><span class="line">cat &gt; /etc/polipo/config&lt;&lt;EOF</span><br><span class="line">logSyslog = <span class="literal">true</span></span><br><span class="line">logFile = /var/<span class="built_in">log</span>/polipo/polipo.log</span><br><span class="line">proxyAddress = <span class="string">"0.0.0.0"</span></span><br><span class="line">socksParentProxy = <span class="string">"127.0.0.1:1080"</span></span><br><span class="line">socksProxyType = socks5</span><br><span class="line">chunkHighMark = 50331648</span><br><span class="line">objectHighMark = 16384</span><br><span class="line">serverMaxSlots = 64</span><br><span class="line">serverSlots = 16</span><br><span class="line">serverSlots1 = 32</span><br><span class="line">EOF</span><br><span class="line">sudo /etc/init.d/polipo restart</span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/2449c06687ad793c5b742df6dcfc6b70.png" alt></p>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/025b2a1366ab09d083610fd104729a60.png" alt><br>服务器重启后，下面两句需要重新执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sslocal -c /etc/ssclient.conf -d start</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br></pre></td></tr></table></figure>
+<p>取消代理:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">unset http_proxy</span><br><span class="line">unset https_proxy</span><br></pre></td></tr></table></figure>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><ul>
+<li><a href="http://blog.forecho.com/ubuntu-use-shadowsocks-and-privoxy.html" target="_blank" rel="noopener">Ubuntu 使用 ShadowSocks + Privoxy 代理</a></li>
+<li><a href="https://linux.cn/article-7119-1.html" target="_blank" rel="noopener">五大开源 Web 代理服务器横评：Squid、Privoxy、Varnish、Polipo、Tinyproxy</a></li>
+<li><a href="https://jingsam.github.io/2016/05/08/setup-shadowsocks-http-proxy-on-ubuntu-server.html" target="_blank" rel="noopener">Ubuntu server命令行配置shadowsocks全局代理</a></li>
+<li><a href="https://www.igfw.net/archives/947" target="_blank" rel="noopener">使用Privoxy、Polipo、3proxy转化Sock5代理为Http代理</a></li>
+</ul>
+<h2 id="使用supervisor管理shadowsocks进程"><a href="#使用supervisor管理shadowsocks进程" class="headerlink" title="使用supervisor管理shadowsocks进程"></a>使用<code>supervisor</code>管理<code>shadowsocks</code>进程</h2><p>安装supervisor<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install supervisor</span><br></pre></td></tr></table></figure></p>
+<p>添加ss配置文件</p>
+<p>vim /etc/supervisor/conf.d/ss.conf<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[program:ss]</span><br><span class="line"><span class="built_in">command</span>=/usr/<span class="built_in">local</span>/bin/sslocal -c /etc/ssclient.conf</span><br><span class="line">user=root</span><br><span class="line">directory=/root</span><br><span class="line">stdout_logfile=/var/<span class="built_in">log</span>/supervisor/%(program_name)s-stdout.log</span><br><span class="line">stderr_logfile=/var/<span class="built_in">log</span>/supervisor/%(program_name)s-stderr.log</span><br><span class="line">killasgroup=<span class="literal">true</span></span><br><span class="line">stopasgroup=<span class="literal">true</span></span><br></pre></td></tr></table></figure></p>
+<p>使用<code>supervisor</code>启动ss:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service supervisor restart</span><br><span class="line">sudo supervisorctl restart ss</span><br><span class="line"></span><br><span class="line">root@huang:~<span class="comment"># lsof -i :1080</span></span><br><span class="line">COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">sslocal 3148 root    3u  IPv4  33691      0t0  TCP localhost:socks (LISTEN)</span><br><span class="line">sslocal 3148 root    4u  IPv4  33692      0t0  UDP localhost:socks</span><br></pre></td></tr></table></figure></p>
+<h2 id="为git协议设置代理"><a href="#为git协议设置代理" class="headerlink" title="为git协议设置代理"></a>为git协议设置代理</h2><h3 id="使用ProxyChains-NG"><a href="#使用ProxyChains-NG" class="headerlink" title="使用ProxyChains-NG"></a>使用ProxyChains-NG</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/rofl0r/proxychains-ng.git</span><br><span class="line"><span class="built_in">cd</span> proxychains-ng</span><br><span class="line">sudo ./configure</span><br><span class="line">sudo make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<!--
+cp ./src/proxychains.conf /etc/proxychains.conf
+
+sed -i -e '/^#/d' -e '/^$/d' /etc/proxychains.conf
+
+将`socks4 127.0.0.1 9095`改为`socks5 127.0.0.1 1080`
+-->
+<p>sudo vim /etc/proxychains.conf</p>
+<p>添加如下配置:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">strict_chain</span><br><span class="line">proxy_dns </span><br><span class="line">remote_dns_subnet 224</span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">localnet 127.0.0.0/255.0.0.0</span><br><span class="line">quiet_mode</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1 1080</span><br></pre></td></tr></table></figure></p>
+<p>在需要代理的命令前加上 <code>proxychains4</code> ，如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">proxychains4 curl ip.sb</span><br><span class="line"></span><br><span class="line">proxychains4 git clone git://github.com/WordPress/WordPress.git</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用tsocks"><a href="#使用tsocks" class="headerlink" title="使用tsocks"></a>使用tsocks</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt-get install tsocks</span><br><span class="line">vim /etc/tsocks.conf</span><br></pre></td></tr></table></figure>
+<p>配置如下:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">local = 192.168.0.0/255.255.255.0</span><br><span class="line">local = 10.0.0.0/255.0.0.0</span><br><span class="line">path &#123;</span><br><span class="line">	reaches = 150.0.0.0/255.255.0.0</span><br><span class="line">	reaches = 150.1.0.0:80/255.255.0.0</span><br><span class="line">	server = 10.1.7.25</span><br><span class="line">	server_type = 5</span><br><span class="line">	default_user = delius</span><br><span class="line">	default_pass = hello</span><br><span class="line">&#125;</span><br><span class="line">server = 127.0.0.1</span><br><span class="line">server_type = 5</span><br><span class="line">server_port = 1080</span><br></pre></td></tr></table></figure></p>
+<p>使用:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tsocks curl ip.sb</span><br></pre></td></tr></table></figure></p>
+]]></content>
+      <categories>
+        <category>tools</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Ubuntu16.04搭建ngrok服务		</title>
+    <url>/2017/11/15/Ubuntu16.04%E6%90%AD%E5%BB%BAngrok%E6%9C%8D%E5%8A%A1/</url>
+    <content><![CDATA[<p>Ubuntu16.04搭建ngrok服务<br><a id="more"></a></p>
+<h2 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖:"></a>安装依赖:</h2><pre><code>sudo apt-get install build-essential golang mercurial git
+</code></pre><p>如果你的 Ubuntu版本是14.04及以下，<code>apt-get install golang</code>安装的<code>golang</code>是1.2版本的,而ngrok要求<code>golang</code>版本大于1.3,导致编译客户端时报错：</p>
+<pre><code>src/github.com/gorilla/websocke... undefined: sync.Pool
+make: * [client] Error 2
+</code></pre><p>参考DigitalOcean给的<a href="https://www.digitalocean.com/community/tutorials/how-to-install-go-1-6-on-ubuntu-14-04" target="_blank" rel="noopener">教程</a>手动安装golang:</p>
+<pre><code>sudo curl -O https://storage.googleapis.com/golang/go1.6.linux-amd64.tar.gz
+sudo tar -zxvf go1.6.linux-amd64.tar.gz
+sudo mv go /usr/local
+echo &quot;export PATH=\$PATH:/usr/local/go/bin&quot; &gt;&gt; ~/.profile
+source ~/.profile
+</code></pre><h2 id="编译ngrok服务端与客户端"><a href="#编译ngrok服务端与客户端" class="headerlink" title="编译ngrok服务端与客户端"></a>编译ngrok服务端与客户端</h2><p>从<code>github</code>获取ngrok源码</p>
+<pre><code>git clone https://github.com/inconshreveable/ngrok.git ngrok
+</code></pre><p>生成并替换源码里默认的<code>ssl</code>证书</p>
+<pre><code>cd ngrok
+export NGROK_DOMAIN=&quot;ngrok.ichenfei.com&quot;
+openssl genrsa -out base.key 2048
+openssl req -new -x509 -nodes -key base.key -days 10000 -subj &quot;/CN=$NGROK_DOMAIN&quot; -out base.pem
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -subj &quot;/CN=$NGROK_DOMAIN&quot; -out server.csr
+openssl x509 -req -in server.csr -CA base.pem -CAkey base.key -CAcreateserial -days 10000 -out server.crt
+
+cp base.pem assets/client/tls/ngrokroot.crt
+</code></pre><h3 id="编译服务端"><a href="#编译服务端" class="headerlink" title="编译服务端:"></a>编译服务端:</h3><pre><code>sudo make release-server
+</code></pre><h3 id="编译客户端"><a href="#编译客户端" class="headerlink" title="编译客户端"></a>编译客户端</h3><pre><code>Windows 64位:
+sudo GOOS=darwin GOARCH=amd64 make release-client
+
+Windows 32位:
+sudo GOOS=darwin GOARCH=386 make release-client
+
+mac osx 64位：
+sudo GOOS=darwin GOARCH=amd64 make release-client
+
+linux：
+sudo GOOS=linux GOARCH=amd64 make release-client
+</code></pre><p>编译完成后再<code>ngrok/bin</code>目录会出现一个类似于的<code>windows_amd64</code>文件夹,里面有客户端 <code>cd bin/windows_amd64 &amp;&amp; sz ngrox</code> 保存到本机</p>
+<h2 id="运行ngrok服务"><a href="#运行ngrok服务" class="headerlink" title="运行ngrok服务:"></a>运行ngrok服务:</h2><pre><code>tmux
+sudo ./bin/ngrokd -tlsKey=server.key -tlsCrt=server.crt -domain=&quot;ngrok.ichenfei.com&quot; -httpAddr=&quot;:8000&quot; -httpsAddr=&quot;:8001&quot; -tunnelAddr=&quot;:4000&quot;
+
+-domain: 指定域名,需要与生成证书使用的域名一致
+-httpAddr: 指定http端口(需要是一个未被占用的端口,可随意指定)
+-httpsAddr: 指定https端口
+-tunnelAddr ngrok通道的端口号，这个端口是Ngrok用来通信的，所以这个端口在服务器上和客户端上设置必须要对应才可以正常的链接，默认不填写是4443
+</code></pre><h2 id="客户端运行"><a href="#客户端运行" class="headerlink" title="客户端运行"></a>客户端运行</h2><p>写一个简单的配置文件，随意命名如 <code>ngrok.cfg</code>：</p>
+<pre><code>server_addr: ngrok.ichenfei.com:4443
+trust_host_root_certs: false
+</code></pre><p>指定子域名、要转发的协议和端口，以及配置文件，运行客户端：</p>
+<pre><code>ngrok.exe -config=ngrok.cfg -subdomain=test -proto=http 80
+
+-config 指定配置文件
+-proto 指定协议
+-subdomain 指定子域名 (需要对域名做泛解析)
+</code></pre><p>没有在服务端指定的端口会随意选择一个端口转发 ngrok会随意选择一个端口对本机的22端口进行转发 如果想一次性转发多个端口或者想指定远程的对应端口，需要完善ngrok.cfg</p>
+<pre><code>server_addr: ngrok.domain.com:4000
+trust_host_root_certs: false
+tunnels:
+ ssh:
+  remote_port: 1122
+  proto:
+   tcp: 22
+ ss:
+  emote_port: 1080
+  proto:
+   tcp: 1080
+ ftp:
+  remote_port: 20
+  proto:
+   tcp: 20
+ http:
+  subdomain: www
+  proto:
+   http: 80
+   https: 192.168.240.3:8080
+</code></pre><p>启动特定的转发tunnel:</p>
+<pre><code>./ngrok -config ngrok.cfg start ssh
+
+当然也可以将所有配置全部转发
+./ngrok -config ngrok.cfg start-all
+</code></pre><p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/aa2b3313dc552dcb323300728c1a88fa.png" alt="ngrok转发http协议"> <img src="https://www.ichenfei.com/wp-content/uploads/2017/11/f2b2059e69955d95000f314f9cf9331c.png" alt="ngrok转发http协议1"> <img src="https://www.chengyingyou.com/article/7" alt="Ngrok内网穿透"> 由于ngrok可以转发所有tcp协议,所以<code>22</code>,<code>3389</code>,<code>3306</code>等端口也可以通过ngrok转发到公网,使用<code>-proto=tcp</code>指定<code>tcp</code>协议</p>
+<pre><code>./ngrok -config=ngrok.cfg -proto=tcp 22
+</code></pre><p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/1b0e2a7228ea244804c6fa4abe5a723c.png" alt> 如果不搭建自己的ngrok服务,也可以到<code>ngork.com</code><a href="https://ngrok.com/download" target="_blank" rel="noopener">下载</a>官方提供的ngrok客户端。ngrok官网提供的服务基于<code>ngrok 2.x</code>(未开源),使用github源码搭建的服务器基于<code>ngrok 1.x</code>,用法有很大不同,可以参考给的<code>EXAMPLES</code>使用</p>
+<pre><code>EXAMPLES:
+    ngrok http 80                    # secure public URL for port 80 web server
+    ngrok http -subdomain=baz 8080   # port 8080 available at baz.ngrok.io
+    ngrok http foo.dev:80            # tunnel to host:port instead of localhost
+    ngrok tcp 22                     # tunnel arbitrary TCP traffic to port 22
+    ngrok tls -hostname=foo.com 443  # TLS traffic for foo.com to port 443
+    ngrok start foo bar baz          # start tunnels from the configuration file
+</code></pre>]]></content>
+      <categories>
+        <category>tools</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Python使用virtualenv和virtualenvwrapper		</title>
+    <url>/2017/11/10/Python%E4%BD%BF%E7%94%A8virtualenv%E5%92%8Cvirtualenvwrapper/</url>
+    <content><![CDATA[<h2 id="virtualenv-介绍"><a href="#virtualenv-介绍" class="headerlink" title="virtualenv 介绍"></a>virtualenv 介绍</h2><blockquote>
+<p>在使用 Python 开发的过程中，工程一多，难免会碰到不同的工程依赖不同版本的库的问题；亦或者是在开发过程中不想让物理环境里充斥各种各样的库，引发未来的依赖灾难。此时，我们需要对于不同的工程使用不同的虚拟环境来保持开发环境以及宿主环境的清洁。virtualenv便是一个可以帮助我们管理不同 Python 环境的绝好工具。 可以在系统中建立多个不同并且相互不干扰的虚拟环境。</p>
+</blockquote>
+<a id="more"></a>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install virtualenv</span><br></pre></td></tr></table></figure>
+<h3 id="新建虚拟环境"><a href="#新建虚拟环境" class="headerlink" title="新建虚拟环境"></a>新建虚拟环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">virtualenv scrapytest</span><br></pre></td></tr></table></figure>
+<h3 id="指定python版本"><a href="#指定python版本" class="headerlink" title="指定python版本"></a>指定python版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">virtualenv -p 指定python版本路径</span><br></pre></td></tr></table></figure>
+<h3 id="激活环境"><a href="#激活环境" class="headerlink" title="激活环境"></a>激活环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> scrapytest/bin/activate <span class="comment"># windows 是在Scripts文件夹下deactivate.bat</span></span><br></pre></td></tr></table></figure>
+<h3 id="退出虚拟环境"><a href="#退出虚拟环境" class="headerlink" title="退出虚拟环境"></a>退出虚拟环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deactivate</span><br></pre></td></tr></table></figure>
+<h2 id="使用-virtualenvwrapper-管理虚拟环境"><a href="#使用-virtualenvwrapper-管理虚拟环境" class="headerlink" title="使用 virtualenvwrapper 管理虚拟环境"></a>使用 virtualenvwrapper 管理虚拟环境</h2><h4 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install virtualenvwrapper <span class="comment"># windows下使用: pip install virtualenvwrapper-win</span></span><br></pre></td></tr></table></figure>
+<h2 id="添加环境变量-WORKON-HOME"><a href="#添加环境变量-WORKON-HOME" class="headerlink" title="添加环境变量: WORKON_HOME"></a>添加环境变量: WORKON_HOME</h2><p>Linux: </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/profile </span><br><span class="line"></span><br><span class="line">在最后添加: </span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> WORKON\_HOME=<span class="variable">$HOME</span>/.virtualenvs </span><br><span class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/bin/virtualenvwrapper.sh </span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile <span class="comment">#使配置立即生效</span></span><br></pre></td></tr></table></figure>
+<p>Windows: <img src="https://www.ichenfei.com/wp-content/uploads/2017/11/dce990ec141f4d3cb0a5bd28e44f1fbe.png" alt></p>
+<h2 id="命令列表"><a href="#命令列表" class="headerlink" title="命令列表"></a>命令列表</h2><ul>
+<li>workon:列出虚拟环境列表</li>
+<li>workon [虚拟环境名称]:切换虚拟环境</li>
+<li>lsvirtualenv:同workon</li>
+<li>mkvirtualenv :新建虚拟环境</li>
+<li>rmvirtualenv :删除虚拟环境</li>
+<li>deactivate: 离开虚拟环境</li>
+</ul>
+<p>参考链接:</p>
+<ul>
+<li><a href="https://segmentfault.com/a/1190000004079979" target="_blank" rel="noopener">聊聊 virtualenv 和 virtualenvwrapper 实践</a></li>
+<li><a href="http://www.jianshu.com/p/dcfe4cab4933" target="_blank" rel="noopener">virtualenvwrapper-win安装</a></li>
+<li><a href="http://blog.csdn.net/shaququ/article/details/54292043" target="_blank" rel="noopener">windows下搭建virtualenv、virtualenvwrapper虚拟环境</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>virtualenv</tag>
+        <tag>virtualenvwrapper</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> 几款用于穿透内网的代理工具		</title>
+    <url>/2017/11/08/%E5%87%A0%E6%AC%BE%E7%94%A8%E4%BA%8E%E7%A9%BF%E9%80%8F%E5%86%85%E7%BD%91%E7%9A%84%E4%BB%A3%E7%90%86%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<blockquote>
+<p>当内网中的主机没有外网IP地址要被外网稳定访问时,可以使用反向代理工具将主机端口映射出去,从而通过访问外网就能访问到内网中的主机</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="ngrok"><a href="#ngrok" class="headerlink" title="ngrok"></a>ngrok</h2><blockquote>
+<p>ngrok 是一个反向代理，通过在公共的端点和本地运行的 Web 服务器之间建立一个安全的通道。ngrok 可捕获和分析所有通道上的流量，便于后期分析和重放</p>
+</blockquote>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/9249f4129b5274569da3cc7576b3e33d.png" alt></p>
+<ul>
+<li><a href="https://ngrok.com/" target="_blank" rel="noopener">ngrok官网</a></li>
+<li><a href="https://github.com/inconshreveable/ngrok" target="_blank" rel="noopener">github: inconshreveable/ngrok</a></li>
+<li>自己搭建ngrok服务：<ul>
+<li>参考:</li>
+<li><a href="https://imququ.com/post/self-hosted-ngrokd.html" target="_blank" rel="noopener">搭建 ngrok 服务实现内网穿透 – imququ.com</a></li>
+<li><a href="https://zhyack.github.io/posts/2017_04_07-Ngrok.html" target="_blank" rel="noopener">内网穿透——ngrok的搭建与使用 – zhyack.github.io</a></li>
+<li><a href="http://blog.just4fun.site/build-ngrok-server.html" target="_blank" rel="noopener">建ngrok服务（内网穿透） –blog.just4fun.site</a></li>
+</ul>
+</li>
+</ul>
+<p>ngrok官网提供的服务基于ngrok 2.x,而ngrok只开源了1.x的源码,要搭建ngrok服务只能使用1.x的客户端连接。</p>
+<h2 id="lanproxy"><a href="#lanproxy" class="headerlink" title="lanproxy:"></a>lanproxy:</h2><blockquote>
+<p>Lanproxy是一个将局域网个人电脑、服务器代理到公网的内网穿透工具<br>目前仅支持tcp流量转发，可支持任何tcp上层协议（访问内网网站、本地支付接口调试、微信小程序调试、ssh访问、远程桌面…）</p>
+</blockquote>
+<p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/7797ae475bcbb69d56ede9b046ce699c.png" alt></p>
+<ul>
+<li><a href="https://lanproxy.thingsglobal.org/" target="_blank" rel="noopener">lanproxy.thingsglobal.org</a></li>
+<li><a href="https://github.com/ffay/lanproxy" target="_blank" rel="noopener">源代码 – github</a></li>
+<li><a href="https://github.com/ffay/lanproxy/files/1439965/proxy-server-0.1-beta.zip" target="_blank" rel="noopener">proxy-server-0.1-beta.zip</a></li>
+<li><a href="https://lanproxy.thingsglobal.org/proxy-client-0.1-beta.zip" target="_blank" rel="noopener">proxy-client-0.1-beta.zip</a></li>
+<li>lanproxy服务搭建<ul>
+<li>参考:</li>
+<li><a href="https://segmentfault.com/a/1190000011155909" target="_blank" rel="noopener">使用lanproxy进行内网穿透</a></li>
+<li><a href="http://blog.csdn.net/xmtblog/article/details/77943159" target="_blank" rel="noopener">业余草推荐一款局域网（内网）穿透工具lanproxy</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="lcx-exe"><a href="#lcx-exe" class="headerlink" title="lcx.exe"></a>lcx.exe</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">服务端:</span><br><span class="line">lcx.exe -listen 51 33891</span><br><span class="line">客户端:</span><br><span class="line">lcx.exe -slave 服务端ip 51 127.0.0.1 3389</span><br><span class="line"></span><br><span class="line">这就用lcx.exe将客户端的3389转发到了服务端的33891上</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>tools</category>
+      </categories>
+      <tags>
+        <tag>lanproxy</tag>
+        <tag>ngrok</tag>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> 使用Python 进行各进制间转换		</title>
+    <url>/2017/10/31/%E4%BD%BF%E7%94%A8Python%20%E8%BF%9B%E8%A1%8C%E5%90%84%E8%BF%9B%E5%88%B6%E9%97%B4%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<ul>
+<li>表示各进制的符号<br>  -b：二进制<br>  -o：八进制<br>  -d：十进制<br>  -x：十六进制 </li>
+</ul>
+<p>bin()、oct()、hex()返回值均为字符串，且分别带有0b、0o、0x前缀。 </p>
+<a id="more"></a>
+<h2 id="十进制转二进制："><a href="#十进制转二进制：" class="headerlink" title="十进制转二进制："></a>十进制转二进制：</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">6</span>]: bin(<span class="number">192</span>)</span><br><span class="line">Out[<span class="number">6</span>]: <span class="string">'0b11000000'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: <span class="string">'&#123;0:b&#125;'</span>.format(<span class="number">192</span>)</span><br><span class="line">Out[<span class="number">7</span>]: <span class="string">'11000000'</span></span><br></pre></td></tr></table></figure>
+<h2 id="十进制转八进制："><a href="#十进制转八进制：" class="headerlink" title="十进制转八进制："></a>十进制转八进制：</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">42</span>]: oct(<span class="number">192</span>)</span><br><span class="line">Out[<span class="number">42</span>]: <span class="string">'0300'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">41</span>]: <span class="string">'&#123;0:o&#125;'</span>.format(<span class="number">192</span>)</span><br><span class="line">Out[<span class="number">41</span>]: <span class="string">'300'</span></span><br></pre></td></tr></table></figure>
+<h2 id="十进制转十六进制："><a href="#十进制转十六进制：" class="headerlink" title="十进制转十六进制："></a>十进制转十六进制：</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">39</span>]: hex(<span class="number">192</span>)</span><br><span class="line">Out[<span class="number">39</span>]: <span class="string">'0xc0'</span></span><br><span class="line">In [<span class="number">40</span>]: <span class="string">'&#123;0:x&#125;'</span>.format(<span class="number">192</span>)</span><br><span class="line">Out[<span class="number">40</span>]: <span class="string">'c0'</span></span><br></pre></td></tr></table></figure>
+<h2 id="n进制转10进制"><a href="#n进制转10进制" class="headerlink" title="n进制转10进制"></a>n进制转10进制</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">int(<span class="string">'xxx'</span>,n)</span><br><span class="line"></span><br><span class="line">示例:</span><br><span class="line">In [<span class="number">5</span>]: int(<span class="string">'c0a83090'</span>,<span class="number">16</span>)</span><br><span class="line">Out[<span class="number">5</span>]: <span class="number">3232247952L</span></span><br><span class="line"></span><br><span class="line">λ ping <span class="number">3232247952</span></span><br><span class="line"></span><br><span class="line">正在 Ping <span class="number">192.168</span><span class="number">.48</span><span class="number">.144</span> 具有 <span class="number">32</span> 字节的数据:</span><br><span class="line">来自 <span class="number">192.168</span><span class="number">.48</span><span class="number">.144</span> 的回复: 字节=<span class="number">32</span> 时间&lt;<span class="number">1</span>ms TTL=<span class="number">64</span></span><br><span class="line">来自 <span class="number">192.168</span><span class="number">.48</span><span class="number">.144</span> 的回复: 字节=<span class="number">32</span> 时间&lt;<span class="number">1</span>ms TTL=<span class="number">64</span></span><br><span class="line">来自 <span class="number">192.168</span><span class="number">.48</span><span class="number">.144</span> 的回复: 字节=<span class="number">32</span> 时间&lt;<span class="number">1</span>ms TTL=<span class="number">64</span></span><br><span class="line">来自 <span class="number">192.168</span><span class="number">.48</span><span class="number">.144</span> 的回复: 字节=<span class="number">32</span> 时间&lt;<span class="number">1</span>ms TTL=<span class="number">64</span></span><br><span class="line"></span><br><span class="line"><span class="number">192.168</span><span class="number">.48</span><span class="number">.144</span> 的 Ping 统计信息:</span><br><span class="line">    数据包: 已发送 = <span class="number">4</span>，已接收 = <span class="number">4</span>，丢失 = <span class="number">0</span> (<span class="number">0</span>% 丢失)，</span><br><span class="line">往返行程的估计时间(以毫秒为单位):</span><br><span class="line">    最短 = <span class="number">0</span>ms，最长 = <span class="number">0</span>ms，平均 = <span class="number">0</span>ms</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> 使用scrapyd部署scrapy爬虫		</title>
+    <url>/2017/10/30/how-to-use-scrapyd/</url>
+    <content><![CDATA[<p>使用scrapyd部署scrapy爬虫</p>
+<a id="more"></a>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Scrapyd is a service for running Scrapy spiders. It allows you to deploy your Scrapy projects and control their spiders using a HTTP JSON API.</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>安装<code>scrapyd</code>服务端(需要scrapy项目环境)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install scrapyd</span><br></pre></td></tr></table></figure>
+<p>安装 <code>scrapyd-deploy</code> (无需scrapy环境)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install scrapyd-client </span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">windows系统，在`c:\python27\Scripts`下生成的是`scrapyd-deploy`，无法直接在命令行里运行`scrapd-deploy` 配置文件位置: </span><br><span class="line"></span><br><span class="line">##### 解决办法：</span><br><span class="line"></span><br><span class="line">在`C:\python27\Scripts`下新建一个`scrapyd-deploy.bat`，文件内容如下：</span><br></pre></td></tr></table></figure>
+<p>@echo off C:\Python27\python C:\Python27\Scripts\scrapyd-deploy %*<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">使用</span><br><span class="line">--</span><br><span class="line"></span><br><span class="line">### 开启scrapyd</span><br><span class="line"></span><br><span class="line">终端运行:`scrapyd`开启`scrapyd`服务</span><br><span class="line"></span><br><span class="line">### 发布工程到scrapyd</span><br><span class="line"></span><br><span class="line">切换至到`scrapy`项目根目录,编辑`scrapy.cfg`,</span><br></pre></td></tr></table></figure></p>
+<p>取消 # url = <a href="http://localhost:6800/前面的注释#" target="_blank" rel="noopener">http://localhost:6800/前面的注释#</a><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">![](https://www.ichenfei.com/wp-content/uploads/2017/10/0678af8c66e671232462916041dee39d.png) </span><br><span class="line"></span><br><span class="line">打包发布`scrapyd`项目:</span><br></pre></td></tr></table></figure></p>
+<p>scrapyd-deploy <target> -p <project><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">*   `&lt;target&gt;`就是配置文件的`deploy`的名字，针对上面的配置就是`scearticle`</span><br><span class="line">*   `&lt;project&gt;`是项目名`scrapyd`项目名,不输入则默认为`deploy`的名字</span><br><span class="line"></span><br><span class="line">部署完成之后，创建的scrapy项目中可以看到多了一个eggs的文件夹，以及里面的一些内容，里面所存放的就是scrapyd-deploy的工程打包成.egg的文件 </span><br><span class="line"></span><br><span class="line">![](https://www.ichenfei.com/wp-content/uploads/2017/10/2e3e75aea3ef2cde9615576f22ee531e.png)</span><br><span class="line"></span><br><span class="line">API</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 查看`scrapyd`运行状态</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">curl http://localhost:6800/daemonstatus.json 返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;running&quot;: 0, &quot;finished&quot;: 42, &quot;pending&quot;: 0, &quot;node_name&quot;: &quot;VM-42-98-ubuntu&quot;&#125;</span><br></pre></td></tr></table></figure></project></target></p>
+<h3 id="创建爬虫任务"><a href="#创建爬虫任务" class="headerlink" title="创建爬虫任务"></a>创建爬虫任务</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://localhost:6800/schedule.json -d project=myproject -d spider=somespider </span><br><span class="line"></span><br><span class="line">参数: </span><br><span class="line"></span><br><span class="line">project (string, required) - 项目名 </span><br><span class="line">spider (string, required) - 项目中的爬虫名 </span><br><span class="line">setting (string, optional) - 指定使用Scrapy设置 </span><br><span class="line">jobid (string, optional) - 指定jobid </span><br><span class="line">_version (string, optional) - 指定项目版本 </span><br><span class="line"></span><br><span class="line">示例: curl http://localhost:6800/schedule.json -d project=SecArticleSpider -d spider=freebuf 返回: &#123;<span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"jobid"</span>: <span class="string">"7ea5ddc0bd7d11e7b256525400dc407e"</span>, <span class="string">"node\_name"</span>: <span class="string">"VM-42-98-ubuntu"</span>&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="取消正在运行的job"><a href="#取消正在运行的job" class="headerlink" title="取消正在运行的job"></a>取消正在运行的job</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://localhost:6800/cancel.json -d project=myproject -d job=6487ec79947edab326d6db28a2d86511e8247444 </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;prevstate&quot;: &quot;running&quot;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="列出项目"><a href="#列出项目" class="headerlink" title="列出项目:"></a>列出项目:</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://localhost:6800/listprojects.json </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;projects&quot;: \[&quot;myproject&quot;, &quot;otherproject&quot;\]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="列出爬虫"><a href="#列出爬虫" class="headerlink" title="列出爬虫:"></a>列出爬虫:</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://localhost:6800/listspiders.json?project=myproject </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;spiders&quot;: \[&quot;spider1&quot;, &quot;spider2&quot;, &quot;spider3&quot;\]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="列出job："><a href="#列出job：" class="headerlink" title="列出job："></a>列出job：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://localhost:6800/listjobs.json?project=myproject </span><br><span class="line">示例返回: <span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"pending"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"78391cc0fcaf11e1b0090800272a6d06"</span>, <span class="string">"spider"</span>: <span class="string">"spider1"</span>&#125;\], <span class="string">"running"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"422e608f9f28cef127b3d5ef93fe9399"</span>, <span class="string">"spider"</span>: <span class="string">"spider2"</span>, <span class="string">"start\_time"</span>: <span class="string">"2012-09-12 10:14:03.594664"</span>&#125;\], <span class="string">"finished"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"2f16646cfcaf11e1b0090800272a6d06"</span>, <span class="string">"spider"</span>: <span class="string">"spider3"</span>, <span class="string">"start\_time"</span>: <span class="string">"2012-09-12 10:14:03.594664"</span>, <span class="string">"end_time"</span>: <span class="string">"2012-09-12 10:24:03.594664"</span>&#125;\]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除项目"><a href="#删除项目" class="headerlink" title="删除项目:"></a>删除项目:</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://localhost:6800/delproject.json -d project=myproject 示例返回: &#123;<span class="string">"status"</span>: <span class="string">"ok"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>更多支持的api： <a href="http://scrapyd.readthedocs.io/en/stable/api.html" target="_blank" rel="noopener">Scrapyd 官方支持手册</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Python抓取中文网页乱码问题		</title>
+    <url>/2016/10/21/python-error-coding-problem/</url>
+    <content><![CDATA[<a id="more"></a><h2 id="text与-content的区别"><a href="#text与-content的区别" class="headerlink" title=".text与.content的区别"></a>.text与.content的区别</h2><p>requests的官方文档有这么一段:</p><blockquote>
+<p>We can read the content of the server’s response. Consider the GitHub timeline again: &gt;&gt;&gt; import requests &gt;&gt;&gt; r = requests.get(‘<a href="https://api.github.com/events&#39;" target="_blank" rel="noopener">https://api.github.com/events&#39;</a>) &gt;&gt;&gt; r.text u’[{“repository”:{“open_issues”:0,”url”:”<a href="https://github.com/.." target="_blank" rel="noopener">https://github.com/..</a>. Requests will automatically decode content from the server. Most unicode charsets are seamlessly decoded. When you make a request, Requests makes educated guesses about the encoding of the response based on the HTTP headers. The text encoding guessed by Requests is used when you access r.text. You can find out what encoding Requests is using, and change it, using the r.encoding property: &gt;&gt;&gt; r.encoding ‘utf-8’ &gt;&gt;&gt; r.encoding = ‘ISO-8859-1’ If you change the encoding, Requests will use the new value of r.encoding whenever you call r.text. You might want to do this in any situation where you can apply special logic to work out what the encoding of the content will be. For example, HTTP and XML have the ability to specify their encoding in their body. In situations like this, you should use r.content to find the encoding, and then set r.encoding. This will let you use r.text with the correct encoding. Requests will also use custom encodings in the event that you need them. If you have created your own encoding and registered it with the codecs module, you can simply use the codec name as the value of r.encoding and Requests will handle the decoding for you.</p>
+</blockquote><a id="more"></a>
+
+
+<p>大意就是说，.text方法会猜网站编码,大部分网站都能蒙对,如果猜不对的话可以用 encoding 方法指定 response 的编码,上面的代码还可以写成 [python] url = “<a href="https://www.jisilu.cn/home/explore/sort\_type-new\_\_day-0__page-1&quot;" target="_blank" rel="noopener">https://www.jisilu.cn/home/explore/sort\_type-new\_\_day-0__page-1&quot;</a> html = requests.get(url,headers=headers) html.encoding = “utf-8” print html.text [/python] 而.content而高级一点,.content会自己去文本里面找是什么编码，而不是靠猜的。。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> 使用 Supervisor 管理进程		</title>
+    <url>/2016/09/22/use-supervisor-to-manage-process/</url>
+    <content><![CDATA[<p>Supervisor 是基于 Python 的进程管理工具，只能运行在 Unix-Like 的系统上,Supervisor可以很方便的用来启动、重启、关闭进程。除了对单个进程的控制，还可以同时启动、关闭多个进程。</p><h2 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h2><p>Supervisor 有两个主要的组成部分：</p><ul>
+<li>supervisord<ul>
+<li>运行 Supervisor 时会启动一个supervisord进程，它负责启动所管理的进程，并将所管理的进程作为自己的子进程来启动，而且可以在所管理的进程出现崩溃时自动重启。<br></li>
+</ul>
+</li>
+<li>supervisorctl<ul>
+<li>是命令行管理工具，可以用来执行 stop、start、restart 等命令，来对这些子进程进行管理。</li>
+</ul>
+</li>
+</ul><a id="more"></a>
+
+
+<h2>安装supervisor</h2>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install supervisor</span><br></pre></td></tr></table></figure>
+<p>也可以使用yum或apt-get安装,ubuntu下更建议用或apt-get安装。</p>
+<h2>配置supervisor</h2>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /etc/supervisor/conf.d</span><br><span class="line">echo_supervisord_conf &gt; /etc/supervisor/supervisord.conf</span><br><span class="line">vim /etc/supervisor/supervisord.conf</span><br></pre></td></tr></table></figure>
+<p>修改:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[include]</span><br><span class="line">files = /etc/supervisor/conf.d/*.conf</span><br></pre></td></tr></table></figure>
+<h2>启动 Supervisor服务</h2>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">supervisord -c /etc/supervisor/supervisord.conf</span><br></pre></td></tr></table></figure>
+<p>其中 -c 指定配置文件,如果没有指定,默认在以下目录查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$CWD</span>/supervisord.conf</span><br><span class="line"><span class="variable">$CWD</span>/etc/supervisord.conf</span><br><span class="line">/etc/supervisord.conf</span><br><span class="line">/etc/supervisor/supervisord.conf (since Supervisor 3.3.0)</span><br><span class="line">../etc/supervisord.conf (Relative to the executable)</span><br><span class="line">../supervisord.conf (Relative to the executable)</span><br></pre></td></tr></table></figure>
+<p>$CWD表示运行supervisord程序的目录。</p>
+<h2 id="program-配置"><a href="#program-配置" class="headerlink" title="program 配置:"></a>program 配置:</h2><p>示例:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /etc/supervisor/conf.d/shadowsocks.conf </span><br><span class="line">[program:shadowsocks]</span><br><span class="line"><span class="built_in">command</span>=ssserver -c /etc/shadowsocks.json</span><br><span class="line">autostart=<span class="literal">true</span></span><br><span class="line">autorestart=<span class="literal">true</span></span><br><span class="line">user=root</span><br><span class="line">log_stderr=<span class="literal">true</span></span><br><span class="line">logfile=/var/<span class="built_in">log</span>/shadowsocks.log</span><br><span class="line">killasgroup=<span class="literal">true</span></span><br><span class="line">stopasgroup=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h2>supervisorctl  交互终端:</h2>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@hhf:~<span class="comment"># supervisorctl </span></span><br><span class="line">shadowsocks                      RUNNING    pid 1667, uptime 0:00:08</span><br><span class="line">supervisor&gt; <span class="built_in">help</span></span><br><span class="line"></span><br><span class="line">default commands (<span class="built_in">type</span> <span class="built_in">help</span> &lt;topic&gt;):</span><br><span class="line">=====================================</span><br><span class="line">add    clear  <span class="built_in">fg</span>        open  quit    remove  restart   start   stop  update </span><br><span class="line">avail  <span class="built_in">exit</span>   maintail  pid   reload  reread  shutdown  status  tail  version</span><br></pre></td></tr></table></figure>
+<p>注:<br>Supervisor只能管理非daemon的进程，也就是说Supervisor不能管理守护进程。否则提示Exited too quickly (process log may have details)异常。</p>
+<p><strong>supervisord.conf</strong> 配置文件详细说明:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[unix_http_server]</span><br><span class="line">file=/tmp/supervisor.sock   ;UNIX socket 文件，supervisorctl 会使用,建议修改为/var/run/supervisor.sock</span><br><span class="line">;chmod=0700                 ;socket文件的mode，默认是0700</span><br><span class="line">;chown=nobody:nogroup       ;socket文件的owner，格式：uid:gid</span><br><span class="line"></span><br><span class="line">;[inet_http_server]         ;HTTP服务器，提供web管理界面</span><br><span class="line">;port=127.0.0.1:9001        ;Web管理后台运行的IP和端口，如果开放到公网，需要注意安全性</span><br><span class="line">;username=user              ;登录管理后台的用户名</span><br><span class="line">;password=123               ;登录管理后台的密码</span><br><span class="line"></span><br><span class="line">[supervisord]</span><br><span class="line">logfile=/tmp/supervisord.log ;日志文件，默认是 <span class="variable">$CWD</span>/supervisord.log</span><br><span class="line">logfile_maxbytes=50MB        ;日志文件大小，超出会rotate，默认 50MB，如果设成0，表示不限制大小</span><br><span class="line">logfile_backups=10           ;日志文件保留备份数量默认10，设为0表示不备份</span><br><span class="line">loglevel=info                ;日志级别，默认info，其它: debug,warn,trace</span><br><span class="line">pidfile=/tmp/supervisord.pid ;pid 文件</span><br><span class="line">nodaemon=<span class="literal">false</span>               ;是否在前台启动，默认是<span class="literal">false</span>，即以 daemon 的方式启动</span><br><span class="line">minfds=1024                  ;可以打开的文件描述符的最小值，默认 1024</span><br><span class="line">minprocs=200                 ;可以打开的进程数的最小值，默认 200</span><br><span class="line"></span><br><span class="line">[supervisorctl]</span><br><span class="line">serverurl=unix:///tmp/supervisor.sock ;通过UNIX socket连接supervisord，路径与unix_http_server部分的file一致</span><br><span class="line">;serverurl=http://127.0.0.1:9001 ; 通过HTTP的方式连接supervisord</span><br><span class="line"></span><br><span class="line">; [program:xx]是被管理的进程配置参数，xx是进程的名称</span><br><span class="line">[program:xx]</span><br><span class="line"><span class="built_in">command</span>=xxxxxxxxxxx  ; 程序启动命令</span><br><span class="line">autostart=<span class="literal">true</span>       ; 在supervisord启动的时候也自动启动</span><br><span class="line">startsecs=10         ; 启动10秒后没有异常退出，就表示进程正常启动了，默认为1秒</span><br><span class="line">autorestart=<span class="literal">true</span>     ; 程序退出后自动重启,可选值：[unexpected,<span class="literal">true</span>,<span class="literal">false</span>]，默认为unexpected，表示进程意外杀死后才重启</span><br><span class="line">startretries=3       ; 启动失败自动重试次数，默认是3</span><br><span class="line">user=tomcat          ; 用哪个用户启动进程，默认是root</span><br><span class="line">priority=999         ; 进程启动优先级，默认999，值小的优先启动</span><br><span class="line">redirect_stderr=<span class="literal">true</span> ; 把stderr重定向到stdout，默认<span class="literal">false</span></span><br><span class="line">stdout_logfile_maxbytes=20MB  ; stdout 日志文件大小，默认50MB</span><br><span class="line">stdout_logfile_backups = 20   ; stdout 日志文件备份数，默认是10</span><br><span class="line">; stdout 日志文件，需要注意当指定目录不存在时无法正常启动，所以需要手动创建目录（supervisord 会自动创建日志文件）</span><br><span class="line">stdout_logfile=/a/path         ; 输出日志目录</span><br><span class="line">;stderr_logfile=/a/path        ; 错误日志目录</span><br><span class="line">;stderr_logfile_maxbytes=1MB   ; stderr 日志文件大小，默认50MB</span><br><span class="line">;stderr_logfile_backups        ; <span class="comment"># stderr 日志文件备份数，默认是10</span></span><br><span class="line">stopasgroup=<span class="literal">false</span>     ;默认为<span class="literal">false</span>,进程被杀死时，是否向这个进程组发送stop信号，包括子进程</span><br><span class="line">killasgroup=<span class="literal">false</span>     ;默认为<span class="literal">false</span>，向进程组发送<span class="built_in">kill</span>信号，包括子进程</span><br><span class="line"></span><br><span class="line">;包含其它配置文件</span><br><span class="line">[include]</span><br><span class="line">files = relative/directory/*.ini    ;可以指定一个或多个以.ini结束的配置文件,多个路径用空格隔开</span><br></pre></td></tr></table></figure>
+<p>更多配置说明参考: <a href="http://supervisord.org/configuration.html" target="_blank" rel="noopener">http://supervisord.org/configuration.html</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[unix_http_server]            </span><br><span class="line">file=/tmp/supervisor.sock   ; socket文件的路径，supervisorctl用XML_RPC和supervisord通信就是通过它进行</span><br><span class="line">                              的。如果不设置的话，supervisorctl也就不能用了  </span><br><span class="line">                              不设置的话，默认为none。 非必须设置        </span><br><span class="line">;chmod=0700                 ; 这个简单，就是修改上面的那个socket文件的权限为0700</span><br><span class="line">                              不设置的话，默认为0700。 非必须设置</span><br><span class="line">;chown=nobody:nogroup       ; 这个一样，修改上面的那个socket文件的属组为user.group</span><br><span class="line">                              不设置的话，默认为启动supervisord进程的用户及属组。非必须设置</span><br><span class="line">;username=user              ; 使用supervisorctl连接的时候，认证的用户</span><br><span class="line">                               不设置的话，默认为不需要用户。 非必须设置</span><br><span class="line">;password=123               ; 和上面的用户名对应的密码，可以直接使用明码，也可以使用SHA加密</span><br><span class="line">                              如：&#123;SHA&#125;82ab876d1387bfafe46cc1c8a2ef074eae50cb1d</span><br><span class="line">                              默认不设置。。。非必须设置</span><br><span class="line"></span><br><span class="line">;[inet_http_server]         ; 侦听在TCP上的socket，Web Server和远程的supervisorctl都要用到他</span><br><span class="line">                              不设置的话，默认为不开启。非必须设置</span><br><span class="line">;port=127.0.0.1:9001        ; 这个是侦听的IP和端口，侦听所有IP用 :9001或*:9001。</span><br><span class="line">                              这个必须设置，只要上面的[inet_http_server]开启了，就必须设置它</span><br><span class="line">;username=user              ; 这个和上面的uinx_http_server一个样。非必须设置</span><br><span class="line">;password=123               ; 这个也一个样。非必须设置</span><br><span class="line"></span><br><span class="line">[supervisord]                ;这个主要是定义supervisord这个服务端进程的一些参数的</span><br><span class="line">                              这个必须设置，不设置，supervisor就不用干活了</span><br><span class="line">logfile=/tmp/supervisord.log ; 这个是supervisord这个主进程的日志路径，注意和子进程的日志不搭嘎。</span><br><span class="line">                               默认路径<span class="variable">$CWD</span>/supervisord.log，<span class="variable">$CWD</span>是当前目录。。非必须设置</span><br><span class="line">logfile_maxbytes=50MB        ; 这个是上面那个日志文件的最大的大小，当超过50M的时候，会生成一个新的日 </span><br><span class="line">                               志文件。当设置为0时，表示不限制文件大小</span><br><span class="line">                               默认值是50M，非必须设置。              </span><br><span class="line">logfile_backups=10           ; 日志文件保持的数量，上面的日志文件大于50M时，就会生成一个新文件。文件</span><br><span class="line">                               数量大于10时，最初的老文件被新文件覆盖，文件数量将保持为10</span><br><span class="line">                               当设置为0时，表示不限制文件的数量。</span><br><span class="line">                               默认情况下为10。。。非必须设置</span><br><span class="line">loglevel=info                ; 日志级别，有critical, error, warn, info, debug, trace, or blather等</span><br><span class="line">                               默认为info。。。非必须设置项</span><br><span class="line">pidfile=/tmp/supervisord.pid ; supervisord的pid文件路径。</span><br><span class="line">                               默认为<span class="variable">$CWD</span>/supervisord.pid。。。非必须设置</span><br><span class="line">nodaemon=<span class="literal">false</span>               ; 如果是<span class="literal">true</span>，supervisord进程将在前台运行</span><br><span class="line">                               默认为<span class="literal">false</span>，也就是后台以守护进程运行。。。非必须设置</span><br><span class="line">minfds=1024                  ; 这个是最少系统空闲的文件描述符，低于这个值supervisor将不会启动。</span><br><span class="line">                               系统的文件描述符在这里设置cat /proc/sys/fs/file-max</span><br><span class="line">                               默认情况下为1024。。。非必须设置</span><br><span class="line">minprocs=200                 ; 最小可用的进程描述符，低于这个值supervisor也将不会正常启动。</span><br><span class="line">                              <span class="built_in">ulimit</span>  -u这个命令，可以查看linux下面用户的最大进程数</span><br><span class="line">                              默认为200。。。非必须设置</span><br><span class="line">;<span class="built_in">umask</span>=022                   ; 进程创建文件的掩码</span><br><span class="line">                               默认为022。。非必须设置项</span><br><span class="line">;user=chrism                 ; 这个参数可以设置一个非root用户，当我们以root用户启动supervisord之后。</span><br><span class="line">                               我这里面设置的这个用户，也可以对supervisord进行管理</span><br><span class="line">                               默认情况是不设置。。。非必须设置项</span><br><span class="line">;identifier=supervisor       ; 这个参数是supervisord的标识符，主要是给XML_RPC用的。当你有多个</span><br><span class="line">                               supervisor的时候，而且想调用XML_RPC统一管理，就需要为每个</span><br><span class="line">                               supervisor设置不同的标识符了</span><br><span class="line">                               默认是supervisord。。。非必需设置</span><br><span class="line">;directory=/tmp              ; 这个参数是当supervisord作为守护进程运行的时候，设置这个参数的话，启动</span><br><span class="line">                               supervisord进程之前，会先切换到这个目录</span><br><span class="line">                               默认不设置。。。非必须设置</span><br><span class="line">;nocleanup=<span class="literal">true</span>              ; 这个参数当为<span class="literal">false</span>的时候，会在supervisord进程启动的时候，把以前子进程</span><br><span class="line">                               产生的日志文件(路径为AUTO的情况下)清除掉。有时候咱们想要看历史日志，当 </span><br><span class="line">                               然不想日志被清除了。所以可以设置为<span class="literal">true</span></span><br><span class="line">                               默认是<span class="literal">false</span>，有调试需求的同学可以设置为<span class="literal">true</span>。。。非必须设置</span><br><span class="line">;childlogdir=/tmp            ; 当子进程日志路径为AUTO的时候，子进程日志文件的存放路径。</span><br><span class="line">                               默认路径是这个东西，执行下面的这个命令看看就OK了，处理的东西就默认路径</span><br><span class="line">                               python -c <span class="string">"import tempfile;print tempfile.gettempdir()"</span></span><br><span class="line">                               非必须设置</span><br><span class="line">;environment=KEY=<span class="string">"value"</span>     ; 这个是用来设置环境变量的，supervisord在linux中启动默认继承了linux的</span><br><span class="line">                               环境变量，在这里可以设置supervisord进程特有的其他环境变量。</span><br><span class="line">                               supervisord启动子进程时，子进程会拷贝父进程的内存空间内容。 所以设置的</span><br><span class="line">                               这些环境变量也会被子进程继承。</span><br><span class="line">                               小例子：environment=name=<span class="string">"haha"</span>,age=<span class="string">"hehe"</span></span><br><span class="line">                               默认为不设置。。。非必须设置</span><br><span class="line">;strip_ansi=<span class="literal">false</span>            ; 这个选项如果设置为<span class="literal">true</span>，会清除子进程日志中的所有ANSI 序列。什么是ANSI</span><br><span class="line">                               序列呢？就是我们的\n,\t这些东西。</span><br><span class="line">                               默认为<span class="literal">false</span>。。。非必须设置</span><br><span class="line"></span><br><span class="line">; the below section must remain <span class="keyword">in</span> the config file <span class="keyword">for</span> RPC</span><br><span class="line">; (supervisorctl/web interface) to work, additional interfaces may be</span><br><span class="line">; added by defining them <span class="keyword">in</span> separate rpcinterface: sections</span><br><span class="line">[rpcinterface:supervisor]    ;这个选项是给XML_RPC用的，当然你如果想使用supervisord或者web server 这 </span><br><span class="line">                              个选项必须要开启的</span><br><span class="line">supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface </span><br><span class="line"></span><br><span class="line">[supervisorctl]              ;这个主要是针对supervisorctl的一些配置  </span><br><span class="line">serverurl=unix:///tmp/supervisor.sock ; 这个是supervisorctl本地连接supervisord的时候，本地UNIX socket</span><br><span class="line">                                        路径，注意这个是和前面的[unix_http_server]对应的</span><br><span class="line">                                        默认值就是unix:///tmp/supervisor.sock。。非必须设置</span><br><span class="line">;serverurl=http://127.0.0.1:9001 ; 这个是supervisorctl远程连接supervisord的时候，用到的TCP socket路径</span><br><span class="line">                                   注意这个和前面的[inet_http_server]对应</span><br><span class="line">                                   默认就是http://127.0.0.1:9001。。。非必须项</span><br><span class="line">                               </span><br><span class="line">;username=chris              ; 用户名</span><br><span class="line">                               默认空。。非必须设置</span><br><span class="line">;password=123                ; 密码</span><br><span class="line">                              默认空。。非必须设置</span><br><span class="line">;prompt=mysupervisor         ; 输入用户名密码时候的提示符</span><br><span class="line">                               默认supervisor。。非必须设置</span><br><span class="line">;history_file=~/.sc_history  ; 这个参数和shell中的<span class="built_in">history</span>类似，我们可以用上下键来查找前面执行过的命令</span><br><span class="line">                               默认是no file的。。所以我们想要有这种功能，必须指定一个文件。。。非</span><br><span class="line">                               必须设置</span><br><span class="line"></span><br><span class="line">; The below sample program section shows all possible program subsection values,</span><br><span class="line">; create one or more <span class="string">'real'</span> program: sections to be able to control them under</span><br><span class="line">; supervisor.</span><br><span class="line"></span><br><span class="line">;[program:theprogramname]      ;这个就是咱们要管理的子进程了，<span class="string">":"</span>后面的是名字，最好别乱写和实际进程</span><br><span class="line">                                有点关联最好。这样的program我们可以设置一个或多个，一个program就是</span><br><span class="line">                                要被管理的一个进程</span><br><span class="line">;<span class="built_in">command</span>=/bin/cat              ; 这个就是我们的要启动进程的命令路径了，可以带参数</span><br><span class="line">                                例子：/home/test.py -a <span class="string">'hehe'</span></span><br><span class="line">                                有一点需要注意的是，我们的<span class="built_in">command</span>只能是那种在终端运行的进程，不能是</span><br><span class="line">                                守护进程。这个想想也知道了，比如说<span class="built_in">command</span>=service httpd start。</span><br><span class="line">                                httpd这个进程被linux的service管理了，我们的supervisor再去启动这个命令</span><br><span class="line">                                这已经不是严格意义的子进程了。</span><br><span class="line">                                这个是个必须设置的项</span><br><span class="line">;process_name=%(program_name)s ; 这个是进程名，如果我们下面的numprocs参数为1的话，就不用管这个参数</span><br><span class="line">                                 了，它默认值%(program_name)s也就是上面的那个program冒号后面的名字，</span><br><span class="line">                                 但是如果numprocs为多个的话，那就不能这么干了。想想也知道，不可能每个</span><br><span class="line">                                 进程都用同一个进程名吧。</span><br><span class="line"></span><br><span class="line">                                </span><br><span class="line">;numprocs=1                    ; 启动进程的数目。当不为1时，就是进程池的概念，注意process_name的设置</span><br><span class="line">                                 默认为1    。。非必须设置</span><br><span class="line">;directory=/tmp                ; 进程运行前，会前切换到这个目录</span><br><span class="line">                                 默认不设置。。。非必须设置</span><br><span class="line">;<span class="built_in">umask</span>=022                     ; 进程掩码，默认none，非必须</span><br><span class="line">;priority=999                  ; 子进程启动关闭优先级，优先级低的，最先启动，关闭的时候最后关闭</span><br><span class="line">                                 默认值为999 。。非必须设置</span><br><span class="line">;autostart=<span class="literal">true</span>                ; 如果是<span class="literal">true</span>的话，子进程将在supervisord启动后被自动启动</span><br><span class="line">                                 默认就是<span class="literal">true</span>   。。非必须设置</span><br><span class="line">;autorestart=unexpected        ; 这个是设置子进程挂掉后自动重启的情况，有三个选项，<span class="literal">false</span>,unexpected</span><br><span class="line">                                 和<span class="literal">true</span>。如果为<span class="literal">false</span>的时候，无论什么情况下，都不会被重新启动，</span><br><span class="line">                                 如果为unexpected，只有当进程的退出码不在下面的exitcodes里面定义的退 </span><br><span class="line">                                 出码的时候，才会被自动重启。当为<span class="literal">true</span>的时候，只要子进程挂掉，将会被无</span><br><span class="line">                                 条件的重启</span><br><span class="line">;startsecs=1                   ; 这个选项是子进程启动多少秒之后，此时状态如果是running，则我们认为启</span><br><span class="line">                                 动成功了</span><br><span class="line">                                 默认值为1 。。非必须设置</span><br><span class="line">;startretries=3                ; 当进程启动失败后，最大尝试启动的次数。。当超过3次后，supervisor将把</span><br><span class="line">                                 此进程的状态置为FAIL</span><br><span class="line">                                 默认值为3 。。非必须设置</span><br><span class="line">;exitcodes=0,2                 ; 注意和上面的的autorestart=unexpected对应。。exitcodes里面的定义的</span><br><span class="line">                                 退出码是expected的。</span><br><span class="line">;stopsignal=QUIT               ; 进程停止信号，可以为TERM, HUP, INT, QUIT, KILL, USR1, or USR2等信号</span><br><span class="line">                                  默认为TERM 。。当用设定的信号去干掉进程，退出码会被认为是expected</span><br><span class="line">                                  非必须设置</span><br><span class="line">;stopwaitsecs=10               ; 这个是当我们向子进程发送stopsignal信号后，到系统返回信息</span><br><span class="line">                                 给supervisord，所等待的最大时间。 超过这个时间，supervisord会向该</span><br><span class="line">                                 子进程发送一个强制<span class="built_in">kill</span>的信号。</span><br><span class="line">                                 默认为10秒。。非必须设置</span><br><span class="line">;stopasgroup=<span class="literal">false</span>             ; 这个东西主要用于，supervisord管理的子进程，这个子进程本身还有</span><br><span class="line">                                 子进程。那么我们如果仅仅干掉supervisord的子进程的话，子进程的子进程</span><br><span class="line">                                 有可能会变成孤儿进程。所以咱们可以设置可个选项，把整个该子进程的</span><br><span class="line">                                 整个进程组都干掉。 设置为<span class="literal">true</span>的话，一般killasgroup也会被设置为<span class="literal">true</span>。</span><br><span class="line">                                 需要注意的是，该选项发送的是stop信号</span><br><span class="line">                                 默认为<span class="literal">false</span>。。非必须设置。。</span><br><span class="line">;killasgroup=<span class="literal">false</span>             ; 这个和上面的stopasgroup类似，不过发送的是<span class="built_in">kill</span>信号</span><br><span class="line">;user=chrism                   ; 如果supervisord是root启动，我们在这里设置这个非root用户，可以用来</span><br><span class="line">                                 管理该program</span><br><span class="line">                                 默认不设置。。。非必须设置项</span><br><span class="line">;redirect_stderr=<span class="literal">true</span>          ; 如果为<span class="literal">true</span>，则stderr的日志会被写入stdout日志文件中</span><br><span class="line">                                 默认为<span class="literal">false</span>，非必须设置</span><br><span class="line">;stdout_logfile=/a/path        ; 子进程的stdout的日志路径，可以指定路径，AUTO，none等三个选项。</span><br><span class="line">                                 设置为none的话，将没有日志产生。设置为AUTO的话，将随机找一个地方</span><br><span class="line">                                 生成日志文件，而且当supervisord重新启动的时候，以前的日志文件会被</span><br><span class="line">                                 清空。当 redirect_stderr=<span class="literal">true</span>的时候，sterr也会写进这个日志文件</span><br><span class="line">;stdout_logfile_maxbytes=1MB   ; 日志文件最大大小，和[supervisord]中定义的一样。默认为50</span><br><span class="line">;stdout_logfile_backups=10     ; 和[supervisord]定义的一样。默认10</span><br><span class="line">;stdout_capture_maxbytes=1MB   ; 这个东西是设定capture管道的大小，当值不为0的时候，子进程可以从stdout</span><br><span class="line">                                 发送信息，而supervisor可以根据信息，发送相应的event。</span><br><span class="line">                                 默认为0，为0的时候表达关闭管道。。。非必须项</span><br><span class="line">;stdout_events_enabled=<span class="literal">false</span>   ; 当设置为ture的时候，当子进程由stdout向文件描述符中写日志的时候，将</span><br><span class="line">                                 触发supervisord发送PROCESS_LOG_STDOUT类型的event</span><br><span class="line">                                 默认为<span class="literal">false</span>。。。非必须设置</span><br><span class="line">;stderr_logfile=/a/path        ; 这个东西是设置stderr写的日志路径，当redirect_stderr=<span class="literal">true</span>。这个就不用</span><br><span class="line">                                 设置了，设置了也是白搭。因为它会被写入stdout_logfile的同一个文件中</span><br><span class="line">                                 默认为AUTO，也就是随便找个地存，supervisord重启被清空。。非必须设置</span><br><span class="line">;stderr_logfile_maxbytes=1MB   ; 这个出现好几次了，就不重复了</span><br><span class="line">;stderr_logfile_backups=10     ; 这个也是</span><br><span class="line">;stderr_capture_maxbytes=1MB   ; 这个一样，和stdout_capture一样。 默认为0，关闭状态</span><br><span class="line">;stderr_events_enabled=<span class="literal">false</span>   ; 这个也是一样，默认为<span class="literal">false</span></span><br><span class="line">;environment=A=<span class="string">"1"</span>,B=<span class="string">"2"</span>       ; 这个是该子进程的环境变量，和别的子进程是不共享的</span><br><span class="line">;serverurl=AUTO                ; </span><br><span class="line"></span><br><span class="line">; The below sample eventlistener section shows all possible</span><br><span class="line">; eventlistener subsection values, create one or more <span class="string">'real'</span></span><br><span class="line">; eventlistener: sections to be able to handle event notifications</span><br><span class="line">; sent by supervisor.</span><br><span class="line"></span><br><span class="line">;[eventlistener:theeventlistenername] ;这个东西其实和program的地位是一样的，也是suopervisor启动的子进</span><br><span class="line">                                       程，不过它干的活是订阅supervisord发送的event。他的名字就叫</span><br><span class="line">                                       listener了。我们可以在listener里面做一系列处理，比如报警等等</span><br><span class="line">                                       楼主这两天干的活，就是弄的这玩意</span><br><span class="line">;<span class="built_in">command</span>=/bin/eventlistener    ; 这个和上面的program一样，表示listener的可执行文件的路径</span><br><span class="line">;process_name=%(program_name)s ; 这个也一样，进程名，当下面的numprocs为多个的时候，才需要。否则默认就</span><br><span class="line">                                 OK了</span><br><span class="line">;numprocs=1                    ; 相同的listener启动的个数</span><br><span class="line">;events=EVENT                  ; event事件的类型，也就是说，只有写在这个地方的事件类型。才会被发送</span><br><span class="line">                      </span><br><span class="line">                                 </span><br><span class="line">;buffer_size=10                ; 这个是event队列缓存大小，单位不太清楚，楼主猜测应该是个吧。当buffer</span><br><span class="line">                                 超过10的时候，最旧的event将会被清除，并把新的event放进去。</span><br><span class="line">                                 默认值为10。。非必须选项</span><br><span class="line">;directory=/tmp                ; 进程执行前，会切换到这个目录下执行</span><br><span class="line">                                 默认为不切换。。。非必须</span><br><span class="line">;<span class="built_in">umask</span>=022                     ; 淹没，默认为none，不说了</span><br><span class="line">;priority=-1                   ; 启动优先级，默认-1，也不扯了</span><br><span class="line">;autostart=<span class="literal">true</span>                ; 是否随supervisord启动一起启动，默认<span class="literal">true</span></span><br><span class="line">;autorestart=unexpected        ; 是否自动重启，和program一个样，分<span class="literal">true</span>,<span class="literal">false</span>,unexpected等，注意</span><br><span class="line">                                  unexpected和exitcodes的关系</span><br><span class="line">;startsecs=1                   ; 也是一样，进程启动后跑了几秒钟，才被认定为成功启动，默认1</span><br><span class="line">;startretries=3                ; 失败最大尝试次数，默认3</span><br><span class="line">;exitcodes=0,2                 ; 期望或者说预料中的进程退出码，</span><br><span class="line">;stopsignal=QUIT               ; 干掉进程的信号，默认为TERM，比如设置为QUIT，那么如果QUIT来干这个进程</span><br><span class="line">                                 那么会被认为是正常维护，退出码也被认为是expected中的</span><br><span class="line">;stopwaitsecs=10               ; max num secs to <span class="built_in">wait</span> b4 SIGKILL (default 10)</span><br><span class="line">;stopasgroup=<span class="literal">false</span>             ; send stop signal to the UNIX process group (default <span class="literal">false</span>)</span><br><span class="line">;killasgroup=<span class="literal">false</span>             ; SIGKILL the UNIX process group (def <span class="literal">false</span>)</span><br><span class="line">;user=chrism                   ;设置普通用户，可以用来管理该listener进程。</span><br><span class="line">                                默认为空。。非必须设置</span><br><span class="line">;redirect_stderr=<span class="literal">true</span>          ; 为<span class="literal">true</span>的话，stderr的<span class="built_in">log</span>会并入stdout的<span class="built_in">log</span>里面</span><br><span class="line">                                默认为<span class="literal">false</span>。。。非必须设置</span><br><span class="line">;stdout_logfile=/a/path        ; 这个不说了，好几遍了</span><br><span class="line">;stdout_logfile_maxbytes=1MB   ; 这个也是</span><br><span class="line">;stdout_logfile_backups=10     ; 这个也是</span><br><span class="line">;stdout_events_enabled=<span class="literal">false</span>   ; 这个其实是错的，listener是不能发送event</span><br><span class="line">;stderr_logfile=/a/path        ; 这个也是</span><br><span class="line">;stderr_logfile_maxbytes=1MB   ; 这个也是</span><br><span class="line">;stderr_logfile_backups        ; 这个不说了</span><br><span class="line">;stderr_events_enabled=<span class="literal">false</span>   ; 这个也是错的，listener不能发送event</span><br><span class="line">;environment=A=<span class="string">"1"</span>,B=<span class="string">"2"</span>       ; 这个是该子进程的环境变量</span><br><span class="line">                                 默认为空。。。非必须设置</span><br><span class="line">;serverurl=AUTO                ; override serverurl computation (childutils)</span><br><span class="line"></span><br><span class="line">; The below sample group section shows all possible group values,</span><br><span class="line">; create one or more <span class="string">'real'</span> group: sections to create <span class="string">"heterogeneous"</span></span><br><span class="line">; process groups.</span><br><span class="line"></span><br><span class="line">;[group:thegroupname]  ;这个东西就是给programs分组，划分到组里面的program。我们就不用一个一个去操作了</span><br><span class="line">                         我们可以对组名进行统一的操作。 注意：program被划分到组里面之后，就相当于原来</span><br><span class="line">                         的配置从supervisor的配置文件里消失了。。。supervisor只会对组进行管理，而不再</span><br><span class="line">                         会对组里面的单个program进行管理了</span><br><span class="line">;programs=progname1,progname2  ; 组成员，用逗号分开</span><br><span class="line">                                 这个是个必须的设置项</span><br><span class="line">;priority=999                  ; 优先级，相对于组和组之间说的</span><br><span class="line">                                 默认999。。非必须选项</span><br><span class="line"></span><br><span class="line">; The [include] section can just contain the <span class="string">"files"</span> setting.  This</span><br><span class="line">; setting can list multiple files (separated by whitespace or</span><br><span class="line">; newlines).  It can also contain wildcards.  The filenames are</span><br><span class="line">; interpreted as relative to this file.  Included files *cannot*</span><br><span class="line">; include files themselves.</span><br><span class="line"></span><br><span class="line">;[include]                         ;这个东西挺有用的，当我们要管理的进程很多的时候，写在一个文件里面</span><br><span class="line">                                    就有点大了。我们可以把配置信息写到多个文件中，然后include过来</span><br><span class="line">;files = relative/directory/*.ini</span><br></pre></td></tr></table></figure>
+<p>参考: <a href="http://lixcto.blog.51cto.com/4834175/1539136" target="_blank" rel="noopener">http://lixcto.blog.51cto.com/4834175/1539136</a></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>supervisor</tag>
+        <tag>管理Linux进程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> 使用Docker安装Discourse		</title>
+    <url>/2016/09/20/to-use-docker-install-discourse/</url>
+    <content><![CDATA[<p>Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。</p>
+<a id="more"></a>
+<p><blockquote><br>Discourse is the 100% open source discussion platform built for the next decade of the Internet. It works as:</blockquote></p>
+<li>a mailing list<br><br></li><li>a discussion forum</li><br><li>a long-form chat room</li><br><br>官网:<a href="http://www.discourse.org/" target="_blank" rel="noopener"> www.discourse.org</a><br>源码:<a href="https://github.com/discourse/discourse" target="_blank" rel="noopener"> github.com/discourse/discourse</a><br><br><br><h2>安装要求</h2><br><br><li>Linux服务器(内核版本&gt;=3.1)<br><br></li><li>官方建议2G以上内存(可以使用虚拟内存)<br><br></li><li>基本的Linux命令行操作</li>
+
+<h2>安装配置Discourse</h2>
+
+<p>1.安装Docker(这里使用官方提供的脚本)<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -qO- https://get.docker.io/ | sh</span><br></pre></td></tr></table></figure></p>
+<p>2.从github克隆discourse docker安装源码<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir /var/discourse</span><br><span class="line">sudo git <span class="built_in">clone</span> https://github.com/discourse/discourse_docker.git /var/discourse</span><br></pre></td></tr></table></figure></p>
+<p>3.安装前配置(有两种方法)</p>
+<p>手动配置：(推荐)<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/discourse</span><br><span class="line">cp samples/standalone.yml containers/app.yml</span><br><span class="line">sudo vim containers/app.yml</span><br></pre></td></tr></table></figure></p>
+<p>修改下面字段的对应值:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DISCOURSE_HOSTNAME: &apos;discourse.ichenfei.com&apos;     ###配置域名,可用ip代替</span><br><span class="line"></span><br><span class="line">DISCOURSE_DEVELOPER_EMAILS: &apos;853885165@qq.com&apos;   ###开发者邮箱地址</span><br><span class="line"></span><br><span class="line">## 配置SMTP邮箱</span><br><span class="line">DISCOURSE_SMTP_ADDRESS: smtp.qq.com              # smtp地址</span><br><span class="line">DISCOURSE_SMTP_PORT: 25                          # 端口(可选, 默认 587)</span><br><span class="line">DISCOURSE_SMTP_USER_NAME: 853885165@qq.com       # 必选</span><br><span class="line">DISCOURSE_SMTP_PASSWORD: PASSSWORD               # 必选</span><br><span class="line">DISCOURSE_SMTP_ENABLE_START_TLS: false           # 加密(可选, 默认为true)</span><br></pre></td></tr></table></figure>
+<p>启动Discourse：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./launcher bootstrap app   <span class="comment">#初始化</span></span><br><span class="line">./launcher start app       <span class="comment">#启动discourse容器</span></span><br></pre></td></tr></table></figure></p>
+<p>自动配置:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ./discourse-setup    <span class="comment">#交互式,填入对应值就行，填错删除使用 Ctrl+Backspace</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse配置.jpg" alt="Discourse配置" width="623" height="354" class="aligncenter size-full wp-image-382"></p>
+<p>4.维护Discourse(使用launcher)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">launcher COMMAND CONFIG [--skip-prereqs] [--docker-args STRING]</span><br><span class="line"></span><br><span class="line">COMMAND:</span><br><span class="line">    start:      启动/初始化一个容器</span><br><span class="line">    stop:       停止一个正在运行的容器</span><br><span class="line">    restart:    重启一个容器</span><br><span class="line">    destroy:    停止并删除一个容器</span><br><span class="line">    enter:      使用 nsenter 进入容器</span><br><span class="line">    logs:       容器的Docker日志</span><br><span class="line">    bootstrap:  基于配置模版来引导一个容器</span><br><span class="line">    rebuild:    重建一个容器（摧毁旧的,初始化,启动新的）</span><br><span class="line">    cleanup:    清理所有停止了超过24小时的容器</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">    --skip-prereqs             不检查前置需求</span><br><span class="line">    --docker-args              当运行 docker 时，展开并传入参数</span><br><span class="line">    --skip-mac-address         不分配mac地址</span><br></pre></td></tr></table></figure>
+<p>6.注册管理员账号</p>
+<p>这时,通过ip或域名(要解析或修改host)都能访问到discourse,点击 sign up 使用开发者邮箱注册账号(验证登录后默认就是管理员了)</p>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/创建Discourse账号.jpg" alt="创建Discourse账号" width="446" height="399" class="aligncenter size-full wp-image-383"><br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse验证邮箱.jpg" alt="Discourse验证邮箱" width="808" height="158" class="aligncenter size-full wp-image-384"></p>
+<p>ps:<br>系统默认有个system账号,google也不知道密码，也不知道Discourse是用什么方式加密的。<br>手动修改数据库设置账号active字段为true也好像没什么卵用，只好通过smtp,嗯，要确定smtp账号是有效的。。。</p>
+<p>7.管理Discourse站点<br>登录后访问 http://域名/admin 就能访问discourse管理界面了。<br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse_admin-1024x504.jpg" alt="Discourse_admin" width="1024" height="504" class="aligncenter size-large wp-image-386"></p>
+]]></content>
+      <categories>
+        <category>Discourse</category>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Discourse</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> 查看Docker容器日志		</title>
+    <url>/2016/09/17/get-docker-contain-logs/</url>
+    <content><![CDATA[<p>查看Docker容器日志<br><a id="more"></a></p>
+<p>由于在建立Wordpress容器的时候总是刚建完就直接退出。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@hhf ~]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS                     PORTS                                      NAMES</span><br><span class="line">da602f603d64        wordpress             <span class="string">"/entrypoint.sh apach"</span>   5 minutes ago       Exited (1) 5 minutes ago                                              wordpress1</span><br><span class="line">dbf9e0ff7cb1        mysql                 <span class="string">"docker-entrypoint.sh"</span>   6 minutes ago       Up 5 minutes               3306/tcp                                   db1</span><br></pre></td></tr></table></figure></p>
+<p>也不知道啥原因,Docker在/var/log下也没有日志。<br>此时可以使用 docker logs +容器名 查看容器日志</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@hhf ~]<span class="comment"># docker logs da602f603d64</span></span><br><span class="line">error: missing required WORDPRESS_DB_PASSWORD environment variable</span><br><span class="line">  Did you forget to -e WORDPRESS_DB_PASSWORD=... ?</span><br><span class="line"></span><br><span class="line">  (Also of interest might be WORDPRESS_DB_USER and WORDPRESS_DB_NAME.)</span><br></pre></td></tr></table></figure>
+<p>原来是没有加 WORDPRESS_DB_PASSWORD 参数导致的</p>
+<p>删除创建失败的容器再使用-e WORDPRESS_DB_PASSWORD=’password’创建:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker rm da602f603d64</span><br><span class="line">docker run --name wordpress1 --link db1:db1 -d -P -e WORDPRESS_DB_PASSWORD=password wordpress</span><br><span class="line">docker ps</span><br><span class="line"></span><br><span class="line">CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                                      NAMES</span><br><span class="line">dbf9e0ff7cb1        mysql                 <span class="string">"docker-entrypoint.sh"</span>   16 minutes ago      Up 16 minutes       3306/tcp                                   db1</span><br><span class="line">4957dd67d2cd        wordpress             <span class="string">"/entrypoint.sh apach"</span>   44 minutes ago      Up 22 minutes       0.0.0.0:32773-&gt;80/tcp                      some-wordpress</span><br></pre></td></tr></table></figure>
+<p>附:<br>docker logs –help<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage:	docker logs [OPTIONS] CONTAINER</span><br><span class="line"></span><br><span class="line">Fetch the logs of a container</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      --details        Show extra details provided to logs</span><br><span class="line">  -f, --follow         Follow <span class="built_in">log</span> output</span><br><span class="line">      --<span class="built_in">help</span>           Print usage</span><br><span class="line">      --since string   Show logs since timestamp</span><br><span class="line">      --tail string    Number of lines to show from the end of the logs (default <span class="string">"all"</span>)</span><br><span class="line">  -t, --timestamps     Show timestamps</span><br></pre></td></tr></table></figure></p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+        <category>wordpress</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>Docker</tag>
+        <tag>wordpress</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL5.7忘记root密码解决方法		</title>
+    <url>/2016/09/13/forget-root-password-mysql5-7/</url>
+    <content><![CDATA[<p>MySQL5.7忘记root密码解决方法</p>
+<a id="more"></a>
+<p>1.使用skip-grant-tables取消授权登录 [bash] vi /etc/my.cnf 在mysqld下面添加 skip-grant-tables [mysqld] skip-grant-table [/bash] 2.重启mysqld [bash] sudo /etc/init.d/mysqld restart [/bash] 3.此时不需要密码就能进入mysql交互界面 [bash] [root@ichenfei ~]# mysql mysql&gt; [/bash] 4.命令行修改root [bash] mysql&gt; update mysql.user set authentication_string=password(‘password’) where user=’root’ and Host = ‘localhost’; mysql&gt; flush privileges; mysql&gt; quit; ‘password’为要设置的密码 MySQL 5.7将password替换成了authentication_string. 5.7之前使用password。 [/bash] 5.重启mysqld后就能使用新设置的密码登录了. [bash] sudo /etc/init.d/mysqld restart mysql -uroot -ppassword [/bash] 再进入MySQL操作提示, 这是因为,自MySQL 5.7开始，密码存在有效期的概念， 同时因为安全等级的问题，需要使用使用其它的方式进行设置。 [bash] ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement. [/bash] 可以通过 [bash] ALTER USER USER() IDENTIFIED BY ‘password’; [/bash] 修改密码 报错: ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 这和密码的安全等级相关,此时先设置成包含大小写+特殊字符的密码。 查看安全等级命令如下: [bash] mysql&gt; SHOW VARIABLES LIKE ‘validate_password%’; +————————————–+——–+ | Variable_name | Value | +————————————–+——–+ | validate_password_dictionary_file | | | validate_password_length | 8 | | validate_password_mixed_case_count | 1 | | validate_password_number_count | 1 | | validate_password_policy | MEDIUM | | validate_password_special_char_count | 1 | +————————————–+——–+ [/bash] 通过 SET GLOBAL validate_password_policy=’LOW’; 命令，降低安全等级后，就可以直接使用，限制是必须8个字符以上； 关于安全等级更详细的介绍如下：*   LOW 只测试密码长度。 密码必须至少有8个字符长。</p>
+<ul>
+<li>MEDIUM 密码必须包含至少1数字字符,1大写和小写字符,和1特殊字符。</li>
+<li>STRONG 密码子字符串长度为4的或更长时间不能匹配 单词在字典文件中,如果一个人被指定。<br>关于密码有效期相关的更多信息。 <a href="http://dev.mysql.com/doc/refman/5.7/en/password-expiration-policy.html" target="_blank" rel="noopener">http://dev.mysql.com/doc/refman/5.7/en/password-expiration-policy.html</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> Centos系统安装Docker		</title>
+    <url>/2016/09/13/install-docker-in-centos/</url>
+    <content><![CDATA[<p>Centos系统安装Docker</p>
+<a id="more"></a>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Centos7系列: CentOS7 的 CentOS-Extras 库中已带 Docker，可以直接安装： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum install docker</span><br></pre></td></tr></table></figure>
+<p>Centos6系列:</p>
+<p>1.添加docker软件源 </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &gt; /etc/yum.repos.d/docker.repo &lt;&lt;EOF \[dockerrepo\] name=Docker Repository baseurl=https://yum.dockerproject.org/repo/main/centos/7/ enabled=1 gpgcheck=1 gpgkey=https://yum.dockerproject.org/gpg EOF</span><br></pre></td></tr></table></figure>
+<p> 2.安装 docker </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum update sudo yum install -y docker-engine</span><br></pre></td></tr></table></figure>
+<p>也可以使用Docker官方提供的脚本: </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo curl -sSL https://get.docker.com/ | sh</span><br></pre></td></tr></table></figure>
+<h3 id="启动docker"><a href="#启动docker" class="headerlink" title="启动docker"></a>启动docker</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
+<h3 id="设置开机自动启动"><a href="#设置开机自动启动" class="headerlink" title="设置开机自动启动"></a>设置开机自动启动</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chkconfig docker on</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> ansible使用笔记		</title>
+    <url>/2016/03/31/record-use-ansible/</url>
+    <content><![CDATA[<p>ansible 是一个模型驱动的配置管理器，支持多节点发布、远程任务执行。默认使用 SSH 进行远程连接。无需在被管理节点上安装附加软件，可使用各种编程语言进行扩展。</p><p>ansible 基于Python语言实现，由Paramiko和PyYAML两个关键模块构建，特点有:</p><ul>
+<li>部署简单，只要主控端部署ansible环境，被控端无需任何操作</li>
+<li>默认使用SSH协议对设备进行管理</li>
+<li>主从集中化管理</li>
+<li>配置简单，功能强大扩展性强</li>
+<li>支持API及自定义模块，可通过Python轻松扩展</li>
+<li>通过playbook定制强大配置、状态管理</li>
+</ul><a id="more"></a>
+<!--miore-->
+
+
+<h2>安装:</h2>
+
+<p>centos:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install ansible</span><br></pre></td></tr></table></figure></p>
+<p>ubuntu:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">apt-get install ansible</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install ansible</span><br></pre></td></tr></table></figure></p>
+<p>编译安装:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://pypi.python.org/packages/<span class="built_in">source</span>/a/ansible/ansible-1.9.5.tar.gz<span class="comment">#md5=9adaa79b8040cc46b3e1d0140e0717ff</span></span><br><span class="line">tar -zxvf  ansible-2.0.0.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ansible-2.0.0.1</span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure></p>
+<p>配置文件在 <code>/etc/ansible/ansible.cfg</code></p>
+<p>ansible主机在 <code>/etc/ansible/hosts</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> ubuntu14.04 安装dokuwiki		</title>
+    <url>/2016/02/01/install-dokuwiki-in-ubuntu-14-04/</url>
+    <content><![CDATA[<p>DokuWiki是一个开源wiki引擎程序，运行于PHP环境下。Doku Wiki 程序小巧而功能强大、灵活，适合中小团队和个人网站知识库的管理。 DokuWiki可以与多种CMS程序进行整合，例如WordPress、XOOPS、PostNuke等。由于这个原因，很多Blog作者对DokuWiki比较感兴趣。<br><a id="more"></a></p>
+<p></p><h2>步骤</h2><p></p>
+<ol>
+<li>更新apt-get<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>2、安装apache、php5<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install apache2 libapache2-mod-php5</span><br></pre></td></tr></table></figure></p>
+<p>3、apache开启rewrite<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo a2enmod rewrite</span><br></pre></td></tr></table></figure></p>
+<p>4、下载dokuwiki并解压到/var/www/html<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html</span><br><span class="line">sudo wget http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz</span><br><span class="line">sudo tar xvf dokuwiki-stable.tgz</span><br><span class="line">sudo mv dokuwiki-*/* .</span><br><span class="line">sudo rm index.php</span><br></pre></td></tr></table></figure></p>
+<p>5、更改权限为www-data:www-data<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R www-data:www-data /var/www/html</span><br></pre></td></tr></table></figure></p>
+<p>6、重启apache2<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service apache2 restart</span><br></pre></td></tr></table></figure></p>
+<p>7、浏览器访问 ip/install.php完成dokuwiki配置。</p>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2016/02/QQ截图20160201201302-1024x518.jpg" alt="QQ截图20160201201302" width="1024" height="518" class="aligncenter size-large wp-image-324"><br>8、配置完成后删除install.php<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rm install.php</span><br></pre></td></tr></table></figure></p>
+<p>到这里酒安装完成了。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>wiki</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> 安装完django后的一些问题		</title>
+    <url>/2016/01/24/some-problem-after-install-django/</url>
+    <content><![CDATA[<p>安装完django后的一些问题记录</p>
+<a id="more"></a>
+<p>上次在centos6安装了django1.9，安装完之后虽然能用了，但出现了一些问题</p>
+<blockquote>
+<p>问题1：yum不能用了</p>
+</blockquote>
+<p>提示: No module named yum 解决方法：google后了解到，由于yum和Python是依赖关系，修改修改yum配置 [bash] sudo vi /usr/bin/yum #!/usr/bin/python 改为 #!/usr/bin/python2.6 [/bash]</p>
+<blockquote>
+<p>问题2：python交互界面上下左右退格变成了ABCDH</p>
+</blockquote>
+<p>解决方法：是因为readline库的问题，安装readline-devel [bash] yum install readline-devel.* 重新编译安装python make &amp;&amp; make install [/bash]</p>
+<blockquote>
+<p>问题3：django-admin.py无法运行</p>
+</blockquote>
+<p>提示： -bash: django-admin.py: command not found 解决方法： 找到 django-admin.py的位置： [bash] find / -name django-admin.py [/bash] 找到在 /usr/local/python2.7/bin/django-admin.py 建立软链接： [bash] ln -s /usr/local/python2.7/bin/django-admin.py /usr/bin/django-admin.py ln -s /usr/local/python2.7/bin/django-admin.py /usr/bin/django-admin [/bash]</p>
+]]></content>
+      <categories>
+        <category>django</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> linux设置开启swap交换分区(虚拟内存)		</title>
+    <url>/2015/12/18/setup-swap-file-on-linux/</url>
+    <content><![CDATA[<p>linux设置开启swap交换分区</p>
+<a id="more"></a>
+<p><strong>1. 验证不存在交换分区</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">free -m</span><br></pre></td></tr></table></figure>
+<p>输出如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">             total       used       free     shared    buffers     cached</span><br><span class="line">Mem:           995        947         47          0         46        142</span><br><span class="line">-/+ buffers/cache:        758        236</span><br><span class="line">Swap:           0          0        0</span><br></pre></td></tr></table></figure></p>
+<p>如果swap选项total是0则表示没有交换分区，开始下一步</p>
+<p><strong>2. 创建swap分区</strong><br>使用dd命令选择swap分区目录以及大小,在此我们给他放到根目录，创建的是2G的虚拟内存，可以根据自己需要选择大小。 </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=/dev/zero of=/swapfile count=2048 bs=1M</span><br></pre></td></tr></table></figure>
+<p>输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2048+0 records in</span><br><span class="line">2048+0 records out</span><br><span class="line">2147483648 bytes (2.1 GB) copied, 10.5356 s, 204 MB/s</span><br></pre></td></tr></table></figure>
+<p>接下来验证根目录是否存在swapfile</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ls / | grep swapfile</span><br></pre></td></tr></table></figure>
+<p>不出意外的话你将会看到swapfile<br><br><br><strong>3. 激活swap分区</strong><br>交换分区不会自动激活，你需要告诉服务器如何格式化文件,使它作为一个有效的交换分区。<br>出于安全考虑，交交换区权限设置成600</p>
+<figure class="highlight plain"><figcaption><span>600</span><a href="/swapfile```">link</a></figcaption><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">使用mkswap命令来设置交换文件：</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">mkswap /swapfile</span><br></pre></td></tr></table></figure>
+<p>输出如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Setting up swapspace version 1, size = 4194300 KiB</span><br><span class="line">no label, UUID=*******************************</span><br></pre></td></tr></table></figure></p>
+<p><br><br><strong>4. 开启swap分区</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">swapon /swapfile</span><br></pre></td></tr></table></figure>
+<p>输出如下：<br>再次使用 free -m 查看内存使用情况，输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">total       used       free     shared    buffers     cached</span><br><span class="line">Mem:          1840       1754         86         16         23       1519</span><br><span class="line">-/+ buffers/cache:        210       1630</span><br><span class="line">Swap:         2047          0       2047</span><br></pre></td></tr></table></figure>
+<p><strong>5. 设置允许开机启用swap分区</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/fstab</span><br></pre></td></tr></table></figure>
+<p>在后面加上</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">/swapfile   none    swap    sw    0   0</span><br></pre></td></tr></table></figure>
+<p>参考:<a href="https://www.vultr.com/docs/setup-swap-file-on-linux" target="_black">vultr帮助文档</a></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Linux常用的解压缩命令(.tar.gz .zip .rar .7z)		</title>
+    <url>/2015/12/12/linux-decode-and-code/</url>
+    <content><![CDATA[<h3 id="tar-gz-tgz"><a href="#tar-gz-tgz" class="headerlink" title="tar.gz/tgz"></a>tar.gz/tgz</h3><p>linux自带<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解压: tar -zxvf FileName.tar.gz               //解压FileName.tar.gz文件  </span><br><span class="line">压缩：tar -zcvf DirName.tar.gz  DirName       //将文件夹DirdName压缩为 DirName.tar.gz</span><br><span class="line">    tar -zcvf FileName.tar.gz FileName1 FileName2 … //将FileName1,FileName2…压缩为FileName.tar.gz</span><br></pre></td></tr></table></figure></p><a id="more"></a>
+<h3 id="tar-xz"><a href="#tar-xz" class="headerlink" title="tar.xz"></a>tar.xz</h3><p>解压：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">xz -d xxx.tar.xz</span><br><span class="line">tar -xavf xxx.tar</span><br></pre></td></tr></table></figure></p>
+<h3 id="zip"><a href="#zip" class="headerlink" title=".zip"></a>.zip</h3><p>需要安装zip以及unzip</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解压：unzip FileName.zip           //解压FileName.zip</span><br><span class="line">压缩：zip -r DirName.zip DirName   //将文件夹DirName压缩为DirName.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="rar"><a href="#rar" class="headerlink" title=".rar"></a>.rar</h3><p>需要下载rar</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解压：rar x FileName.rar           //解压FileName.rar</span><br><span class="line">压缩：rar a FileName.rar DirName   //将DirName压缩为DirName.rar</span><br></pre></td></tr></table></figure>
+<h3 id="7z"><a href="#7z" class="headerlink" title=".7z"></a>.7z</h3><p>需要下载p7zip-full</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解压：7z x FileName.7z        //解压FileName.7z</span><br><span class="line">压缩：7z a DirName.7z DirName.7z  //将DirName压缩为DirName.7z</span><br></pre></td></tr></table></figure>
+<p>安装命令示例：<br>Redhat、Fedora、Centos下安装zip、unzip：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install -y zip unzip</span><br></pre></td></tr></table></figure>
+<p>Debian、Ubuntu下安装zip、unzip：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt-get install -y zip unzip</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>linux命令</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> ubuntu service 12.04安装edx记录		</title>
+    <url>/2015/12/11/install-open-edx-ubuntu-service-12-04-64-bit/</url>
+    <content><![CDATA[<p> ubuntu service 12.04安装edx记录</p>
+<a id="more"></a>
+<h2 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h2><ul>
+<li><p>内存4G  </p>
+</li>
+<li><p>cpu 4核  </p>
+</li>
+<li><p>硬盘 90G</p>
+</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>查看系统版本信息 uname -a [bash] Linux vultr.guest 3.2.0-95-generic #135-Ubuntu SMP Tue Nov 10 13:33:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux [/bash] 1. 更新apt-get [bash] sudo apt-get update -y sudo apt-get upgrade -y sudo reboot [/bash] 2. 安装系统依赖 [bash] sudo apt-get install -y build-essential software-properties-common python-software-properties curl git-core libxml2-dev libxslt1-dev libfreetype6-dev python-pip python-apt python-dev libxmlsec1-dev swig sudo pip install –upgrade pip sudo pip install –upgrade virtualenv [/bash] 3. 从github 克隆安装脚本 [bash] cd /var/tmp git clone <a href="https://github.com/edx/configuration" target="_blank" rel="noopener">https://github.com/edx/configuration</a> [/bash] 4.修改配置文件设置允许ssh通过密码登录 [bash] sudo vi /var/tmp/configuration/playbooks/roles/common_vars/defaults/main.yml [/bash] 找到 COMMON_SSH_PASSWORD_AUTH: “no”,将其修改为”yes”;不然一不小心重启后就要杯具了。 5.安装依赖环境 [bash] cd /var/tmp/configuration sudo pip install -r requirements.txt [/bash] 安装依赖时遇到了 EnvironmentError: mysql_config not found 这个错误 解决方法：安装 libmysqlclient-dev [bash] sudo apt-get install libmysqlclient-dev [/bash] 6. 执行安装时遇到 pkg_resources.DistributionNotFound: paramiko 的报错 参考解决方法如下： [bash] pip install paramiko==1.10 pip install fabric==1.8.1 [/bash] 7. 执行安装脚本 [bash] cd /var/tmp/configuration/playbooks &amp;&amp; sudo ansible-playbook -c local ./edx_sandbox.yml -i “localhost,” [/bash] 默认安装的是master版本,如果要执行lms，cms域名及其端口还有版本。请参考下面的脚本 [bash] cd /var/tmp/configuration/playbooks/edx-east sudo ansible-playbook -c local –limit “localhost:127.0.0.1” ../edx_sandbox.yml \ -i “localhost,” -e ‘EDXAPP_PREVIEW_LMS_BASE=preview.example.com EDXAPP_LMS_BASE=example.com EDXAPP_LMS_PREVIEW_NGINX_PORT=80 EDXAPP_CMS_NGINX_PORT=80 EDXAPP_LMS_NGINX_PORT=80 edx_platform_version=master ‘ [/bash] 顺利的话出现下图提示就表示安装成功了 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/QQ截图20151211131507.png" alt="edx安装成功"> 8. 此时访问浏览器还不能访问到服务器 查看edx各服务允许状态如下： [bash] sudo /edx/bin/supervisorctl status [/bash] <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx服务器允许状态.png" alt="检查edx各服务器运行状态"> 发现浏览器http访问被301重定向到了https。猜是因为这个导致的无法访问。 查看lms的Nginx配置文件 [bash]sudo vi /edx/app/nginx/sites-available/lms[/bash] 发现最后有句 [bash] if ($scheme != “https”) { rewrite ^ https://$host$uri permanent; } [/bash] 将其注释掉或者删除都行，同理在修改cms。重启nginx服务器。 [bash] sudo service nginx restart [/bash] 同时清除浏览器缓存再次访问 出现了welcome to open edX!界面 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx首页.png" alt="openedx首页"> 安装服务器完成，接下来需要的就只是配置了。</p>
+]]></content>
+      <categories>
+        <category>Open edx</category>
+      </categories>
+      <tags>
+        <tag>edx</tag>
+        <tag>openedx</tag>
+        <tag>安装edx</tag>
+        <tag>安装openedx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> ubuntu 14.04服务器上使用nginx搭建wordpress博客详解		</title>
+    <url>/2015/12/08/ubuntu%2014.04%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E4%BD%BF%E7%94%A8nginx%E6%90%AD%E5%BB%BAwordpress%E5%8D%9A%E5%AE%A2%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>ubuntu 14.04服务器上使用nginx搭建wordpress博客<br><a id="more"></a></p>
+<p></p><h2>过程详解</h2><p></p>
+<p>1. 更新apt-get</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+<p>2.安装nginx</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install nginx</span><br></pre></td></tr></table></figure>
+<p>3.启动nginx<br><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure><br><br></p><p>此时浏览器输入你的服务器ip会看到如下界面</p><br><p>4. 安装mysql</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install mysql-server php5-mysql</span><br></pre></td></tr></table></figure>
+<p>5. 安装php</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install php5-fpm</span><br></pre></td></tr></table></figure>
+<p>6. 配置PHP</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/php5/fpm/php.ini</span><br></pre></td></tr></table></figure>
+<p>找到cgi.fix_pathinfo=1,把1改成0,并去掉；号<span style="color:#66ccff;">(如果vim编辑器的上下左右键变成了ABCD可以使用下面的命令重装vim解决)</span></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get remove vim-common </span><br><span class="line">sudo apt-get install vim</span><br></pre></td></tr></table></figure>
+<p></p><p></p>
+<p>7. 启动php-fpm</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service php5-fpm restart</span><br></pre></td></tr></table></figure>
+<p>8. 配置nginx</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
+<p>打开后如图：<br>改为<br>取消一些注释如图：<br>保存退出并重启nginx</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
+<p>9. 安装phpmyadmin,并建立软链接</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install phpmyadmin  </span><br><span class="line">sudo ln -s /usr/share/phpmyadmin/ /usr/share/nginx/html/phpmyadmin</span><br></pre></td></tr></table></figure>
+<p>安装中会要求输入密码<br>浏览器访问phpmyadmin:ip/phpmyadmin<br>登录账号为root，密码为设置的密码</p>
+<p>10 建立名为wordpress的数据库</p><br><span style="color:#66ccff;">(如果你擅长SQL语句，可以直接用SQL语句创建数据库 create database wordpress;)</span><br><p>11. 下载wordpress,解压，转移到nginx目录,更改文件所有者</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/share/nginx/html/    <span class="comment">#有的是www而不是html</span></span><br><span class="line">sudo wget https://cn.wordpress.org/wordpress-4.3.1-zh_CN.tar.gz</span><br><span class="line">sudo tar -zxvf wordpress-*.tar.gz </span><br><span class="line">sudo mv wordpress/* .</span><br><span class="line">sudo rm index.html</span><br><span class="line">sudo chown -R www-data:www-data *</span><br><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
+<p>12. 此时浏览器输入ip访问会出现如下页面</p><br>点击现在就开始,填表,提交。<br><p>如果提示<span style="color:red">抱歉，但是向导在您的文件系统中没有足够的权限写入wp-config.php文件。</span>,使用下面的命令可直接修改写入wp-config.php</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp  wp-config-sample.php wp-config.php </span><br><span class="line">sudo vi  wp-config.php</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ichenfei.com/wp-content/uploads/2015/12/QQ截图20160115103946-2.jpg" alt="QQ截图20160115103946" width="675" height="280" class="aligncenter size-full wp-image-293"></p>
+<p style="color:#red;">填写站点信息完成安装</p><br><p>13. 此时nginx更改固定链接会提示404,在nginx配置文件加入rewrite规则可解决.</p><br><p>解决：</p>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/nginx/sites-available/default</span><br><span class="line">写入</span><br><span class="line">        <span class="keyword">if</span> (-f <span class="variable">$request_filename</span>/index.html)&#123;</span><br><span class="line">                rewrite (.*) <span class="variable">$1</span>/index.html <span class="built_in">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (-f <span class="variable">$request_filename</span>/index.php)&#123;</span><br><span class="line">                rewrite (.*) <span class="variable">$1</span>/index.php;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!-f <span class="variable">$request_filename</span>)&#123;</span><br><span class="line">                rewrite (.*) /index.php;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p></p><p>此时固定链接就正常了。</p><br>至此wordpress安装完成。<p></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>wordpress</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> Ubuntu设置允许root用户登录		</title>
+    <url>/2015/12/08/ubuntu-allow-root-login/</url>
+    <content><![CDATA[<p>1. 修改root密码</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo passwd root</span><br></pre></td></tr></table></figure><p>输入密码</p><p>2. 修改ssh配置</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure><p>找到 <code>PermitRootLogin</code> 这项 将其改为 <code>yes</code></p><p>保存退出并重启ssh服务既可生效。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service ssh  restart</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title> tmux命令使用详解		</title>
+    <url>/2015/12/08/use-tmux-commands-in-linux/</url>
+    <content><![CDATA[<p>Tmux 是 “Terminal Multiplexer”的简写，可以让我们在单个屏幕的灵活布局下开出很多终端，我们就可以协作地使用它们。不过我觉得tmux最大的功能还是在防止是服务器端互传文件或者做其他重要的事的时候ssh连接突然断掉了。。那样传输的内容也自然就断掉了。而开着tmux传输就方便多了。</p>
+<a id="more"></a>
+<h2 id="1-安装："><a href="#1-安装：" class="headerlink" title="1.安装："></a>1.安装：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install tmux</span><br></pre></td></tr></table></figure>
+<h2 id="2-使用详解"><a href="#2-使用详解" class="headerlink" title="2.使用详解"></a>2.使用详解</h2><pre><code>tmux            开启tmux    
+tmux  ls        显示已有tmux列表
+tmux  attach -t 数字     进入选择的mux窗口
+
+下面的命令在tmux窗口中使用:
+Ctrl + b + d         临时断开会话 断开以后,还可以连上的哟:)
+Ctrl + b + 数字      直接跳到你按的数字所在的窗口     
+Ctrl + b + c         创建一个新的tmux窗口
+Ctrl + b + s         显示所有tmux窗口,可上下键选择窗口进入
+Ctrl + b + w         通过上下键选择当前窗口中打开的会话    
+Ctrl + b + &amp;         退出当前窗口    
+Ctrl + b + t         显示时钟
+Ctrl + b + &quot;         分割出来一个小窗口(上下分隔）    
+Ctrl + b + %         分割出来一个小窗口(左右分隔)  
+Ctrl + b + o         跳转到下一个小窗口    
+Ctrl + b + 方向键    在小窗口中上下左右切换
+Ctrl + b + !         关闭所有小窗口    
+Ctrl + b + x         关闭当前光标处的小窗口    
+</code></pre><p><strong>正确的使用姿势为：先按住 Ctrl + b,然后放开，间隔一秒后在按下第三个键(bcd”%!)</strong> </p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+</search>
