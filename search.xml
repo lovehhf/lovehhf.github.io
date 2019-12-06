@@ -3,7 +3,13 @@
   <entry>
     <title>【算法学习】01背包与完全背包（dp）</title>
     <url>/2019/12/07/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%9101%E8%83%8C%E5%8C%85%E4%B8%8E%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%EF%BC%88dp%EF%BC%89/</url>
-    <content><![CDATA[<h2 id="01背包"><a href="#01背包" class="headerlink" title="01背包"></a>01背包</h2><p>题目链接: <a href="https://www.acwing.com/activity/content/problem/content/997/1/" target="_blank" rel="noopener">AcWing 2. 01背包问题</a></p><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述:"></a>题目描述:</h3><p>有 <code>N</code> 件物品和一个容量是 <code>V</code> 的背包。<strong>每件物品只能使用一次</strong></p><p>第 <code>i</code> 件物品的体积是 <code>v[i]</code>，价值是 <code>w[i]</code>。</p><p>求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。<br>输出最大价值。</p><h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><ul>
+    <content><![CDATA[<p>01背包: 每件物品只能取一次<br>完全背包: 每件物品可以取无限次</p>
+<a id="more"></a>
+<h2 id="01背包"><a href="#01背包" class="headerlink" title="01背包"></a>01背包</h2><p>题目链接: <a href="https://www.acwing.com/activity/content/problem/content/997/1/" target="_blank" rel="noopener">AcWing 2. 01背包问题</a></p>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述:"></a>题目描述:</h3><p>有 <code>N</code> 件物品和一个容量是 <code>V</code> 的背包。<strong>每件物品只能使用一次</strong></p>
+<p>第 <code>i</code> 件物品的体积是 <code>v[i]</code>，价值是 <code>w[i]</code>。</p>
+<p>求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。<br>输出最大价值。</p>
+<h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><ul>
 <li>状态表示: <ul>
 <li><code>f[i][j]</code>: 只从前<code>i</code>件物品中选, 且总体积<code>&lt;=j</code>的最大价值</li>
 </ul>
@@ -23,11 +29,7 @@
 <li><code>f[i][j] = max(f[i - 1][j], f[i][j - v[i]] + w[i])</code></li>
 </ul>
 </li>
-</ul><a id="more"></a>
-
-
-
-
+</ul>
 <h3 id="代码"><a href="#代码" class="headerlink" title="代码:"></a>代码:</h3><h4 id="C-代码"><a href="#C-代码" class="headerlink" title="C++ 代码"></a>C++ 代码</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1010</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> m,n;</span><br><span class="line"><span class="keyword">int</span> v[N], w[N];</span><br><span class="line"><span class="keyword">int</span> f[N][N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// n表示n件物品, m表示背包容量</span></span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n &gt;&gt; m;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 状态转移方程中用到了i - 1, 所以i从1开始</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i ++ ) <span class="built_in">cin</span> &gt;&gt; v[i] &gt;&gt; w[i];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i ++ )</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>; j &lt;= m; j ++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 状态转移: 背包的容量大于物品的体积的时候才有可能选第i件物品</span></span><br><span class="line">            f[i][j] = f[i - <span class="number">1</span>][j];</span><br><span class="line">            <span class="keyword">if</span>(j &gt;= v[i]) f[i][j] = max(f[i][j], f[i - <span class="number">1</span>][j - v[i]] + w[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; f[n][m] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="优化空间复杂度"><a href="#优化空间复杂度" class="headerlink" title="优化空间复杂度"></a>优化空间复杂度</h4><p>一般是对对动态规划的代码或计算方程做等价变形</p>
 <p>01背包的动态转移方程: <code>f[i][j] = max(f[i - 1][j], f[i - 1][j - v[i]] + w[i])</code> 中<code>f[i]</code>的状态只用到了第<code>f[i - 1]</code>的状态</p>
