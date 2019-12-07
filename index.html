@@ -237,7 +237,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2019-12-08 00:19:38 / 修改时间：01:37:39" itemprop="dateCreated datePublished" datetime="2019-12-08T00:19:38+08:00">2019-12-08</time>
+              <time title="创建时间：2019-12-08 00:19:38 / 修改时间：01:40:48" itemprop="dateCreated datePublished" datetime="2019-12-08T00:19:38+08:00">2019-12-08</time>
             </span>
 
           <br>
@@ -246,7 +246,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>3.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -265,61 +265,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="STRING-（字符串）"><a href="#STRING-（字符串）" class="headerlink" title="STRING （字符串）"></a>STRING （字符串）</h2><h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层由SDS(Simple Dynamic String, 简单动态字符串)实现。</p><p>特点: </p><ul>
-<li>1个 <code>value</code> 最大支持 <code>512M</code> 的数据</li>
-<li>可以存储二进制字符串</li>
-</ul><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令:"></a>常用命令:</h3><ul>
-<li>SET key value<ul>
-<li>设置 <code>key</code> 的值的 <code>value</code></li>
-</ul>
-</li>
-<li>GET key<ul>
-<li>获取 <code>key</code> 的值</li>
-</ul>
-</li>
-<li>INCR key<ul>
-<li><code>key</code> 的值自加1</li>
-<li>key 的值必须要是整数 且要在64位int范围内 <code>[-2^63, 2^63 - 1]</code></li>
-</ul>
-</li>
-<li>INCRBY key increment<ul>
-<li><code>key += increment</code></li>
-</ul>
-</li>
-<li>DECR key<ul>
-<li>key的值自减1</li>
-</ul>
-</li>
-<li>DECRBY key increment<ul>
-<li><code>key -=  increment</code></li>
-</ul>
-</li>
-<li>GETSET key value<ul>
-<li>设置key的值并返回老的值</li>
-</ul>
-</li>
-<li>SETRANGE key offset value<ul>
-<li><code>key</code> 的值从 <code>offset</code> 开始设置为 <code>value</code></li>
-<li>key看做是一个指针, 这个命令把key + offert的地址开始设置为了value，不检查长度</li>
-</ul>
-</li>
-<li>MGET key [key …]<ul>
-<li>获取多个 <code>key</code> 的值</li>
-</ul>
-</li>
-<li>MSET key value [key value …]<ul>
-<li>同时设置多个键的值</li>
-</ul>
-</li>
-<li>SETNX key value<ul>
-<li>只有 <code>key</code> 不存在的时候才设置 <code>key</code> 的值为 <code>value</code></li>
-</ul>
-</li>
-<li>SETEX key seconds value<ul>
-<li>设置 <code>key</code> 的过期时间, 过期就自动被删了</li>
-</ul>
-</li>
-</ul>
+          <p>String、List、Hash、Set、SortedSet的常用方法和底层编码实现</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2019/12/08/【Redis学习】Redis数据类型与常用命令/#more" rel="contents">
