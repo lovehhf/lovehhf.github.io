@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.ichenfei.com/"/>
-  <updated>2019-12-06T16:21:46.806Z</updated>
+  <updated>2019-12-07T17:18:40.570Z</updated>
   <id>http://blog.ichenfei.com/</id>
   
   <author>
@@ -15,6 +15,81 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【Redis学习】Redis数据类型与常用命令</title>
+    <link href="http://blog.ichenfei.com/2019/12/08/%E3%80%90Redis%E5%AD%A6%E4%B9%A0%E3%80%91Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>http://blog.ichenfei.com/2019/12/08/%E3%80%90Redis%E5%AD%A6%E4%B9%A0%E3%80%91Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
+    <published>2019-12-07T16:19:38.000Z</published>
+    <updated>2019-12-07T17:18:40.570Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="STRING"><a href="#STRING" class="headerlink" title="STRING"></a>STRING</h2><h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层由SDS(Simple Dynamic String, 简单动态字符串)实现。</p><p>特点: </p><ul><li>1个 <code>value</code> 最大支持 <code>512M</code> 的数据</li><li>可以存储二进制字符串</li></ul><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令:"></a>常用命令:</h3><ul><li>SET key value<ul><li>设置 <code>key</code> 的值的 <code>value</code></li></ul></li><li>GET key<ul><li>获取 <code>key</code> 的值</li></ul></li><li>INCR key<ul><li><code>key</code> 的值自加1</li><li>key 的值必须要是整数 且要在64位int范围内 <code>[-2^63, 2^63 - 1]</code></li></ul></li><li>INCRBY key increment<ul><li><code>key += increment</code></li></ul></li><li>DECR key<ul><li>key的值自减1</li></ul></li><li>DECRBY key increment<ul><li><code>key -=  increment</code></li></ul></li><li>GETSET key value<ul><li>设置key的值并返回老的值</li></ul></li><li>SETRANGE key offset value<ul><li><code>key</code> 的值从 <code>offset</code> 开始设置为 <code>value</code></li><li>key看做是一个指针, 这个命令把key + offert的地址开始设置为了value，不检查长度</li></ul></li><li>MGET key [key …]<ul><li>获取多个 <code>key</code> 的值</li></ul></li><li>MSET key value [key value …]<ul><li>同时设置多个键的值</li></ul></li><li>SETNX key value<ul><li>只有 <code>key</code> 不存在的时候才设置 <code>key</code> 的值为 <code>value</code></li></ul></li><li>SETEX key seconds value<ul><li>设置 <code>key</code> 的过期时间, 过期就自动被删了</li></ul></li></ul><a id="more"></a><h2 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h2><h3 id="实现原理-1"><a href="#实现原理-1" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层使用 <code>quicklist</code> 实现，<code>quicklist</code> 是一个 <code>ziplist</code> 的双向链表, 每个 <code>ziplist</code> 最大值可在配置文件中的<code>list-max-ziplist-size</code>设置, 默认为 <code>-2 (8kb)</code></p><p>Redis的列表与双端队列(deque)类似</p><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><ul><li>RPUSH key value [value …]<ul><li>将值推入到列表 <code>key</code> 的右端</li><li>相当于 <code>python</code> 的 <code>append()</code></li></ul></li><li>LPUSH key value [value …]<ul><li>将值推入列表左端</li><li>相当于 <code>python</code> 列表的 <code>insert(0, value)</code></li><li>将多个 <code>value</code> 按从左到右的顺序 <code>lpush</code>，最右边的值在最左边</li></ul></li><li>LPOP<ul><li>列表左端弹出一个值并返回弹出的值</li></ul></li><li>RPOP<ul><li>列表右端弹出一个值</li></ul></li><li>LRANGE key start stop<ul><li>获取列表在指定范围上的所有值, 包括 <code>start</code> 和 <code>stop</code></li></ul></li><li>LINDEX<ul><li>获取列表在给定位置上的单个元素</li></ul></li><li>LSET key index value<ul><li>设置列表 <code>key</code> 的索引为 <code>index</code> 的值 <code>value</code></li></ul></li><li>LTRIM key start stop<ul><li>只保留索引 在 <code>[start, end]</code> 中的元素的值, 干掉其他的</li></ul></li><li>LINSERT key BEFORE|AFTER pivot value<ul><li>在列表 <code>key</code> 的值为 <code>pivot</code> 的元素前或后插入一个值为 <code>value</code> 的元素</li><li>存在多个相同值的元素只管最左侧的元素</li><li>成功: 返回列表长度, 指定元素不存在不执行操作, 返回-1, 列表不存在返回0</li></ul></li></ul><h2 id="HASH"><a href="#HASH" class="headerlink" title="HASH"></a>HASH</h2><h3 id="实现原理-2"><a href="#实现原理-2" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层由 <code>hashtable</code> 与 <code>ziplist</code> 实现</p><p>哈希保存的键值对数量小于 <code>hash-max-ziplist-entries</code> (默认为 <code>512</code> )个 &amp;&amp; 所有键值对的键和值的字符串长度都小于<code>hash-max-ziplist-value</code>(默认为64)字节时, 使用ziplist编码，否则使用 <code>hashtable</code> 编码</p><h3 id="常用方法-1"><a href="#常用方法-1" class="headerlink" title="常用方法:"></a>常用方法:</h3><ul><li>HSET key field value<ul><li>将哈希表 <code>key</code> 中的字段 <code>field</code> 的值设为 <code>value</code></li></ul></li><li>HGET key field<ul><li>获取哈希表 <code>key</code> 中字段 <code>field</code> 的值</li></ul></li><li>HEXISTS key field<ul><li>查询哈希表 <code>key</code> 中，指定字段 <code>filed</code> 是否存在</li></ul></li><li>HVALS key<ul><li>获取哈希表 <code>key</code> 中的所有值</li></ul></li><li>HLEN key<ul><li>获取哈希表中键值对的数量</li></ul></li><li>HKEYS key<ul><li>获取哈希表 <code>key</code> 中的所有键</li></ul></li></ul><h2 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h2><h4 id="底层实现"><a href="#底层实现" class="headerlink" title="底层实现"></a>底层实现</h4><p>底层由<code>hashtable</code>和<code>intset</code>实现</p><h3 id="常用命令-1"><a href="#常用命令-1" class="headerlink" title="常用命令"></a>常用命令</h3><ul><li>SADD key member [member …]<ul><li>将<code>member</code>添加到集合<code>key</code>中</li></ul></li><li>SMEMBERS key<ul><li>获取集合<code>key</code>的所有元素</li></ul></li><li>SCARD key<ul><li>获取集合的元素数量</li></ul></li><li>SDIFF key1 [key2 …]<ul><li>求给定所有集合的差集(<code>s1-s2-s3-...</code>)</li></ul></li><li>SINTER key1 [key2]<ul><li>求给你所有集合的交集(<code>s1&amp;s2&amp;s3...</code>)</li></ul></li><li>SUNION key1 [key1…]<ul><li>求给定所有集合的并集(<code>s1|s2|s3...</code>)</li></ul></li><li>SDIFFSTORE destination key1 [key2 …]<ul><li>求给定所有集合的差集, 并存储到<code>destination</code>中</li></ul></li><li>SINTERSTORE destination key [key …]<ul><li>求给定所有集合的交集, 并存储到<code>destination</code>中</li></ul></li><li>SUNIONSTORE destination key [key …]<ul><li>求给定所有集合的并集, 并存储到<code>destination</code>中</li></ul></li><li>SREM key member [member …]<ul><li>从集合中删除一个或多个元素</li></ul></li><li>SPOP key [count]<ul><li>随机删除<code>count</code>个幸运元素, 不指定<code>count</code>则随机删除一个</li></ul></li><li>SMOVE source destination member<ul><li>将<code>member</code>从集合<code>source</code>移动到<code>destination</code>中 </li><li>删掉<code>source</code>中的<code>member</code>同时向<code>destination</code>中添加<code>member</code>(不管destination中有没有)</li></ul></li><li>SISMEMBER key member<ul><li>判断<code>member</code>是否是集合中的元素</li></ul></li></ul><h2 id="SORTED-SET"><a href="#SORTED-SET" class="headerlink" title="SORTED_SET"></a>SORTED_SET</h2><h3 id="底层实现-1"><a href="#底层实现-1" class="headerlink" title="底层实现"></a>底层实现</h3><p>底层由<code>ziplist</code>和<code>skiplist</code>(跳表实现)</p><h3 id="常用命令-2"><a href="#常用命令-2" class="headerlink" title="常用命令"></a>常用命令</h3><ul><li>ZADD key [NX|XX] [CH] [INCR] score member [score member …]<ul><li>将一个或多个 <code>member</code> 元素及其 <code>score</code> 值加入到有序集合 <code>key</code> 中</li><li>如果某个 <code>member</code> 已经是有序集合的元素，那么更新这个 <code>member</code> 的 <code>score</code> 值</li><li>参数：<ul><li>XX： 仅更新已经存在的元素, 不添加元素。</li><li>NX： 只添加新元素, 不改变已有元素</li><li>CH： 将返回值修改为添加和修改的元素数量总数(不加此参数值返回添加的元素数量)</li><li>INCR: 将<code>member</code>的分值加上<code>score</code>(与<code>ZINCRBY</code>功能相同)</li></ul></li></ul></li><li>ZSCORE key member<ul><li>获取有序集合中指定元素的分数</li></ul></li><li>ZCARD key<ul><li>获取有序集合<code>key</code>的元素数量</li></ul></li><li>ZCOUNT key min max<ul><li>获取值在<code>[min, max]</code>之间的元素数量</li></ul></li><li>ZRANGE key start stop [WITHSCORES]<ul><li>获取有序集合 key 中，索引在[start, stop]的元素(从小到大排序)</li><li><code>-1</code>表示最后一个元素, <code>-2</code>表示倒数第二个元素</li></ul></li><li>ZREVRANGE key start stop [WITHSCORES]<ul><li>与<code>ZRANGE</code>功能相同， 从大到小排序</li></ul></li><li>ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]<ul><li>获取有序集合中分数在<code>[min, max]</code>中的元素</li><li><code>min</code>和<code>max</code>可以是<code>inf</code>和<code>-inf</code></li></ul></li><li>ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]<ul><li>与<code>ZRANGEBYSCORE</code>功能相同, 从大到小排序</li></ul></li><li>ZRANK key member<ul><li>返回有序集合中member元素的排名(按分值从小到大排序), 分值相同按键的<code>ascii</code>字母排序</li></ul></li><li>ZREVRANK key member<ul><li>与<code>ZRANK</code>功能相同, 从大到小排序</li></ul></li><li>ZREM key member [member …]<ul><li>删除有序集合中指定的元素</li></ul></li><li>ZREMRANGEBYRANK key start stop<ul><li>删除有序集合中排名在<code>[start, stop]</code>之间的元素</li></ul></li><li>ZREMRANGEBYSCORE key min max<ul><li>删除值在<code>[min, max]</code>之间的元素</li></ul></li><li>ZINTERSTORE destination numkeys key [key …] [WEIGHTS weight] [AGGREGATE SUM|MIN|MAX]<ul><li>计算给定的一个或多个有序集的交集，其中给定 key 的数量必须以 numkeys 参数指定，并将该交集(结果集)储存到 destination</li></ul></li><li>ZUNIONSTORE destination numkeys key [key …] [WEIGHTS weight] [AGGREGATE SUM|MIN|MAX]<ul><li>计算给定的一个或多个有序集的并集，其中给定 key 的数量必须以 numkeys 参数指定，并将该并集(结果集)储存到 destination</li><li><code>WEIGHTS</code> 参数可指定权重</li><li><code>AGGREGATE</code> 参数可指定聚合方式 和|最大值|最小值, 默认是 SUM</li></ul></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;STRING&quot;&gt;&lt;a href=&quot;#STRING&quot; class=&quot;headerlink&quot; title=&quot;STRING&quot;&gt;&lt;/a&gt;STRING&lt;/h2&gt;&lt;h3 id=&quot;实现原理&quot;&gt;&lt;a href=&quot;#实现原理&quot; class=&quot;headerlink&quot; title=&quot;实现原理&quot;&gt;&lt;/a&gt;实现原理&lt;/h3&gt;&lt;p&gt;底层由SDS(Simple Dynamic String, 简单动态字符串)实现。&lt;/p&gt;&lt;p&gt;特点: &lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;1个 &lt;code&gt;value&lt;/code&gt; 最大支持 &lt;code&gt;512M&lt;/code&gt; 的数据&lt;/li&gt;
+&lt;li&gt;可以存储二进制字符串&lt;/li&gt;
+&lt;/ul&gt;&lt;h3 id=&quot;常用命令&quot;&gt;&lt;a href=&quot;#常用命令&quot; class=&quot;headerlink&quot; title=&quot;常用命令:&quot;&gt;&lt;/a&gt;常用命令:&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;SET key value&lt;ul&gt;
+&lt;li&gt;设置 &lt;code&gt;key&lt;/code&gt; 的值的 &lt;code&gt;value&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;GET key&lt;ul&gt;
+&lt;li&gt;获取 &lt;code&gt;key&lt;/code&gt; 的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;INCR key&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;key&lt;/code&gt; 的值自加1&lt;/li&gt;
+&lt;li&gt;key 的值必须要是整数 且要在64位int范围内 &lt;code&gt;[-2^63, 2^63 - 1]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;INCRBY key increment&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;key += increment&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;DECR key&lt;ul&gt;
+&lt;li&gt;key的值自减1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;DECRBY key increment&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;key -=  increment&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;GETSET key value&lt;ul&gt;
+&lt;li&gt;设置key的值并返回老的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;SETRANGE key offset value&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;key&lt;/code&gt; 的值从 &lt;code&gt;offset&lt;/code&gt; 开始设置为 &lt;code&gt;value&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;key看做是一个指针, 这个命令把key + offert的地址开始设置为了value，不检查长度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MGET key [key …]&lt;ul&gt;
+&lt;li&gt;获取多个 &lt;code&gt;key&lt;/code&gt; 的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MSET key value [key value …]&lt;ul&gt;
+&lt;li&gt;同时设置多个键的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;SETNX key value&lt;ul&gt;
+&lt;li&gt;只有 &lt;code&gt;key&lt;/code&gt; 不存在的时候才设置 &lt;code&gt;key&lt;/code&gt; 的值为 &lt;code&gt;value&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;SETEX key seconds value&lt;ul&gt;
+&lt;li&gt;设置 &lt;code&gt;key&lt;/code&gt; 的过期时间, 过期就自动被删了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="redis" scheme="http://blog.ichenfei.com/tags/redis/"/>
+    
+  </entry>
   
   <entry>
     <title>【算法学习】01背包与完全背包（dp）</title>
@@ -80,9 +155,9 @@
     
     
     
-      <category term="dp" scheme="http://blog.ichenfei.com/tags/dp/"/>
-    
       <category term="算法学习" scheme="http://blog.ichenfei.com/tags/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="dp" scheme="http://blog.ichenfei.com/tags/dp/"/>
     
       <category term="编辑距离" scheme="http://blog.ichenfei.com/tags/%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB/"/>
     
@@ -444,27 +519,6 @@
 &lt;li&gt;表示各进制的符号&lt;br&gt;  -b：二进制&lt;br&gt;  -o：八进制&lt;br&gt;  -d：十进制&lt;br&gt;  -x：十六进制 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;bin()、oct()、hex()返回值均为字符串，且分别带有0b、0o、0x前缀。 &lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Python" scheme="http://blog.ichenfei.com/categories/Python/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title> 使用scrapyd部署scrapy爬虫		</title>
-    <link href="http://blog.ichenfei.com/2017/10/30/how-to-use-scrapyd/"/>
-    <id>http://blog.ichenfei.com/2017/10/30/how-to-use-scrapyd/</id>
-    <published>2017-10-30T13:39:49.000Z</published>
-    <updated>2019-11-30T10:43:58.644Z</updated>
-    
-    <content type="html"><![CDATA[<p>使用scrapyd部署scrapy爬虫</p><a id="more"></a><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Scrapyd is a service for running Scrapy spiders. It allows you to deploy your Scrapy projects and control their spiders using a HTTP JSON API.</p><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>安装<code>scrapyd</code>服务端(需要scrapy项目环境)</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install scrapyd</span><br></pre></td></tr></table></figure><p>安装 <code>scrapyd-deploy</code> (无需scrapy环境)</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pip install scrapyd-client </span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">windows系统，在`c:\python27\Scripts`下生成的是`scrapyd-deploy`，无法直接在命令行里运行`scrapd-deploy` 配置文件位置: </span><br><span class="line"></span><br><span class="line">##### 解决办法：</span><br><span class="line"></span><br><span class="line">在`C:\python27\Scripts`下新建一个`scrapyd-deploy.bat`，文件内容如下：</span><br></pre></td></tr></table></figure><p>@echo off C:\Python27\python C:\Python27\Scripts\scrapyd-deploy %*<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">使用</span><br><span class="line">--</span><br><span class="line"></span><br><span class="line">### 开启scrapyd</span><br><span class="line"></span><br><span class="line">终端运行:`scrapyd`开启`scrapyd`服务</span><br><span class="line"></span><br><span class="line">### 发布工程到scrapyd</span><br><span class="line"></span><br><span class="line">切换至到`scrapy`项目根目录,编辑`scrapy.cfg`,</span><br></pre></td></tr></table></figure></p><p>取消 # url = <a href="http://localhost:6800/前面的注释#" target="_blank" rel="noopener">http://localhost:6800/前面的注释#</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">![](https://www.ichenfei.com/wp-content/uploads/2017/10/0678af8c66e671232462916041dee39d.png) </span><br><span class="line"></span><br><span class="line">打包发布`scrapyd`项目:</span><br></pre></td></tr></table></figure></p><p>scrapyd-deploy <target> -p <project><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">*   `&lt;target&gt;`就是配置文件的`deploy`的名字，针对上面的配置就是`scearticle`</span><br><span class="line">*   `&lt;project&gt;`是项目名`scrapyd`项目名,不输入则默认为`deploy`的名字</span><br><span class="line"></span><br><span class="line">部署完成之后，创建的scrapy项目中可以看到多了一个eggs的文件夹，以及里面的一些内容，里面所存放的就是scrapyd-deploy的工程打包成.egg的文件 </span><br><span class="line"></span><br><span class="line">![](https://www.ichenfei.com/wp-content/uploads/2017/10/2e3e75aea3ef2cde9615576f22ee531e.png)</span><br><span class="line"></span><br><span class="line">API</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### 查看`scrapyd`运行状态</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">curl http://localhost:6800/daemonstatus.json 返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;running&quot;: 0, &quot;finished&quot;: 42, &quot;pending&quot;: 0, &quot;node_name&quot;: &quot;VM-42-98-ubuntu&quot;&#125;</span><br></pre></td></tr></table></figure></project></target></p><h3 id="创建爬虫任务"><a href="#创建爬虫任务" class="headerlink" title="创建爬虫任务"></a>创建爬虫任务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/schedule.json -d project=myproject -d spider=somespider </span><br><span class="line"></span><br><span class="line">参数: </span><br><span class="line"></span><br><span class="line">project (string, required) - 项目名 </span><br><span class="line">spider (string, required) - 项目中的爬虫名 </span><br><span class="line">setting (string, optional) - 指定使用Scrapy设置 </span><br><span class="line">jobid (string, optional) - 指定jobid </span><br><span class="line">_version (string, optional) - 指定项目版本 </span><br><span class="line"></span><br><span class="line">示例: curl http://localhost:6800/schedule.json -d project=SecArticleSpider -d spider=freebuf 返回: &#123;<span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"jobid"</span>: <span class="string">"7ea5ddc0bd7d11e7b256525400dc407e"</span>, <span class="string">"node\_name"</span>: <span class="string">"VM-42-98-ubuntu"</span>&#125;</span><br></pre></td></tr></table></figure><h3 id="取消正在运行的job"><a href="#取消正在运行的job" class="headerlink" title="取消正在运行的job"></a>取消正在运行的job</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/cancel.json -d project=myproject -d job=6487ec79947edab326d6db28a2d86511e8247444 </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;prevstate&quot;: &quot;running&quot;&#125;</span><br></pre></td></tr></table></figure><h3 id="列出项目"><a href="#列出项目" class="headerlink" title="列出项目:"></a>列出项目:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/listprojects.json </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;projects&quot;: \[&quot;myproject&quot;, &quot;otherproject&quot;\]&#125;</span><br></pre></td></tr></table></figure><h3 id="列出爬虫"><a href="#列出爬虫" class="headerlink" title="列出爬虫:"></a>列出爬虫:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/listspiders.json?project=myproject </span><br><span class="line"></span><br><span class="line">返回: &#123;&quot;status&quot;: &quot;ok&quot;, &quot;spiders&quot;: \[&quot;spider1&quot;, &quot;spider2&quot;, &quot;spider3&quot;\]&#125;</span><br></pre></td></tr></table></figure><h3 id="列出job："><a href="#列出job：" class="headerlink" title="列出job："></a>列出job：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/listjobs.json?project=myproject </span><br><span class="line">示例返回: <span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"pending"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"78391cc0fcaf11e1b0090800272a6d06"</span>, <span class="string">"spider"</span>: <span class="string">"spider1"</span>&#125;\], <span class="string">"running"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"422e608f9f28cef127b3d5ef93fe9399"</span>, <span class="string">"spider"</span>: <span class="string">"spider2"</span>, <span class="string">"start\_time"</span>: <span class="string">"2012-09-12 10:14:03.594664"</span>&#125;\], <span class="string">"finished"</span>: \[&#123;<span class="string">"id"</span>: <span class="string">"2f16646cfcaf11e1b0090800272a6d06"</span>, <span class="string">"spider"</span>: <span class="string">"spider3"</span>, <span class="string">"start\_time"</span>: <span class="string">"2012-09-12 10:14:03.594664"</span>, <span class="string">"end_time"</span>: <span class="string">"2012-09-12 10:24:03.594664"</span>&#125;\]&#125;</span><br></pre></td></tr></table></figure><h3 id="删除项目"><a href="#删除项目" class="headerlink" title="删除项目:"></a>删除项目:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:6800/delproject.json -d project=myproject 示例返回: &#123;<span class="string">"status"</span>: <span class="string">"ok"</span>&#125;</span><br></pre></td></tr></table></figure><p>更多支持的api： <a href="http://scrapyd.readthedocs.io/en/stable/api.html" target="_blank" rel="noopener">Scrapyd 官方支持手册</a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;使用scrapyd部署scrapy爬虫&lt;/p&gt;
     
     </summary>
     

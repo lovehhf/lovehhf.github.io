@@ -1,6 +1,276 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>【Redis学习】Redis数据类型与常用命令</title>
+    <url>/2019/12/08/%E3%80%90Redis%E5%AD%A6%E4%B9%A0%E3%80%91Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h2 id="STRING"><a href="#STRING" class="headerlink" title="STRING"></a>STRING</h2><h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层由SDS(Simple Dynamic String, 简单动态字符串)实现。</p><p>特点: </p><ul>
+<li>1个 <code>value</code> 最大支持 <code>512M</code> 的数据</li>
+<li>可以存储二进制字符串</li>
+</ul><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令:"></a>常用命令:</h3><ul>
+<li>SET key value<ul>
+<li>设置 <code>key</code> 的值的 <code>value</code></li>
+</ul>
+</li>
+<li>GET key<ul>
+<li>获取 <code>key</code> 的值</li>
+</ul>
+</li>
+<li>INCR key<ul>
+<li><code>key</code> 的值自加1</li>
+<li>key 的值必须要是整数 且要在64位int范围内 <code>[-2^63, 2^63 - 1]</code></li>
+</ul>
+</li>
+<li>INCRBY key increment<ul>
+<li><code>key += increment</code></li>
+</ul>
+</li>
+<li>DECR key<ul>
+<li>key的值自减1</li>
+</ul>
+</li>
+<li>DECRBY key increment<ul>
+<li><code>key -=  increment</code></li>
+</ul>
+</li>
+<li>GETSET key value<ul>
+<li>设置key的值并返回老的值</li>
+</ul>
+</li>
+<li>SETRANGE key offset value<ul>
+<li><code>key</code> 的值从 <code>offset</code> 开始设置为 <code>value</code></li>
+<li>key看做是一个指针, 这个命令把key + offert的地址开始设置为了value，不检查长度</li>
+</ul>
+</li>
+<li>MGET key [key …]<ul>
+<li>获取多个 <code>key</code> 的值</li>
+</ul>
+</li>
+<li>MSET key value [key value …]<ul>
+<li>同时设置多个键的值</li>
+</ul>
+</li>
+<li>SETNX key value<ul>
+<li>只有 <code>key</code> 不存在的时候才设置 <code>key</code> 的值为 <code>value</code></li>
+</ul>
+</li>
+<li>SETEX key seconds value<ul>
+<li>设置 <code>key</code> 的过期时间, 过期就自动被删了</li>
+</ul>
+</li>
+</ul><a id="more"></a>
+
+
+
+<h2 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h2><h3 id="实现原理-1"><a href="#实现原理-1" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层使用 <code>quicklist</code> 实现，<code>quicklist</code> 是一个 <code>ziplist</code> 的双向链表, 每个 <code>ziplist</code> 最大值可在配置文件中的<code>list-max-ziplist-size</code>设置, 默认为 <code>-2 (8kb)</code></p>
+<p>Redis的列表与双端队列(deque)类似</p>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><ul>
+<li>RPUSH key value [value …]<ul>
+<li>将值推入到列表 <code>key</code> 的右端</li>
+<li>相当于 <code>python</code> 的 <code>append()</code></li>
+</ul>
+</li>
+<li>LPUSH key value [value …]<ul>
+<li>将值推入列表左端</li>
+<li>相当于 <code>python</code> 列表的 <code>insert(0, value)</code></li>
+<li>将多个 <code>value</code> 按从左到右的顺序 <code>lpush</code>，最右边的值在最左边</li>
+</ul>
+</li>
+<li>LPOP<ul>
+<li>列表左端弹出一个值并返回弹出的值</li>
+</ul>
+</li>
+<li>RPOP<ul>
+<li>列表右端弹出一个值</li>
+</ul>
+</li>
+<li>LRANGE key start stop<ul>
+<li>获取列表在指定范围上的所有值, 包括 <code>start</code> 和 <code>stop</code></li>
+</ul>
+</li>
+<li>LINDEX<ul>
+<li>获取列表在给定位置上的单个元素</li>
+</ul>
+</li>
+<li>LSET key index value<ul>
+<li>设置列表 <code>key</code> 的索引为 <code>index</code> 的值 <code>value</code></li>
+</ul>
+</li>
+<li>LTRIM key start stop<ul>
+<li>只保留索引 在 <code>[start, end]</code> 中的元素的值, 干掉其他的</li>
+</ul>
+</li>
+<li>LINSERT key BEFORE|AFTER pivot value<ul>
+<li>在列表 <code>key</code> 的值为 <code>pivot</code> 的元素前或后插入一个值为 <code>value</code> 的元素</li>
+<li>存在多个相同值的元素只管最左侧的元素</li>
+<li>成功: 返回列表长度, 指定元素不存在不执行操作, 返回-1, 列表不存在返回0</li>
+</ul>
+</li>
+</ul>
+<h2 id="HASH"><a href="#HASH" class="headerlink" title="HASH"></a>HASH</h2><h3 id="实现原理-2"><a href="#实现原理-2" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层由 <code>hashtable</code> 与 <code>ziplist</code> 实现</p>
+<p>哈希保存的键值对数量小于 <code>hash-max-ziplist-entries</code> (默认为 <code>512</code> )个 &amp;&amp; 所有键值对的键和值的字符串长度都小于<code>hash-max-ziplist-value</code>(默认为64)字节时, 使用ziplist编码，否则使用 <code>hashtable</code> 编码</p>
+<h3 id="常用方法-1"><a href="#常用方法-1" class="headerlink" title="常用方法:"></a>常用方法:</h3><ul>
+<li>HSET key field value<ul>
+<li>将哈希表 <code>key</code> 中的字段 <code>field</code> 的值设为 <code>value</code></li>
+</ul>
+</li>
+<li>HGET key field<ul>
+<li>获取哈希表 <code>key</code> 中字段 <code>field</code> 的值</li>
+</ul>
+</li>
+<li>HEXISTS key field<ul>
+<li>查询哈希表 <code>key</code> 中，指定字段 <code>filed</code> 是否存在</li>
+</ul>
+</li>
+<li>HVALS key<ul>
+<li>获取哈希表 <code>key</code> 中的所有值</li>
+</ul>
+</li>
+<li>HLEN key<ul>
+<li>获取哈希表中键值对的数量</li>
+</ul>
+</li>
+<li>HKEYS key<ul>
+<li>获取哈希表 <code>key</code> 中的所有键</li>
+</ul>
+</li>
+</ul>
+<h2 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h2><h4 id="底层实现"><a href="#底层实现" class="headerlink" title="底层实现"></a>底层实现</h4><p>底层由<code>hashtable</code>和<code>intset</code>实现</p>
+<h3 id="常用命令-1"><a href="#常用命令-1" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
+<li>SADD key member [member …]<ul>
+<li>将<code>member</code>添加到集合<code>key</code>中</li>
+</ul>
+</li>
+<li>SMEMBERS key<ul>
+<li>获取集合<code>key</code>的所有元素</li>
+</ul>
+</li>
+<li>SCARD key<ul>
+<li>获取集合的元素数量</li>
+</ul>
+</li>
+<li>SDIFF key1 [key2 …]<ul>
+<li>求给定所有集合的差集(<code>s1-s2-s3-...</code>)</li>
+</ul>
+</li>
+<li>SINTER key1 [key2]<ul>
+<li>求给你所有集合的交集(<code>s1&amp;s2&amp;s3...</code>)</li>
+</ul>
+</li>
+<li>SUNION key1 [key1…]<ul>
+<li>求给定所有集合的并集(<code>s1|s2|s3...</code>)</li>
+</ul>
+</li>
+<li>SDIFFSTORE destination key1 [key2 …]<ul>
+<li>求给定所有集合的差集, 并存储到<code>destination</code>中</li>
+</ul>
+</li>
+<li>SINTERSTORE destination key [key …]<ul>
+<li>求给定所有集合的交集, 并存储到<code>destination</code>中</li>
+</ul>
+</li>
+<li>SUNIONSTORE destination key [key …]<ul>
+<li>求给定所有集合的并集, 并存储到<code>destination</code>中</li>
+</ul>
+</li>
+<li>SREM key member [member …]<ul>
+<li>从集合中删除一个或多个元素</li>
+</ul>
+</li>
+<li>SPOP key [count]<ul>
+<li>随机删除<code>count</code>个幸运元素, 不指定<code>count</code>则随机删除一个</li>
+</ul>
+</li>
+<li>SMOVE source destination member<ul>
+<li>将<code>member</code>从集合<code>source</code>移动到<code>destination</code>中 </li>
+<li>删掉<code>source</code>中的<code>member</code>同时向<code>destination</code>中添加<code>member</code>(不管destination中有没有)</li>
+</ul>
+</li>
+<li>SISMEMBER key member<ul>
+<li>判断<code>member</code>是否是集合中的元素</li>
+</ul>
+</li>
+</ul>
+<h2 id="SORTED-SET"><a href="#SORTED-SET" class="headerlink" title="SORTED_SET"></a>SORTED_SET</h2><h3 id="底层实现-1"><a href="#底层实现-1" class="headerlink" title="底层实现"></a>底层实现</h3><p>底层由<code>ziplist</code>和<code>skiplist</code>(跳表实现)</p>
+<h3 id="常用命令-2"><a href="#常用命令-2" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
+<li>ZADD key [NX|XX] [CH] [INCR] score member [score member …]<ul>
+<li>将一个或多个 <code>member</code> 元素及其 <code>score</code> 值加入到有序集合 <code>key</code> 中</li>
+<li>如果某个 <code>member</code> 已经是有序集合的元素，那么更新这个 <code>member</code> 的 <code>score</code> 值</li>
+<li>参数：<ul>
+<li>XX： 仅更新已经存在的元素, 不添加元素。</li>
+<li>NX： 只添加新元素, 不改变已有元素</li>
+<li>CH： 将返回值修改为添加和修改的元素数量总数(不加此参数值返回添加的元素数量)</li>
+<li>INCR: 将<code>member</code>的分值加上<code>score</code>(与<code>ZINCRBY</code>功能相同)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ZSCORE key member<ul>
+<li>获取有序集合中指定元素的分数</li>
+</ul>
+</li>
+<li>ZCARD key<ul>
+<li>获取有序集合<code>key</code>的元素数量</li>
+</ul>
+</li>
+<li>ZCOUNT key min max<ul>
+<li>获取值在<code>[min, max]</code>之间的元素数量</li>
+</ul>
+</li>
+<li>ZRANGE key start stop [WITHSCORES]<ul>
+<li>获取有序集合 key 中，索引在[start, stop]的元素(从小到大排序)</li>
+<li><code>-1</code>表示最后一个元素, <code>-2</code>表示倒数第二个元素</li>
+</ul>
+</li>
+<li>ZREVRANGE key start stop [WITHSCORES]<ul>
+<li>与<code>ZRANGE</code>功能相同， 从大到小排序</li>
+</ul>
+</li>
+<li>ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]<ul>
+<li>获取有序集合中分数在<code>[min, max]</code>中的元素</li>
+<li><code>min</code>和<code>max</code>可以是<code>inf</code>和<code>-inf</code></li>
+</ul>
+</li>
+<li>ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]<ul>
+<li>与<code>ZRANGEBYSCORE</code>功能相同, 从大到小排序</li>
+</ul>
+</li>
+<li>ZRANK key member<ul>
+<li>返回有序集合中member元素的排名(按分值从小到大排序), 分值相同按键的<code>ascii</code>字母排序</li>
+</ul>
+</li>
+<li>ZREVRANK key member<ul>
+<li>与<code>ZRANK</code>功能相同, 从大到小排序</li>
+</ul>
+</li>
+<li>ZREM key member [member …]<ul>
+<li>删除有序集合中指定的元素</li>
+</ul>
+</li>
+<li>ZREMRANGEBYRANK key start stop<ul>
+<li>删除有序集合中排名在<code>[start, stop]</code>之间的元素</li>
+</ul>
+</li>
+<li>ZREMRANGEBYSCORE key min max<ul>
+<li>删除值在<code>[min, max]</code>之间的元素</li>
+</ul>
+</li>
+<li>ZINTERSTORE destination numkeys key [key …] [WEIGHTS weight] [AGGREGATE SUM|MIN|MAX]<ul>
+<li>计算给定的一个或多个有序集的交集，其中给定 key 的数量必须以 numkeys 参数指定，并将该交集(结果集)储存到 destination</li>
+</ul>
+</li>
+<li>ZUNIONSTORE destination numkeys key [key …] [WEIGHTS weight] [AGGREGATE SUM|MIN|MAX]<ul>
+<li>计算给定的一个或多个有序集的并集，其中给定 key 的数量必须以 numkeys 参数指定，并将该并集(结果集)储存到 destination</li>
+<li><code>WEIGHTS</code> 参数可指定权重</li>
+<li><code>AGGREGATE</code> 参数可指定聚合方式 和|最大值|最小值, 默认是 SUM</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【算法学习】01背包与完全背包（dp）</title>
     <url>/2019/12/07/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%9101%E8%83%8C%E5%8C%85%E4%B8%8E%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%EF%BC%88dp%EF%BC%89/</url>
     <content><![CDATA[<p>01背包: 每件物品只能取一次<br>完全背包: 每件物品可以取无限次</p>
@@ -189,8 +459,8 @@
 <h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><h4 id="C-1"><a href="#C-1" class="headerlink" title="C++"></a>C++</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1010</span>, M = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, m;</span><br><span class="line"><span class="keyword">char</span> s[N][M];</span><br><span class="line"><span class="keyword">int</span> f[M][M];</span><br><span class="line"></span><br><span class="line"><span class="comment">// a是否能在&lt;=t的次数下编辑到b</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">can_solve</span><span class="params">(<span class="keyword">char</span> a[], <span class="keyword">char</span> b[], <span class="keyword">int</span> t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> la = <span class="built_in">strlen</span>(a + <span class="number">1</span>), lb = <span class="built_in">strlen</span>(b + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    f[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= la; i++) f[i][<span class="number">0</span>] = i;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= lb; i++) f[<span class="number">0</span>][i] = i;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//求a最小需要编辑多少次可以到b</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= la; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= lb; j++) &#123;</span><br><span class="line">            f[i][j] = min(f[i - <span class="number">1</span>][j] + <span class="number">1</span>, f[i][j - <span class="number">1</span>] + <span class="number">1</span>);</span><br><span class="line">            f[i][j] = min(f[i][j], f[i - <span class="number">1</span>][j - <span class="number">1</span>] + <span class="keyword">int</span>(a[i] != b[j]));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> f[la][lb] &lt;= t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n &gt;&gt; m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) <span class="built_in">cin</span> &gt;&gt; s[i] + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(m --) &#123;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">char</span> q[M];</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; q + <span class="number">1</span> &gt;&gt; t;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; j++) res += can_solve(s[j], q, t);</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; res &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="Python-1"><a href="#Python-1" class="headerlink" title="Python"></a>Python</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">can_solve</span><span class="params">(a, b, t)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    求字符串a是否能在t的次数内编辑到b</span></span><br><span class="line"><span class="string">    为了方便计算, a和b在前面随便加个字符占位</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    a = <span class="string">' '</span> + a</span><br><span class="line">    b = <span class="string">' '</span> + b</span><br><span class="line">    la, lb = len(a), len(b)</span><br><span class="line">    dp = [[<span class="number">0</span>] * lb <span class="keyword">for</span> _ <span class="keyword">in</span> range(la)]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 初始化：a[i]到空字符串的编辑距离为i, 空字符串到b[i]的编辑距离也是i</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(la):</span><br><span class="line">        dp[i][<span class="number">0</span>] = i</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(lb):</span><br><span class="line">        dp[<span class="number">0</span>][i] = i</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, la):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, lb):</span><br><span class="line">            <span class="comment"># dp[i][j]: a的前i个字母到b的前j个字母的最短编辑距离</span></span><br><span class="line">            <span class="comment"># 枚举最后一步的编辑方式: 增 dp[i - 1][j] + 1, 删 dp[i][j - 1] + 1, 改dp[i - 1][j - 1] + 1</span></span><br><span class="line">            <span class="comment"># 如果a[i] == b[j] 不需要编辑, 直接是dp[i - 1][j - 1]</span></span><br><span class="line">            dp[i][j] = min(dp[i - <span class="number">1</span>][j] + <span class="number">1</span>, dp[i][j - <span class="number">1</span>] + <span class="number">1</span>, dp[i - <span class="number">1</span>][j - <span class="number">1</span>] + (a[i] != b[j]))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dp[la - <span class="number">1</span>][lb - <span class="number">1</span>] &lt;= t</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    n, m = [int(x) <span class="keyword">for</span> x <span class="keyword">in</span> input().split()]</span><br><span class="line">    s = []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(n):</span><br><span class="line">        s.append(input())</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(m):</span><br><span class="line">        q, t = input().split()</span><br><span class="line">        t = int(t)</span><br><span class="line">        res = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">            res += can_solve(s[i], q, t)</span><br><span class="line">        print(res)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>]]></content>
       <tags>
-        <tag>dp</tag>
         <tag>算法学习</tag>
+        <tag>dp</tag>
         <tag>编辑距离</tag>
       </tags>
   </entry>
