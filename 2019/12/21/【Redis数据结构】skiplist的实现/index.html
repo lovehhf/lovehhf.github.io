@@ -47,20 +47,20 @@
   };
 </script>
 
-  <meta name="description" content="1. 修改root密码1sudo passwd root输入密码2. 修改ssh配置1sudo vi /etc/ssh/sshd_config找到 PermitRootLogin 这项 将其改为 yes保存退出并重启ssh服务既可生效。1sudo service ssh  restart">
-<meta name="keywords" content="编程学习|算法学习|Linux学习|Python学习">
+  <meta name="description" content="跳表(skiplist)是一种基于有序链表的用于方便快速查找/插入/删除的数据结构， 查询效率堪比红黑树，然而实现与维护却要比红黑树要简单的多。 跳表的每个节点都维护了多个指向其他节点的指针，所以在查找、插入、删除操作时可以跳过一些节点，快速找到操作需要的节点。 跳表是有序集合(sorted_set)的底层实现之一, 另一种是整数集合(intset), 在 sorted_set 都是int类型时，">
+<meta name="keywords" content="redis,sds,源码学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content=" Ubuntu设置允许root用户登录		">
-<meta property="og:url" content="http://blog.ichenfei.com/2015/12/08/ubuntu-allow-root-login/index.html">
+<meta property="og:title" content="【Redis数据结构】skiplist的实现">
+<meta property="og:url" content="http://blog.ichenfei.com/2019/12/21/【Redis数据结构】skiplist的实现/index.html">
 <meta property="og:site_name" content="晨飞小窝">
-<meta property="og:description" content="1. 修改root密码1sudo passwd root输入密码2. 修改ssh配置1sudo vi /etc/ssh/sshd_config找到 PermitRootLogin 这项 将其改为 yes保存退出并重启ssh服务既可生效。1sudo service ssh  restart">
+<meta property="og:description" content="跳表(skiplist)是一种基于有序链表的用于方便快速查找/插入/删除的数据结构， 查询效率堪比红黑树，然而实现与维护却要比红黑树要简单的多。 跳表的每个节点都维护了多个指向其他节点的指针，所以在查找、插入、删除操作时可以跳过一些节点，快速找到操作需要的节点。 跳表是有序集合(sorted_set)的底层实现之一, 另一种是整数集合(intset), 在 sorted_set 都是int类型时，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-30T12:04:00.230Z">
+<meta property="og:updated_time" content="2019-12-21T15:32:23.511Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content=" Ubuntu设置允许root用户登录		">
-<meta name="twitter:description" content="1. 修改root密码1sudo passwd root输入密码2. 修改ssh配置1sudo vi /etc/ssh/sshd_config找到 PermitRootLogin 这项 将其改为 yes保存退出并重启ssh服务既可生效。1sudo service ssh  restart">
+<meta name="twitter:title" content="【Redis数据结构】skiplist的实现">
+<meta name="twitter:description" content="跳表(skiplist)是一种基于有序链表的用于方便快速查找/插入/删除的数据结构， 查询效率堪比红黑树，然而实现与维护却要比红黑树要简单的多。 跳表的每个节点都维护了多个指向其他节点的指针，所以在查找、插入、删除操作时可以跳过一些节点，快速找到操作需要的节点。 跳表是有序集合(sorted_set)的底层实现之一, 另一种是整数集合(intset), 在 sorted_set 都是int类型时，">
 
-<link rel="canonical" href="http://blog.ichenfei.com/2015/12/08/ubuntu-allow-root-login/">
+<link rel="canonical" href="http://blog.ichenfei.com/2019/12/21/【Redis数据结构】skiplist的实现/">
 
 
 <script id="page-configurations">
@@ -74,7 +74,7 @@
   };
 </script>
 
-  <title> Ubuntu设置允许root用户登录		 | 晨飞小窝</title>
+  <title>【Redis数据结构】skiplist的实现 | 晨飞小窝</title>
   
 
 
@@ -213,7 +213,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.ichenfei.com/2015/12/08/ubuntu-allow-root-login/">
+    <link itemprop="mainEntityOfPage" href="http://blog.ichenfei.com/2019/12/21/【Redis数据结构】skiplist的实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/image/avatar.gif">
@@ -226,7 +226,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-           Ubuntu设置允许root用户登录		
+          【Redis数据结构】skiplist的实现
         </h1>
 
         <div class="post-meta">
@@ -235,24 +235,18 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2015-12-08 19:19:36" itemprop="dateCreated datePublished" datetime="2015-12-08T19:19:36+08:00">2015-12-08</time>
+              <time title="创建时间：2019-12-21 22:01:56 / 修改时间：23:32:23" itemprop="dateCreated datePublished" datetime="2019-12-21T22:01:56+08:00">2019-12-21</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-30 20:04:00" itemprop="dateModified" datetime="2019-11-30T20:04:00+08:00">2019-11-30</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
                   </a>
                 </span>
             </span>
@@ -270,7 +264,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>130</span>
+              <span>812</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -289,7 +283,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>1. 修改root密码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo passwd root</span><br></pre></td></tr></table></figure><p>输入密码</p><p>2. 修改ssh配置</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure><p>找到 <code>PermitRootLogin</code> 这项 将其改为 <code>yes</code></p><p>保存退出并重启ssh服务既可生效。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service ssh  restart</span><br></pre></td></tr></table></figure>
+        <p>跳表(skiplist)是一种基于有序链表的用于方便快速查找/插入/删除的数据结构， 查询效率堪比红黑树，然而实现与维护却要比红黑树要简单的多。 跳表的每个节点都维护了多个指向其他节点的指针，所以在查找、插入、删除操作时可以跳过一些节点，快速找到操作需要的节点。</p>
+<p>跳表是有序集合(sorted_set)的底层实现之一, 另一种是整数集合(intset), 在 sorted_set 都是int类型时，sorted_set 采用 intset 作为底层编码，否则就采用skiplist作为底层的实现方式。</p>
+<a id="more"></a>
+<h3 id="跳表的实现"><a href="#跳表的实现" class="headerlink" title="跳表的实现"></a>跳表的实现</h3><h4 id="跳表定义"><a href="#跳表定义" class="headerlink" title="跳表定义"></a>跳表定义</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* ZSETs use a specialized version of Skiplists */</span></span><br><span class="line"><span class="comment">// 跳表节点</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> &#123;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 字符串类型的集合元素</span></span><br><span class="line">    sds ele;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 集合元素的分值</span></span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 前一个节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">backward</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 柔性结构体数组level，用于存储跳表节点每层的信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistLevel</span> &#123;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 指向本层的下一个节点</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">forward</span>;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 从当前层到下一个跳表节点的当前层的距离, 距离越大，跳过的节点越多</span></span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">long</span> span;</span><br><span class="line">    &#125; level[];</span><br><span class="line"></span><br><span class="line">&#125; zskiplistNode;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 跳表</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplist</span> &#123;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 跳表的头结点与尾结点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">header</span>, *<span class="title">tail</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 跳表节点的数量 </span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 整个跳表的最高层, 所有跳表节点最幸运的那个随机得到的层数大小</span></span><br><span class="line">    <span class="keyword">int</span> level;</span><br><span class="line">&#125; zskiplist;</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -297,6 +294,11 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+              <a href="/tags/sds/" rel="tag"># sds</a>
+              <a href="/tags/源码学习/" rel="tag"># 源码学习</a>
+          </div>
 
         
 
@@ -304,13 +306,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2015/12/08/use-tmux-commands-in-linux/" rel="prev" title=" tmux命令使用详解		">
-      <i class="fa fa-chevron-left"></i>  tmux命令使用详解		
+    <a href="/2019/12/13/【Redis数据结构】Dict的实现/" rel="prev" title="【Redis数据结构】Dict的实现">
+      <i class="fa fa-chevron-left"></i> 【Redis数据结构】Dict的实现
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2015/12/08/ubuntu 14.04服务器上使用nginx搭建wordpress博客详解/" rel="next" title=" ubuntu 14.04服务器上使用nginx搭建wordpress博客详解		">
-       ubuntu 14.04服务器上使用nginx搭建wordpress博客详解		 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -349,6 +348,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#跳表的实现"><span class="nav-number">1.</span> <span class="nav-text">跳表的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跳表定义"><span class="nav-number">1.1.</span> <span class="nav-text">跳表定义</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -536,7 +536,7 @@ show_date_time();
       repo: 'lovehhf.github.io',
       owner: 'lovehhf',
       admin: ['lovehhf'],
-      id: 'af49ed16b6d1be56f48024fbf9c95244',
+      id: '3db7cd5fada9dd1624cfd9e513808a8a',
         language: 'zh-CN',
       distractionFreeMode: 'true'
     });
