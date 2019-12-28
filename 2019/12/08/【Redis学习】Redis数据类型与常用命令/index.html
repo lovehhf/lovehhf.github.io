@@ -55,7 +55,7 @@
 <meta property="og:site_name" content="晨飞小窝">
 <meta property="og:description" content="String、List、Hash、Set、SortedSet的常用方法和底层编码实现">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-12-08T15:25:29.663Z">
+<meta property="og:updated_time" content="2019-12-25T15:56:30.540Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Redis学习】Redis数据类型与常用命令">
 <meta name="twitter:description" content="String、List、Hash、Set、SortedSet的常用方法和底层编码实现">
@@ -235,10 +235,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2019-12-08 00:19:38 / 修改时间：23:25:29" itemprop="dateCreated datePublished" datetime="2019-12-08T00:19:38+08:00">2019-12-08</time>
+              <time title="创建时间：2019-12-08 00:19:38" itemprop="dateCreated datePublished" datetime="2019-12-08T00:19:38+08:00">2019-12-08</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-25 23:56:30" itemprop="dateModified" datetime="2019-12-25T23:56:30+08:00">2019-12-25</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -264,7 +270,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
+              <span>3.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -516,6 +522,9 @@
 <li>ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]<ul>
 <li>获取有序集合中分数在<code>[min, max]</code>中的元素</li>
 <li><code>min</code>和<code>max</code>可以是<code>inf</code>和<code>-inf</code></li>
+<li><code>min</code> 和 <code>max</code> 默认为开区间(包含最小值和最大值)</li>
+<li>可以在 <code>min</code> 或 <code>max</code> 前加<code>(</code> 表示使用闭区间(不包含), 如 ZRANGEBYSCORE zs (1 5 就表示返回 1 &lt; socre &lt;= 5的元素；</li>
+<li>开闭区间的判断与解析源码在 <code>zslParseRange</code> 函数中</li>
 </ul>
 </li>
 <li>ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]<ul>
@@ -687,12 +696,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">88k</span>
+    <span title="站点总字数">91k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:20</span>
+    <span title="站点阅读时长">1:23</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
   </div>
