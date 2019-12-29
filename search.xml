@@ -92,17 +92,17 @@
 <tr>
 <td>00pppppp</td>
 <td>1 byte</td>
-<td>高2位的00表示节点类型为0~63位的字节数组, 低6位表示 entry-data 的真正长度</td>
+<td>高2位的00表示节点类型为0~63位的字节数组 <br> 低6位表示 entry-data 的真正长度</td>
 </tr>
 <tr>
 <td>01pppppp qqqqqqqq</td>
 <td>2 bytes</td>
-<td>01表示类型是 长度 &lt; 2^14 的字符数组长度, 后14位保存正真的长度</td>
+<td>01表示类型是 长度 &lt; 2^14 的字符数组长度 <br> 后14位保存正真的长度</td>
 </tr>
 <tr>
 <td>10000000 qqqqqqqq rrrrrrrr ssssssss tttttttt</td>
 <td>5 bytes</td>
-<td>10表示类型是 长度 &lt; 2^32 的字节数组, 后32位保存真正的长度</td>
+<td>10表示类型是 长度 &lt; 2^32 的字节数组 <br> 后32位保存真正的长度</td>
 </tr>
 <tr>
 <td>11000000</td>
