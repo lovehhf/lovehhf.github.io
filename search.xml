@@ -552,6 +552,13 @@
 <li>成功: 返回列表长度, 指定元素不存在不执行操作, 返回-1, 列表不存在返回0</li>
 </ul>
 </li>
+<li>LREM key count value<ul>
+<li>移除列表中与value相等的元素</li>
+<li>count &gt; 0 : 从表头开始向表尾搜索，移除与 VALUE 相等的元素，数量为 COUNT 。</li>
+<li>count &lt; 0 : 从表尾开始向表头搜索，移除与 VALUE 相等的元素，数量为 COUNT 的绝对值。</li>
+<li>count = 0 : 移除表中所有与 VALUE 相等的值。</li>
+</ul>
+</li>
 </ul>
 <h2 id="HASH-（哈希表）"><a href="#HASH-（哈希表）" class="headerlink" title="HASH （哈希表）"></a>HASH （哈希表）</h2><h3 id="实现原理-2"><a href="#实现原理-2" class="headerlink" title="实现原理"></a>实现原理</h3><p>底层由 <code>hashtable</code> 与 <code>ziplist</code> 实现</p>
 <p>满足以下2个条件是使用 <code>ziplist</code>, 否则转化为<code>hashtable</code>编码</p>
