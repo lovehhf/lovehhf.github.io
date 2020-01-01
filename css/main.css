@@ -502,10 +502,6 @@ pre .addition {
 }
 pre .meta {
   color: #eab700;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
 }
 pre .comment {
   color: #8e908c;
@@ -1182,7 +1178,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #9affff;
+  background: #8affb1;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
