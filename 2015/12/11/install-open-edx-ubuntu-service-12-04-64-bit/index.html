@@ -303,7 +303,7 @@
 <li><p>硬盘 90G</p>
 </li>
 </ul>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>查看系统版本信息 uname -a [bash] Linux vultr.guest 3.2.0-95-generic #135-Ubuntu SMP Tue Nov 10 13:33:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux [/bash] 1. 更新apt-get [bash] sudo apt-get update -y sudo apt-get upgrade -y sudo reboot [/bash] 2. 安装系统依赖 [bash] sudo apt-get install -y build-essential software-properties-common python-software-properties curl git-core libxml2-dev libxslt1-dev libfreetype6-dev python-pip python-apt python-dev libxmlsec1-dev swig sudo pip install –upgrade pip sudo pip install –upgrade virtualenv [/bash] 3. 从github 克隆安装脚本 [bash] cd /var/tmp git clone <a href="https://github.com/edx/configuration" target="_blank" rel="noopener">https://github.com/edx/configuration</a> [/bash] 4.修改配置文件设置允许ssh通过密码登录 [bash] sudo vi /var/tmp/configuration/playbooks/roles/common_vars/defaults/main.yml [/bash] 找到 COMMON_SSH_PASSWORD_AUTH: “no”,将其修改为”yes”;不然一不小心重启后就要杯具了。 5.安装依赖环境 [bash] cd /var/tmp/configuration sudo pip install -r requirements.txt [/bash] 安装依赖时遇到了 EnvironmentError: mysql_config not found 这个错误 解决方法：安装 libmysqlclient-dev [bash] sudo apt-get install libmysqlclient-dev [/bash] 6. 执行安装时遇到 pkg_resources.DistributionNotFound: paramiko 的报错 参考解决方法如下： [bash] pip install paramiko==1.10 pip install fabric==1.8.1 [/bash] 7. 执行安装脚本 [bash] cd /var/tmp/configuration/playbooks &amp;&amp; sudo ansible-playbook -c local ./edx_sandbox.yml -i “localhost,” [/bash] 默认安装的是master版本,如果要执行lms，cms域名及其端口还有版本。请参考下面的脚本 [bash] cd /var/tmp/configuration/playbooks/edx-east sudo ansible-playbook -c local –limit “localhost:127.0.0.1” ../edx_sandbox.yml \ -i “localhost,” -e ‘EDXAPP_PREVIEW_LMS_BASE=preview.example.com EDXAPP_LMS_BASE=example.com EDXAPP_LMS_PREVIEW_NGINX_PORT=80 EDXAPP_CMS_NGINX_PORT=80 EDXAPP_LMS_NGINX_PORT=80 edx_platform_version=master ‘ [/bash] 顺利的话出现下图提示就表示安装成功了 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/QQ截图20151211131507.png" alt="edx安装成功"> 8. 此时访问浏览器还不能访问到服务器 查看edx各服务允许状态如下： [bash] sudo /edx/bin/supervisorctl status [/bash] <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx服务器允许状态.png" alt="检查edx各服务器运行状态"> 发现浏览器http访问被301重定向到了https。猜是因为这个导致的无法访问。 查看lms的Nginx配置文件 [bash]sudo vi /edx/app/nginx/sites-available/lms[/bash] 发现最后有句 [bash] if ($scheme != “https”) { rewrite ^ https://$host$uri permanent; } [/bash] 将其注释掉或者删除都行，同理在修改cms。重启nginx服务器。 [bash] sudo service nginx restart [/bash] 同时清除浏览器缓存再次访问 出现了welcome to open edX!界面 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx首页.png" alt="openedx首页"> 安装服务器完成，接下来需要的就只是配置了。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>查看系统版本信息 uname -a [bash] Linux vultr.guest 3.2.0-95-generic #135-Ubuntu SMP Tue Nov 10 13:33:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux [/bash] 1. 更新apt-get [bash] sudo apt-get update -y sudo apt-get upgrade -y sudo reboot [/bash] 2. 安装系统依赖 [bash] sudo apt-get install -y build-essential software-properties-common python-software-properties curl git-core libxml2-dev libxslt1-dev libfreetype6-dev python-pip python-apt python-dev libxmlsec1-dev swig sudo pip install —upgrade pip sudo pip install —upgrade virtualenv [/bash] 3. 从github 克隆安装脚本 [bash] cd /var/tmp git clone <a href="https://github.com/edx/configuration" target="_blank" rel="noopener">https://github.com/edx/configuration</a> [/bash] 4.修改配置文件设置允许ssh通过密码登录 [bash] sudo vi /var/tmp/configuration/playbooks/roles/common_vars/defaults/main.yml [/bash] 找到 COMMON_SSH_PASSWORD_AUTH: “no”,将其修改为”yes”;不然一不小心重启后就要杯具了。 5.安装依赖环境 [bash] cd /var/tmp/configuration sudo pip install -r requirements.txt [/bash] 安装依赖时遇到了 EnvironmentError: mysql_config not found 这个错误 解决方法：安装 libmysqlclient-dev [bash] sudo apt-get install libmysqlclient-dev [/bash] 6. 执行安装时遇到 pkg_resources.DistributionNotFound: paramiko 的报错 参考解决方法如下： [bash] pip install paramiko==1.10 pip install fabric==1.8.1 [/bash] 7. 执行安装脚本 [bash] cd /var/tmp/configuration/playbooks &amp;&amp; sudo ansible-playbook -c local ./edx_sandbox.yml -i “localhost,” [/bash] 默认安装的是master版本,如果要执行lms，cms域名及其端口还有版本。请参考下面的脚本 [bash] cd /var/tmp/configuration/playbooks/edx-east sudo ansible-playbook -c local —limit “localhost:127.0.0.1” ../edx_sandbox.yml \ -i “localhost,” -e ‘EDXAPP_PREVIEW_LMS_BASE=preview.example.com EDXAPP_LMS_BASE=example.com EDXAPP_LMS_PREVIEW_NGINX_PORT=80 EDXAPP_CMS_NGINX_PORT=80 EDXAPP_LMS_NGINX_PORT=80 edx_platform_version=master ‘ [/bash] 顺利的话出现下图提示就表示安装成功了 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/QQ截图20151211131507.png" alt="edx安装成功"> 8. 此时访问浏览器还不能访问到服务器 查看edx各服务允许状态如下： [bash] sudo /edx/bin/supervisorctl status [/bash] <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx服务器允许状态.png" alt="检查edx各服务器运行状态"> 发现浏览器http访问被301重定向到了https。猜是因为这个导致的无法访问。 查看lms的Nginx配置文件 [bash]sudo vi /edx/app/nginx/sites-available/lms[/bash] 发现最后有句 [bash] if ($scheme != “https”) { rewrite ^ <a href="https://$host$uri" target="_blank" rel="noopener">https://$host$uri</a> permanent; } [/bash] 将其注释掉或者删除都行，同理在修改cms。重启nginx服务器。 [bash] sudo service nginx restart [/bash] 同时清除浏览器缓存再次访问 出现了welcome to open edX!界面 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx首页.png" alt="openedx首页"> 安装服务器完成，接下来需要的就只是配置了。</p>
 
     </div>
 
@@ -384,14 +384,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -443,12 +443,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">110k</span>
+    <span title="站点总字数">114k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:40</span>
+    <span title="站点阅读时长">1:43</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
   </div>
@@ -547,6 +547,56 @@ show_date_time();
 
 
   
+
+  
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

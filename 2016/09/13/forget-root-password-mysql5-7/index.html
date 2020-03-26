@@ -291,7 +291,7 @@
       
         <p>MySQL5.7忘记root密码解决方法</p>
 <a id="more"></a>
-<p>1.使用skip-grant-tables取消授权登录 [bash] vi /etc/my.cnf 在mysqld下面添加 skip-grant-tables [mysqld] skip-grant-table [/bash] 2.重启mysqld [bash] sudo /etc/init.d/mysqld restart [/bash] 3.此时不需要密码就能进入mysql交互界面 [bash] [root@ichenfei ~]# mysql mysql&gt; [/bash] 4.命令行修改root [bash] mysql&gt; update mysql.user set authentication_string=password(‘password’) where user=’root’ and Host = ‘localhost’; mysql&gt; flush privileges; mysql&gt; quit; ‘password’为要设置的密码 MySQL 5.7将password替换成了authentication_string. 5.7之前使用password。 [/bash] 5.重启mysqld后就能使用新设置的密码登录了. [bash] sudo /etc/init.d/mysqld restart mysql -uroot -ppassword [/bash] 再进入MySQL操作提示, 这是因为,自MySQL 5.7开始，密码存在有效期的概念， 同时因为安全等级的问题，需要使用使用其它的方式进行设置。 [bash] ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement. [/bash] 可以通过 [bash] ALTER USER USER() IDENTIFIED BY ‘password’; [/bash] 修改密码 报错: ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 这和密码的安全等级相关,此时先设置成包含大小写+特殊字符的密码。 查看安全等级命令如下: [bash] mysql&gt; SHOW VARIABLES LIKE ‘validate_password%’; +————————————–+——–+ | Variable_name | Value | +————————————–+——–+ | validate_password_dictionary_file | | | validate_password_length | 8 | | validate_password_mixed_case_count | 1 | | validate_password_number_count | 1 | | validate_password_policy | MEDIUM | | validate_password_special_char_count | 1 | +————————————–+——–+ [/bash] 通过 SET GLOBAL validate_password_policy=’LOW’; 命令，降低安全等级后，就可以直接使用，限制是必须8个字符以上； 关于安全等级更详细的介绍如下：*   LOW 只测试密码长度。 密码必须至少有8个字符长。</p>
+<p>1.使用skip-grant-tables取消授权登录 [bash] vi /etc/my.cnf 在mysqld下面添加 skip-grant-tables [mysqld] skip-grant-table [/bash] 2.重启mysqld [bash] sudo /etc/init.d/mysqld restart [/bash] 3.此时不需要密码就能进入mysql交互界面 [bash] [root@ichenfei ~]# mysql mysql&gt; [/bash] 4.命令行修改root [bash] mysql&gt; update mysql.user set authentication_string=password(‘password’) where user=’root’ and Host = ‘localhost’; mysql&gt; flush privileges; mysql&gt; quit; ‘password’为要设置的密码 MySQL 5.7将password替换成了authentication_string. 5.7之前使用password。 [/bash] 5.重启mysqld后就能使用新设置的密码登录了. [bash] sudo /etc/init.d/mysqld restart mysql -uroot -ppassword [/bash] 再进入MySQL操作提示, 这是因为,自MySQL 5.7开始，密码存在有效期的概念， 同时因为安全等级的问题，需要使用使用其它的方式进行设置。 [bash] ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement. [/bash] 可以通过 [bash] ALTER USER USER() IDENTIFIED BY ‘password’; [/bash] 修改密码 报错: ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 这和密码的安全等级相关,此时先设置成包含大小写+特殊字符的密码。 查看安全等级命令如下: [bash] mysql&gt; SHOW VARIABLES LIKE ‘validate_password%’; +———————————————————+————+ | Variable_name | Value | +———————————————————+————+ | validate_password_dictionary_file | | | validate_password_length | 8 | | validate_password_mixed_case_count | 1 | | validate_password_number_count | 1 | | validate_password_policy | MEDIUM | | validate_password_special_char_count | 1 | +———————————————————+————+ [/bash] 通过 SET GLOBAL validate_password_policy=’LOW’; 命令，降低安全等级后，就可以直接使用，限制是必须8个字符以上； 关于安全等级更详细的介绍如下：*   LOW 只测试密码长度。 密码必须至少有8个字符长。</p>
 <ul>
 <li>MEDIUM 密码必须包含至少1数字字符,1大写和小写字符,和1特殊字符。</li>
 <li>STRONG 密码子字符串长度为4的或更长时间不能匹配 单词在字典文件中,如果一个人被指定。<br>关于密码有效期相关的更多信息。 <a href="http://dev.mysql.com/doc/refman/5.7/en/password-expiration-policy.html" target="_blank" rel="noopener">http://dev.mysql.com/doc/refman/5.7/en/password-expiration-policy.html</a></li>
@@ -372,14 +372,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -431,12 +431,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">110k</span>
+    <span title="站点总字数">114k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:40</span>
+    <span title="站点阅读时长">1:43</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
   </div>
@@ -535,6 +535,56 @@ show_date_time();
 
 
   
+
+  
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

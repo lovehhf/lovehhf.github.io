@@ -1,14 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>【Git学习】合并与修改 commit</title>
+    <url>/2020/03/27/%E3%80%90Git%E5%AD%A6%E4%B9%A0%E3%80%91%E5%90%88%E5%B9%B6%E4%B8%8E%E4%BF%AE%E6%94%B9-commit/</url>
+    <content><![CDATA[<h3 id="合并多条commit"><a href="#合并多条commit" class="headerlink" title="合并多条commit"></a>合并多条commit</h3><p>对于多条commit存在多条重复记录的情况, 例如</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">commit e47711f5633548b809b7e8f669d6fb608a84680e (HEAD -&gt; master)</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:06:04 2020 +0800</span><br><span class="line">    duplicate commit</span><br><span class="line">commit b7e411f6843b08aaa41ec68a7fdb2b241eb03fd0</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:05:55 2020 +0800</span><br><span class="line">    duplicate commit</span><br><span class="line">commit 9c0c06c2478df556adce50fb26faf559424f8e78</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:02:31 2020 +0800</span><br><span class="line">    [ADD] 1.txt</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+<p>存在两条 <code>duplicate commit</code> 的提交记录，需要进行合并.<br>选择 <code>rebase</code> 基点, 由于要合并的提交最早的是 <code>b7e411f6843b08aaa41ec68a7fdb2b241eb03fd0</code>，选取前一个做为 <code>rebase</code> 的基点，即</p>
+<p><code>git rebase -i 9c0c06c2478df556adce50fb26faf559424f8e78</code> 也可以使用 <code>git rebase -i b7e411f6843b08aaa41ec68a7fdb2b241eb03fd0~1</code></p>
+<p>在命令行中执行 <code>rebase</code> 命令后，默认会打开 <code>vim</code> 编辑器进行编辑， 如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pick b7e411f duplicate commit</span><br><span class="line">pick e47711f duplicate commit</span><br><span class="line"><span class="comment"># Rebase 9c0c06c..e47711f onto 9c0c06c (2 commands)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Commands:</span></span><br><span class="line"><span class="comment"># p, pick &lt;commit&gt; = use commit</span></span><br><span class="line"><span class="comment"># r, reword &lt;commit&gt; = use commit, but edit the commit message</span></span><br><span class="line"><span class="comment"># e, edit &lt;commit&gt; = use commit, but stop for amending</span></span><br><span class="line"><span class="comment"># s, squash &lt;commit&gt; = use commit, but meld into previous commit</span></span><br><span class="line"><span class="comment"># f, fixup &lt;commit&gt; = like "squash", but discard this commit's  log message</span></span><br><span class="line"><span class="comment"># x, exec &lt;command&gt; = run command (the rest of the line) using  shell</span></span><br><span class="line"><span class="comment"># b, break = stop here (continue rebase later with 'git rebase  --continue')</span></span><br><span class="line"><span class="comment"># d, drop &lt;commit&gt; = remove commit</span></span><br><span class="line"><span class="comment"># l, label &lt;label&gt; = label current HEAD with a name</span></span><br><span class="line"><span class="comment"># t, reset &lt;label&gt; = reset HEAD to a label</span></span><br><span class="line"><span class="comment"># m, merge [-C &lt;commit&gt; | -c &lt;commit&gt;] &lt;label&gt; [# &lt;oneline&gt;]</span></span><br><span class="line"><span class="comment"># .       create a merge commit using the original merge  commit's</span></span><br><span class="line"><span class="comment"># .       message (or the oneline, if no original merge commit  was</span></span><br><span class="line"><span class="comment"># .       specified). Use -c &lt;commit&gt; to reword the commit  message</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，这里commit的显示顺序跟 <code>git log</code> 的默认显示顺序相反的</p>
+<p>修改后的内容为:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pick b7e411f duplicate commit</span><br><span class="line">f  e47711f duplicate commit</span><br></pre></td></tr></table></figure>
+<p>检查修改, 出现 <code>Successfully</code> 就表示修改成功，再看 <code>log</code> 列表</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git log</span><br><span class="line">commit af1a6cdcacff2298a4a77355aae98bccbc3027b2 (HEAD -&gt; master)</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:05:55 2020 +0800</span><br><span class="line">    duplicate commit</span><br><span class="line">commit 9c0c06c2478df556adce50fb26faf559424f8e78</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:02:31 2020 +0800</span><br><span class="line">    [ADD] 1.txt</span><br></pre></td></tr></table></figure>
+<p>合并后新的 <code>commit</code> 则为 <code>af1a6cdcacff2298a4a77355aae98bccbc3027b2</code>, 如果觉得合并的不对，要进行重来一次，前面的 <code>commit</code> 就可以用上了，</p>
+<p>使用 <code>git reset</code> 来进行回滚：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git reset --hard e47711f5633548b809b7e8f669d6fb608a84680e</span><br><span class="line">HEAD is now at e47711f duplicate commit</span><br></pre></td></tr></table></figure>
+<p>推送新分支</p>
+<p>由于 <code>rebase</code> 操作会修改版本树，如果合并的几个 <code>commit</code> 仅存在于本地，则直接 <code>git push</code> 推送即可</p>
+<p>如果合并的几个 <code>commit</code>, 已经推送到远端了，则需要把本地的版本树覆盖掉远端，在 <code>push</code> 时使用 <code>--force</code> 或 <code>-f</code> 参数来强推</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git push -f origin 本地分支:远程分支</span><br></pre></td></tr></table></figure>
+<h3 id="修改-commit-描述"><a href="#修改-commit-描述" class="headerlink" title="修改 commit 描述"></a>修改 commit 描述</h3><p>在提交后，由于手残 <code>commit</code> 内容打错字了，强迫症看着不舒服。 分为两种场景：</p>
+<ul>
+<li>要修改的 <code>commit</code> 是最新的一次提交</li>
+<li>要修改的 <code>commit</code> 不是最新的一次提交</li>
+</ul>
+<h4 id="要修改的-commit-是最新的一次提交"><a href="#要修改的-commit-是最新的一次提交" class="headerlink" title="要修改的 commit 是最新的一次提交:"></a>要修改的 commit 是最新的一次提交:</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git commit --amend</span><br></pre></td></tr></table></figure>
+<h4 id="修改描述后保存就可以了"><a href="#修改描述后保存就可以了" class="headerlink" title="修改描述后保存就可以了"></a>修改描述后保存就可以了</h4><p>要修改的 commit 不是最新的一次提交</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">commit 29dcff5fb5eb508bb63a8c79c942f1c23602edc5 (HEAD -&gt; master)</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:06:04 2020 +0800</span><br><span class="line">    duplicate commit 1</span><br><span class="line">commit b7e411f6843b08aaa41ec68a7fdb2b241eb03fd0</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:05:55 2020 +0800</span><br><span class="line">    duplicate commit</span><br><span class="line">commit 9c0c06c2478df556adce50fb26faf559424f8e78</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:02:31 2020 +0800</span><br><span class="line">    [ADD] 1.txt</span><br></pre></td></tr></table></figure>
+<p>找到要修改的commitid: <code>b7e411f6843b08aaa41ec68a7fdb2b241eb03fd0</code>, 使用 <code>~1</code> 来快速定位 <code>rebase</code> 的基点</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git rebase -i b7e411f6843b08aaa41ec68a7fdb2b241eb03fd0~1</span><br></pre></td></tr></table></figure>
+<p>这里的操作跟合并提交的操作类似，不同的是需要使用修改的指令 r 或者 reword</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">r b7e411f duplicate commit</span><br><span class="line">r e47711f duplicate commit</span><br><span class="line"><span class="comment"># Rebase 9c0c06c..e47711f onto 9c0c06c (2 commands)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Commands:</span></span><br><span class="line"><span class="comment"># p, pick &lt;commit&gt; = use commit</span></span><br><span class="line"><span class="comment"># r, reword &lt;commit&gt; = use commit, but edit the commit message</span></span><br><span class="line"><span class="comment"># e, edit &lt;commit&gt; = use commit, but stop for amending</span></span><br><span class="line"><span class="comment"># s, squash &lt;commit&gt; = use commit, but meld into previous commit</span></span><br><span class="line"><span class="comment"># f, fixup &lt;commit&gt; = like "squash", but discard this commit's  log message</span></span><br><span class="line"><span class="comment"># x, exec &lt;command&gt; = run command (the rest of the line) using  shell</span></span><br><span class="line"><span class="comment"># b, break = stop here (continue rebase later with 'git rebase  --continue')</span></span><br><span class="line"><span class="comment"># d, drop &lt;commit&gt; = remove commit</span></span><br><span class="line"><span class="comment"># l, label &lt;label&gt; = label current HEAD with a name</span></span><br><span class="line"><span class="comment"># t, reset &lt;label&gt; = reset HEAD to a label</span></span><br><span class="line"><span class="comment"># m, merge [-C &lt;commit&gt; | -c &lt;commit&gt;] &lt;label&gt; [# &lt;oneline&gt;]</span></span><br><span class="line"><span class="comment"># .       create a merge commit using the original merge  commit's</span></span><br><span class="line"><span class="comment"># .       message (or the oneline, if no original merge commit  was</span></span><br><span class="line"><span class="comment"># .       specified). Use -c &lt;commit&gt; to reword the commit  message.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># These lines can be re-ordered; they are executed from top to  bottom.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># If you remove a line here THAT COMMIT WILL BE LOST.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># However, if you remove everything, the rebase will be aborted.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Note that empty commits are commented out</span></span><br></pre></td></tr></table></figure>
+<p>保存之后会依次进入 <code>r</code> 的 <code>commit</code> 的编辑界面，修改 <code>commit</code> 内容后保存退出</p>
+<p>查看 <code>git log</code> 日志, 已经修改好了:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">commit e73d817c3158482eb4d27c0d1a0858eeeb1fb4cc (HEAD -&gt; master)</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:06:04 2020 +0800</span><br><span class="line">    [ADD] 3.txt</span><br><span class="line">commit 4d34a4ee66bcf7e818d48c4bdf87e3a7e01c149f</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:05:55 2020 +0800</span><br><span class="line">    [ADD] 2.txt</span><br><span class="line">commit 9c0c06c2478df556adce50fb26faf559424f8e78</span><br><span class="line">Author: lovehhf &lt;853885165@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 19 21:02:31 2020 +0800</span><br><span class="line">    [ADD] 1.txt</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>testmathjax</title>
+    <url>/2020/02/02/testmathjax/</url>
+    <content><![CDATA[<p>111</p><script type="math/tex; mode=display">x+1\over\sqrt{1-x^2} \tag{1}\label{eq_tag}</script><p>$\sum_{i=0}^n i^2 = \frac{(n^2 + n)(2n+1)}{6}$</p><p>$\alpha$</p><script type="math/tex; mode=display">\lim_{x\to\infty}</script><script type="math/tex; mode=display">\begin{align}
+-4 + 5x &= 2+y \nonumber  \\
+ w+2 &= -1+w \\
+ ab &= cb
+\end{align}</script>]]></content>
+  </entry>
+  <entry>
     <title>【数据结构】LeetCode.146 LRU缓存机制</title>
     <url>/2020/01/05/%E3%80%90%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%91LeetCode-146-LRU%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>原题链接: <a href="https://leetcode-cn.com/problems/lru-cache/" target="_blank" rel="noopener">146. LRU缓存机制</a></p><p>运用你所掌握的数据结构，设计和实现一个  <code>LRU (最近最少使用)</code> 缓存机制。它应该支持以下操作： 获取数据 <code>get</code> 和 写入数据 <code>put</code> 。</p><ul>
-<li>获取数据  <code>get(key)</code> <ul>
+<li>获取数据  <code>get(key)</code><ul>
 <li>如果密钥 (key) 存在于缓存中，则获取密钥的值（总是正数），否则返回 -1。</li>
 </ul>
 </li>
-<li>写入数据 <code>put(key, value)</code> <ul>
+<li>写入数据 <code>put(key, value)</code><ul>
 <li>如果密钥不存在，则写入其数据值。当缓存容量达到上限时，它应该在写入新数据之前删除最近最少使用的数据值，从而为新的数据值留出空间。</li>
 </ul>
 </li>
@@ -35,7 +87,7 @@
 <p>单链表可以实现在O(1)时间内在表头和表尾插入元素<br>但是单链表需要遍历一遍才能找到指定元素的前一个元素, 也做不到在O(1)时间内将任意元素移到队尾</p>
 <p>哈希 + 双链表就能很好的解决这个问题：</p>
 <p>key为键值对, 值为双链表节点。</p>
-<p>结构如图所示： </p>
+<p>结构如图所示：</p>
 <p><img src="lrucache结构.png" alt="lrucache结构"></p>
 <h3 id="代码"><a href="#代码" class="headerlink" title="代码:"></a>代码:</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListNode</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    双端链表</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, key=<span class="number">0</span>, val=<span class="number">0</span>)</span>:</span></span><br><span class="line">        self.key = key</span><br><span class="line">        self.val = val</span><br><span class="line">        self.prev = <span class="literal">None</span></span><br><span class="line">        self.next = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LRUCache</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    字典 + 双端链表</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, capacity: int)</span>:</span></span><br><span class="line">        self.head = ListNode()</span><br><span class="line">        self.tail = ListNode()</span><br><span class="line">        self.head.next = self.tail</span><br><span class="line">        self.tail.prev = self.head</span><br><span class="line">        self.capacity = capacity</span><br><span class="line">        self.ht = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remove_head_node</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        删除双链表头结点(最久没有访问过的节点)</span></span><br><span class="line"><span class="string">        head 的 next 指向表头节点的下一个节点</span></span><br><span class="line"><span class="string">        表头节点下一节点的 prev 指向 head, 中间的节点就相当于被删了</span></span><br><span class="line"><span class="string">        :return: 被删除的节点的键, 需要拿到这个去删除字典中键</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        node = self.head.next</span><br><span class="line">        self.head.next = node.next</span><br><span class="line">        node.next.prev = node.prev</span><br><span class="line">        <span class="keyword">return</span> node.key</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">append_to_tail</span><span class="params">(self, node: ListNode)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        将 node 节点(最近访问的节点)加到表尾</span></span><br><span class="line"><span class="string">        表尾节点(tail.prev)的 next 指针指向node</span></span><br><span class="line"><span class="string">        node 的 prev 指针指向表尾节点, next 指针指向 tail</span></span><br><span class="line"><span class="string">        tail 的 prev 指针指向 node</span></span><br><span class="line"><span class="string">        :param node: 要加到表尾的节点</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        node.prev = self.tail.prev</span><br><span class="line">        node.next = self.tail</span><br><span class="line">        self.tail.prev.next = node</span><br><span class="line">        self.tail.prev = node</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">move_to_tail</span><span class="params">(self, node: ListNode)</span> -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        将链表节点移至表尾</span></span><br><span class="line"><span class="string">        1. 节点 node 的前一个节点的 next 指针指向node后一个节点</span></span><br><span class="line"><span class="string">           节点 node 的后一个节点的 prev 指针指向node前一个节点</span></span><br><span class="line"><span class="string">        2. node 插到表尾</span></span><br><span class="line"><span class="string">        :param node: 要移动的节点</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        node.prev.next = node.next</span><br><span class="line">        node.next.prev = node.prev</span><br><span class="line">        self.append_to_tail(node)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, key: int)</span> -&gt; int:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        查找元素 时间复杂度 O(1):=</span></span><br><span class="line"><span class="string">        1. 元素不存在, 返回 -1</span></span><br><span class="line"><span class="string">        2. 元素存在, 将节点提到链表尾, 返回节点的 val 值</span></span><br><span class="line"><span class="string">        :param key: 要查找的键</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        node = self.ht.get(key)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> node:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">        self.move_to_tail(node)</span><br><span class="line">        <span class="keyword">return</span> node.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span><span class="params">(self, key: int, value: int)</span> -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        1. key不存在的情况, 插入元素</span></span><br><span class="line"><span class="string">          缓存未满, 插到表尾</span></span><br><span class="line"><span class="string">          缓存已满, 且key在字典中不存在, 插到表尾, 删除表头, 删除字典中的键值对</span></span><br><span class="line"><span class="string">        2. key已经存在的情况, 修改值, 节点移到表尾</span></span><br><span class="line"><span class="string">        :param key: 要插入的键</span></span><br><span class="line"><span class="string">        :param value: 插入键对应的值</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">not</span> key <span class="keyword">in</span> self.ht):</span><br><span class="line">            <span class="keyword">if</span> (len(self.ht) &gt;= self.capacity):</span><br><span class="line">                removed_key = self.remove_head_node()</span><br><span class="line">                self.ht.pop(removed_key)</span><br><span class="line">            node = ListNode(key, value)</span><br><span class="line">            self.ht[key] = node</span><br><span class="line">            self.append_to_tail(node)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            node = self.ht[key]</span><br><span class="line">            node.val = value</span><br><span class="line">            self.move_to_tail(node)</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
@@ -68,6 +120,7 @@
 <li>操作不方便，每次数据变动都会引发内存的分配和数据拷贝</li>
 </ul>
 <h3 id="ziplist-结构示意图"><a href="#ziplist-结构示意图" class="headerlink" title="ziplist 结构示意图:"></a>ziplist 结构示意图:</h3><p><img src="ziplist结构图.png" alt="ziplist结构图"></p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -110,8 +163,10 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>相关的宏定义<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 返回压缩列表的字节数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_BYTES(zl)       (*((uint32_t*)(zl)))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回压缩列表表尾相对的压缩列表起始地址的偏移量 (zl的地址 + 4字节 就是zltail的地址) </span></span><br><span class="line"><span class="comment">// 列表为空时最后一个节点为0xff, 非空时为0xff前一个节点</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_TAIL_OFFSET(zl) (*((uint32_t*)((zl)+sizeof(uint32_t))))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回压缩列表的长度，如果遍历一遍才能确定长度则返回 UINT16_MAX</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_LENGTH(zl)      (*((uint16_t*)((zl)+sizeof(uint32_t)*2)))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回 ZIPLIST 头部的长度: zlbytes(4字节) + zltail(4字节) + zllen(2字节) = 10 字节*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_HEADER_SIZE     (sizeof(uint32_t)*2+sizeof(uint16_t))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回 zllen 的长度 (1字节) */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_END_SIZE        (sizeof(uint8_t))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回第一个 ziplist 节点的指针 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_ENTRY_HEAD(zl)  ((zl)+ZIPLIST_HEADER_SIZE)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment"> * 返回最后一个 ziplist 节点的指针</span></span><br><span class="line"><span class="comment"> * intrev32ifbe函数为大小端转换函数，统一转换为小端存储。因为压缩列表的操作中涉及到的位运算很多，如果不统一的话会出现混乱。</span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_ENTRY_TAIL(zl)  ((zl)+intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl)))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回ziplist表尾节点的指针</span></span><br><span class="line"><span class="comment">Return the pointer to the last byte of a ziplist, which is, the end of ziplist FF entry. */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIPLIST_ENTRY_END(zl)   ((zl)+intrev32ifbe(ZIPLIST_BYTES(zl))-1)</span></span><br></pre></td></tr></table></figure></p>
 <h4 id="ziplist节点的构成"><a href="#ziplist节点的构成" class="headerlink" title="ziplist节点的构成:"></a>ziplist节点的构成:</h4><p><img src="ziplist_entry结构.png" alt="ziplist_entry结构"></p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -138,7 +193,9 @@
 </tr>
 </tbody>
 </table>
-<h4 id="encoding-的编码类型如下表"><a href="#encoding-的编码类型如下表" class="headerlink" title="encoding 的编码类型如下表:"></a>encoding 的编码类型如下表:</h4><table>
+</div>
+<h4 id="encoding-的编码类型如下表"><a href="#encoding-的编码类型如下表" class="headerlink" title="encoding 的编码类型如下表:"></a>encoding 的编码类型如下表:</h4><div class="table-container">
+<table>
 <thead>
 <tr>
 <th>编码</th>
@@ -199,6 +256,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>encoding 相关的宏定义如下:</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_END 255</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_BIG_PREVLEN 254</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_STR_MASK 0xc0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_INT_MASK 0x30</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_STR_06B (0 &lt;&lt; 6)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_STR_14B (1 &lt;&lt; 6)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_STR_32B (2 &lt;&lt; 6)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_INT_16B (0xc0 | 0&lt;&lt;4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_INT_32B (0xc0 | 1&lt;&lt;4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_INT_64B (0xc0 | 2&lt;&lt;4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_INT_24B (0xc0 | 3&lt;&lt;4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ZIP_INT_8B 0xfe</span></span><br></pre></td></tr></table></figure>
 <h3 id="压缩列表的创建于增删改查"><a href="#压缩列表的创建于增删改查" class="headerlink" title="压缩列表的创建于增删改查"></a>压缩列表的创建于增删改查</h3><h4 id="创建一个空的-ziplist"><a href="#创建一个空的-ziplist" class="headerlink" title="创建一个空的 ziplist"></a>创建一个空的 ziplist</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Create a new empty ziplist. */</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistNew</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 分配空间为头部大小 + 尾部大小(11字节)</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> bytes = ZIPLIST_HEADER_SIZE+ZIPLIST_END_SIZE;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *zl = zmalloc(bytes);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置总的字节数和尾部偏移量</span></span><br><span class="line">    ZIPLIST_BYTES(zl) = intrev32ifbe(bytes);</span><br><span class="line">    ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(ZIPLIST_HEADER_SIZE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置长度和表尾</span></span><br><span class="line">    ZIPLIST_LENGTH(zl) = <span class="number">0</span>;</span><br><span class="line">    zl[bytes<span class="number">-1</span>] = ZIP_END;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回压缩列表首地址</span></span><br><span class="line">    <span class="keyword">return</span> zl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -259,8 +317,8 @@
       </categories>
       <tags>
         <tag>redis</tag>
-        <tag>源码学习</tag>
         <tag>跳表</tag>
+        <tag>源码学习</tag>
       </tags>
   </entry>
   <entry>
@@ -351,8 +409,8 @@
       </categories>
       <tags>
         <tag>redis</tag>
-        <tag>sds</tag>
         <tag>源码学习</tag>
+        <tag>sds</tag>
       </tags>
   </entry>
   <entry>
@@ -503,8 +561,8 @@
       </categories>
       <tags>
         <tag>redis</tag>
-        <tag>sds</tag>
         <tag>源码学习</tag>
+        <tag>sds</tag>
       </tags>
   </entry>
   <entry>
@@ -893,55 +951,6 @@
       </tags>
   </entry>
   <entry>
-    <title>【算法学习】Leetcode 10. 正则表达式匹配</title>
-    <url>/2019/12/01/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91Leetcode-10-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/</url>
-    <content><![CDATA[<p>原题链接: <a href="https://leetcode-cn.com/problems/regular-expression-matching/" target="_blank" rel="noopener">Leetcode 10. 正则表达式匹配</a></p>
-<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 ‘.’ 和 ‘*’ 的正则表达式匹配。</p>
-<p><code>&#39;.&#39;</code> 匹配任意单个字符<br><code>&#39;*&#39;</code> 匹配零个或多个前面的那一个元素</p>
-<p>所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。</p>
-<p>说明:</p>
-<p><code>s</code> 可能为空，且只包含从 <code>a-z</code> 的小写字母。<br><code>p</code> 可能为空，且只包含从 <code>a-z</code> 的小写字母，以及字符 <code>.</code> 和 <code>*</code>。</p>
-<a id="more"></a>
-<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>二维dp</p>
-<ul>
-<li>状态表示:<ul>
-<li><code>dp[i][j]</code>: 字符串<code>s前i个字母</code>能否被<code>p的前j个字母</code>表示</li>
-</ul>
-</li>
-<li>状态计算:<ul>
-<li>枚举<code>p[j]</code>的所有可能的字母</li>
-<li><code>s[i] = p[j]</code> 或 <code>p[j] = &#39;.&#39;</code><ul>
-<li><code>dp[i][j] = dp[i - 1][j - 1]</code></li>
-</ul>
-</li>
-<li><code>p[j] = &#39;*&#39;</code><ul>
-<li>不使用<code>*</code><ul>
-<li>需要s[1~i]与p[1~j]匹配上: </li>
-<li><code>dp[i][j] = dp[i][j - 2]</code></li>
-</ul>
-</li>
-<li>使用<code>*</code><ul>
-<li>需要<code>s[i] = p[j - 1]</code>或者<code>p[j - 1] = .</code>才可以用<code>*</code></li>
-<li>需要<code>s[1 ~ i-1]</code>与<code>p[1~j]</code>匹配上</li>
-<li><code>dp[i][j] = dp[i - 1][j]</code></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="代码："><a href="#代码：" class="headerlink" title="代码："></a>代码：</h3><h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isMatch</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m, n;</span><br><span class="line">        n = s.size(), m = p.size();</span><br><span class="line">        <span class="comment">// 初始化, 先给s和p加' '不用处理边界</span></span><br><span class="line">        s = <span class="string">' '</span> + s;</span><br><span class="line">        p = <span class="string">' '</span> + p;</span><br><span class="line">        <span class="comment">// 定义一个n行m列的bool数组, 初始化为false</span></span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; dp(n + <span class="number">1</span>, <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;(m + <span class="number">1</span>, <span class="literal">false</span>));</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 先把s为空的情况处理了, 就不用在后面的循环加判断条件处理</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= m; i ++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(p[i] == <span class="string">'*'</span>) dp[<span class="number">0</span>][i] = dp[<span class="number">0</span>][i - <span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i ++)</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= m; j++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 正常转移</span></span><br><span class="line">                <span class="keyword">if</span>(p[j] == <span class="string">'.'</span> || s[i] == p[j]) dp[i][j] = dp[i - <span class="number">1</span>][j - <span class="number">1</span>];</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 非正常转移</span></span><br><span class="line">                    <span class="keyword">if</span>(p[j] == <span class="string">'*'</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 没用到*的情况， 从dp[i][j - 2], 表示*和*前面的数都不使用</span></span><br><span class="line">                        dp[i][j] = dp[i][j - <span class="number">2</span>];</span><br><span class="line">                        <span class="comment">// 用到了*的情况, 从dp[i - 1][j]转移</span></span><br><span class="line">                        <span class="keyword">if</span>(p[j - <span class="number">1</span>] == <span class="string">'.'</span> || s[i] == p[j - <span class="number">1</span>]) dp[i][j] = dp[i][j] | dp[i - <span class="number">1</span>][j];</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[n][m];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isMatch</span><span class="params">(self, s: str, p: str)</span> -&gt; bool:</span></span><br><span class="line">        s, p = <span class="string">' '</span> + s, <span class="string">' '</span> + p</span><br><span class="line">        n, m = len(s), len(p)</span><br><span class="line">        dp = [[<span class="number">0</span>] * m <span class="keyword">for</span> _ <span class="keyword">in</span> range(n)]</span><br><span class="line"></span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">        <span class="comment"># p匹配空字符串的特殊情况</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, m):</span><br><span class="line">            <span class="keyword">if</span> p[i] == <span class="string">'*'</span>:</span><br><span class="line">                dp[<span class="number">0</span>][i] = dp[<span class="number">0</span>][i - <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, m):</span><br><span class="line">                <span class="keyword">if</span> (s[i] == p[j] <span class="keyword">or</span> p[j] == <span class="string">'.'</span>):</span><br><span class="line">                    dp[i][j] = dp[i - <span class="number">1</span>][j - <span class="number">1</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">if</span> p[j] == <span class="string">'*'</span>:</span><br><span class="line">                        dp[i][j] = dp[i][j - <span class="number">2</span>]</span><br><span class="line">                        <span class="keyword">if</span> (p[j - <span class="number">1</span>] == <span class="string">'.'</span> <span class="keyword">or</span> s[i] == p[j - <span class="number">1</span>]):</span><br><span class="line">                            dp[i][j] |= dp[i - <span class="number">1</span>][j]</span><br><span class="line">        <span class="keyword">return</span> dp[n - <span class="number">1</span>][m - <span class="number">1</span>] == <span class="number">1</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法学习</category>
-      </categories>
-      <tags>
-        <tag>算法学习</tag>
-        <tag>dp</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【算法学习】AcWing 899. 编辑距离(dp)</title>
     <url>/2019/11/30/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91AcWing%20899.%20%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB%E3%80%90dp%E3%80%91/</url>
     <content><![CDATA[<h2 id="AcWing-902-最短编辑距离"><a href="#AcWing-902-最短编辑距离" class="headerlink" title="AcWing 902. 最短编辑距离"></a><a href="https://www.acwing.com/problem/content/904/" target="_blank" rel="noopener">AcWing 902. 最短编辑距离</a></h2><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>给定两个字符串A和B，现在要将A经过若干操作变为B，可进行的操作有：<br>删除–将字符串A中的某个字符删除。<br>插入–在字符串A的某个位置插入某个字符。<br>替换–将字符串A中的某个字符替换为另一个字符。<br>现在请你求出，将A变为B至少需要进行多少次操作。</p>
@@ -1116,7 +1125,7 @@
 <h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install stress</span><br><span class="line">stress -c 50   # cpu压力测试, 开50个进程不停地sqrt, 一下子风扇就转起来了</span><br><span class="line">tail -f /var/log/fan_control.log  # 查看日志</span><br></pre></td></tr></table></figure>
 <h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h4><ul>
 <li><a href="https://segmentfault.com/a/1190000017225701" target="_blank" rel="noopener">三极管打造树莓派温控风扇</a></li>
-<li><a href="https://blog.newnius.com/raspberry-control-fan-with-transistor.html" target="_blank" rel="noopener">树莓派—利用三极管控制散热风扇</a></li>
+<li><a href="https://blog.newnius.com/raspberry-control-fan-with-transistor.html" target="_blank" rel="noopener">树莓派—-利用三极管控制散热风扇</a></li>
 <li><a href="https://www.jianshu.com/p/20fea50cf483" target="_blank" rel="noopener">用Python做一个温控风扇-树莓派</a></li>
 </ul>
 ]]></content>
@@ -1195,16 +1204,16 @@ iter1:一个或多个可迭代对象（字符串、列表、元祖、字典）
 返回值:
 --&gt; zip object
 </code></pre><h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例:"></a>使用示例:</h2><p><img src="https://www.ichenfei.com/wp-content/uploads/2019/03/03d295c17556dbd50160ff8f321c8780.png" alt></p>
-<h2 id="使用技巧"><a href="#使用技巧" class="headerlink" title="使用技巧"></a>使用技巧</h2><h2 id="1、将两个列表合并为字典"><a href="#1、将两个列表合并为字典" class="headerlink" title="1、将两个列表合并为字典"></a>1、将两个列表合并为字典</h2><pre><code>a = [chr(ord(&apos;a&apos;)+i) for i in range(0,10)]
+<h2 id="使用技巧"><a href="#使用技巧" class="headerlink" title="使用技巧"></a>使用技巧</h2><h2 id="1、将两个列表合并为字典"><a href="#1、将两个列表合并为字典" class="headerlink" title="1、将两个列表合并为字典"></a>1、将两个列表合并为字典</h2><pre><code>a = [chr(ord(&#39;a&#39;)+i) for i in range(0,10)]
 b = list(range(0,26))
 print(a)
 print(b)
 print(dict(zip(a,b)))
 
 
-[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;, &apos;d&apos;, &apos;e&apos;, &apos;f&apos;, &apos;g&apos;, &apos;h&apos;, &apos;i&apos;, &apos;j&apos;]
+[&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;, &#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;i&#39;, &#39;j&#39;]
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-{&apos;a&apos;: 0, &apos;b&apos;: 1, &apos;c&apos;: 2, &apos;d&apos;: 3, &apos;e&apos;: 4, &apos;f&apos;: 5, &apos;g&apos;: 6, &apos;h&apos;: 7, &apos;i&apos;: 8, &apos;j&apos;: 9}
+{&#39;a&#39;: 0, &#39;b&#39;: 1, &#39;c&#39;: 2, &#39;d&#39;: 3, &#39;e&#39;: 4, &#39;f&#39;: 5, &#39;g&#39;: 6, &#39;h&#39;: 7, &#39;i&#39;: 8, &#39;j&#39;: 9}
 </code></pre><h2 id="2、-旋转矩阵"><a href="#2、-旋转矩阵" class="headerlink" title="2、 旋转矩阵"></a>2、 旋转矩阵</h2><h3 id="示例1-顺时针旋转"><a href="#示例1-顺时针旋转" class="headerlink" title="示例1 顺时针旋转:"></a>示例1 顺时针旋转:</h3><p><a href="https://leetcode-cn.com/problems/rotate-image/" target="_blank" rel="noopener">LeetCode 48. 旋转图像</a></p>
 <blockquote>
 <p>给定一个 <code>n × n</code> 的二维矩阵表示一个图像。将图像顺时针旋转 <code>90</code> 度。</p>
@@ -1302,7 +1311,8 @@ print(spiralOrder([
 <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>设置访问密码:</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt; jupyter notebook password</span><br><span class="line"></span><br><span class="line">Enter password:</span><br><span class="line">Verify password:</span><br><span class="line">[NotebookPasswordApp] Wrote hashed password to C:\Users\xxx\.jupyter\jupyter_notebook_config.json</span><br></pre></td></tr></table></figure>
 <p>添加内核:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">workon py36_env</span><br><span class="line">pip install ipykernel</span><br><span class="line">python -m ipykernel install --name <span class="string">"py36env"</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="常用快捷键"><a href="#常用快捷键" class="headerlink" title="常用快捷键"></a>常用快捷键</h2><table>
+<h2 id="常用快捷键"><a href="#常用快捷键" class="headerlink" title="常用快捷键"></a>常用快捷键</h2><div class="table-container">
+<table>
 <thead>
 <tr>
 <th>模式</th>
@@ -1378,6 +1388,7 @@ print(spiralOrder([
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><ul>
 <li><a href="https://jupyter.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">Jupyter Documentation</a></li>
 </ul>
@@ -1705,9 +1716,9 @@ tunnels:
 <li><a href="https://github.com/inconshreveable/ngrok" target="_blank" rel="noopener">github: inconshreveable/ngrok</a></li>
 <li>自己搭建ngrok服务：<ul>
 <li>参考:</li>
-<li><a href="https://imququ.com/post/self-hosted-ngrokd.html" target="_blank" rel="noopener">搭建 ngrok 服务实现内网穿透 – imququ.com</a></li>
-<li><a href="https://zhyack.github.io/posts/2017_04_07-Ngrok.html" target="_blank" rel="noopener">内网穿透——ngrok的搭建与使用 – zhyack.github.io</a></li>
-<li><a href="http://blog.just4fun.site/build-ngrok-server.html" target="_blank" rel="noopener">建ngrok服务（内网穿透） –blog.just4fun.site</a></li>
+<li><a href="https://imququ.com/post/self-hosted-ngrokd.html" target="_blank" rel="noopener">搭建 ngrok 服务实现内网穿透 — imququ.com</a></li>
+<li><a href="https://zhyack.github.io/posts/2017_04_07-Ngrok.html" target="_blank" rel="noopener">内网穿透——ngrok的搭建与使用 — zhyack.github.io</a></li>
+<li><a href="http://blog.just4fun.site/build-ngrok-server.html" target="_blank" rel="noopener">建ngrok服务（内网穿透） —blog.just4fun.site</a></li>
 </ul>
 </li>
 </ul>
@@ -1718,7 +1729,7 @@ tunnels:
 <p><img src="https://www.ichenfei.com/wp-content/uploads/2017/11/7797ae475bcbb69d56ede9b046ce699c.png" alt></p>
 <ul>
 <li><a href="https://lanproxy.thingsglobal.org/" target="_blank" rel="noopener">lanproxy.thingsglobal.org</a></li>
-<li><a href="https://github.com/ffay/lanproxy" target="_blank" rel="noopener">源代码 – github</a></li>
+<li><a href="https://github.com/ffay/lanproxy" target="_blank" rel="noopener">源代码 — github</a></li>
 <li><a href="https://github.com/ffay/lanproxy/files/1439965/proxy-server-0.1-beta.zip" target="_blank" rel="noopener">proxy-server-0.1-beta.zip</a></li>
 <li><a href="https://lanproxy.thingsglobal.org/proxy-client-0.1-beta.zip" target="_blank" rel="noopener">proxy-client-0.1-beta.zip</a></li>
 <li>lanproxy服务搭建<ul>
@@ -1783,11 +1794,11 @@ tunnels:
     <title> Python抓取中文网页乱码问题		</title>
     <url>/2016/10/21/python-error-coding-problem/</url>
     <content><![CDATA[<a id="more"></a><h2 id="text与-content的区别"><a href="#text与-content的区别" class="headerlink" title=".text与.content的区别"></a>.text与.content的区别</h2><p>requests的官方文档有这么一段:</p><blockquote>
-<p>We can read the content of the server’s response. Consider the GitHub timeline again: &gt;&gt;&gt; import requests &gt;&gt;&gt; r = requests.get(‘<a href="https://api.github.com/events&#39;" target="_blank" rel="noopener">https://api.github.com/events&#39;</a>) &gt;&gt;&gt; r.text u’[{“repository”:{“open_issues”:0,”url”:”<a href="https://github.com/.." target="_blank" rel="noopener">https://github.com/..</a>. Requests will automatically decode content from the server. Most unicode charsets are seamlessly decoded. When you make a request, Requests makes educated guesses about the encoding of the response based on the HTTP headers. The text encoding guessed by Requests is used when you access r.text. You can find out what encoding Requests is using, and change it, using the r.encoding property: &gt;&gt;&gt; r.encoding ‘utf-8’ &gt;&gt;&gt; r.encoding = ‘ISO-8859-1’ If you change the encoding, Requests will use the new value of r.encoding whenever you call r.text. You might want to do this in any situation where you can apply special logic to work out what the encoding of the content will be. For example, HTTP and XML have the ability to specify their encoding in their body. In situations like this, you should use r.content to find the encoding, and then set r.encoding. This will let you use r.text with the correct encoding. Requests will also use custom encodings in the event that you need them. If you have created your own encoding and registered it with the codecs module, you can simply use the codec name as the value of r.encoding and Requests will handle the decoding for you.</p>
+<p>We can read the content of the server’s response. Consider the GitHub timeline again: &gt;&gt;&gt; import requests &gt;&gt;&gt; r = requests.get(‘<a href="https://api.github.com/events" target="_blank" rel="noopener">https://api.github.com/events</a>‘) &gt;&gt;&gt; r.text u’[{“repository”:{“open_issues”:0,”url”:”<a href="https://github.com/" target="_blank" rel="noopener">https://github.com/</a>… Requests will automatically decode content from the server. Most unicode charsets are seamlessly decoded. When you make a request, Requests makes educated guesses about the encoding of the response based on the HTTP headers. The text encoding guessed by Requests is used when you access r.text. You can find out what encoding Requests is using, and change it, using the r.encoding property: &gt;&gt;&gt; r.encoding ‘utf-8’ &gt;&gt;&gt; r.encoding = ‘ISO-8859-1’ If you change the encoding, Requests will use the new value of r.encoding whenever you call r.text. You might want to do this in any situation where you can apply special logic to work out what the encoding of the content will be. For example, HTTP and XML have the ability to specify their encoding in their body. In situations like this, you should use r.content to find the encoding, and then set r.encoding. This will let you use r.text with the correct encoding. Requests will also use custom encodings in the event that you need them. If you have created your own encoding and registered it with the codecs module, you can simply use the codec name as the value of r.encoding and Requests will handle the decoding for you.</p>
 </blockquote><a id="more"></a>
 
 
-<p>大意就是说，.text方法会猜网站编码,大部分网站都能蒙对,如果猜不对的话可以用 encoding 方法指定 response 的编码,上面的代码还可以写成 [python] url = “<a href="https://www.jisilu.cn/home/explore/sort\_type-new\_\_day-0__page-1&quot;" target="_blank" rel="noopener">https://www.jisilu.cn/home/explore/sort\_type-new\_\_day-0__page-1&quot;</a> html = requests.get(url,headers=headers) html.encoding = “utf-8” print html.text [/python] 而.content而高级一点,.content会自己去文本里面找是什么编码，而不是靠猜的。。</p>
+<p>大意就是说，.text方法会猜网站编码,大部分网站都能蒙对,如果猜不对的话可以用 encoding 方法指定 response 的编码,上面的代码还可以写成 [python] url = “<a href="https://www.jisilu.cn/home/explore/sort\_type-new\_\_day-0__page-1" target="_blank" rel="noopener">https://www.jisilu.cn/home/explore/sort\_type-new\_\_day-0__page-1</a>“ html = requests.get(url,headers=headers) html.encoding = “utf-8” print html.text [/python] 而.content而高级一点,.content会自己去文本里面找是什么编码，而不是靠猜的。。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -1798,7 +1809,7 @@ tunnels:
     <url>/2016/09/22/use-supervisor-to-manage-process/</url>
     <content><![CDATA[<p>Supervisor 是基于 Python 的进程管理工具，只能运行在 Unix-Like 的系统上,Supervisor可以很方便的用来启动、重启、关闭进程。除了对单个进程的控制，还可以同时启动、关闭多个进程。</p><h2 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h2><p>Supervisor 有两个主要的组成部分：</p><ul>
 <li>supervisord<ul>
-<li>运行 Supervisor 时会启动一个supervisord进程，它负责启动所管理的进程，并将所管理的进程作为自己的子进程来启动，而且可以在所管理的进程出现崩溃时自动重启。<br></li>
+<li>运行 Supervisor 时会启动一个supervisord进程，它负责启动所管理的进程，并将所管理的进程作为自己的子进程来启动，而且可以在所管理的进程出现崩溃时自动重启。&lt;/br&gt;</li>
 </ul>
 </li>
 <li>supervisorctl<ul>
@@ -1850,7 +1861,19 @@ tunnels:
     <content><![CDATA[<p>Discourse 是 Stack Overflow 的联合创始人 Jeff Atwood 推出的一个新的开源论坛项目，其目的是为了改变十年未变的论坛软件。它摒弃了传统论坛的话题讨论形式、拥有自学习系统、全Web应用同时适用于桌面和移动终端。</p>
 <a id="more"></a>
 <p><blockquote><br>Discourse is the 100% open source discussion platform built for the next decade of the Internet. It works as:</blockquote></p>
-<li>a mailing list<br><br></li><li>a discussion forum</li><br><li>a long-form chat room</li><br><br>官网:<a href="http://www.discourse.org/" target="_blank" rel="noopener"> www.discourse.org</a><br>源码:<a href="https://github.com/discourse/discourse" target="_blank" rel="noopener"> github.com/discourse/discourse</a><br><br><br><h2>安装要求</h2><br><br><li>Linux服务器(内核版本&gt;=3.1)<br><br></li><li>官方建议2G以上内存(可以使用虚拟内存)<br><br></li><li>基本的Linux命令行操作</li>
+<li>a mailing list<br>
+</li><li>a discussion forum</li>
+<li>a long-form chat room</li>
+
+官网:<a href="http://www.discourse.org/" target="_blank" rel="noopener"> www.discourse.org</a>
+源码:<a href="https://github.com/discourse/discourse" target="_blank" rel="noopener"> github.com/discourse/discourse</a>
+
+
+<h2>安装要求</h2>
+
+<li>Linux服务器(内核版本>=3.1)<br>
+</li><li>官方建议2G以上内存(可以使用虚拟内存)<br>
+</li><li>基本的Linux命令行操作</li>
 
 <h2>安装配置Discourse</h2>
 
@@ -1869,7 +1892,7 @@ tunnels:
 <p>这时,通过ip或域名(要解析或修改host)都能访问到discourse,点击 sign up 使用开发者邮箱注册账号(验证登录后默认就是管理员了)</p>
 <p><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/创建Discourse账号.jpg" alt="创建Discourse账号" width="446" height="399" class="aligncenter size-full wp-image-383"><br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse验证邮箱.jpg" alt="Discourse验证邮箱" width="808" height="158" class="aligncenter size-full wp-image-384"></p>
 <p>ps:<br>系统默认有个system账号,google也不知道密码，也不知道Discourse是用什么方式加密的。<br>手动修改数据库设置账号active字段为true也好像没什么卵用，只好通过smtp,嗯，要确定smtp账号是有效的。。。</p>
-<p>7.管理Discourse站点<br>登录后访问 http://域名/admin 就能访问discourse管理界面了。<br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse_admin-1024x504.jpg" alt="Discourse_admin" width="1024" height="504" class="aligncenter size-large wp-image-386"></p>
+<p>7.管理Discourse站点<br>登录后访问 <a href="http://域名/admin" target="_blank" rel="noopener">http://域名/admin</a> 就能访问discourse管理界面了。<br><img src="http://www.ichenfei.com/wp-content/uploads/2016/09/Discourse_admin-1024x504.jpg" alt="Discourse_admin" width="1024" height="504" class="aligncenter size-large wp-image-386"></p>
 ]]></content>
       <categories>
         <category>Discourse</category>
@@ -1890,15 +1913,15 @@ tunnels:
 <p>原来是没有加 WORDPRESS_DB_PASSWORD 参数导致的</p>
 <p>删除创建失败的容器再使用-e WORDPRESS_DB_PASSWORD=’password’创建:</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker rm da602f603d64</span><br><span class="line">docker run --name wordpress1 --link db1:db1 -d -P -e WORDPRESS_DB_PASSWORD=password wordpress</span><br><span class="line">docker ps</span><br><span class="line"></span><br><span class="line">CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                                      NAMES</span><br><span class="line">dbf9e0ff7cb1        mysql                 <span class="string">"docker-entrypoint.sh"</span>   16 minutes ago      Up 16 minutes       3306/tcp                                   db1</span><br><span class="line">4957dd67d2cd        wordpress             <span class="string">"/entrypoint.sh apach"</span>   44 minutes ago      Up 22 minutes       0.0.0.0:32773-&gt;80/tcp                      some-wordpress</span><br></pre></td></tr></table></figure>
-<p>附:<br>docker logs –help<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage:	docker logs [OPTIONS] CONTAINER</span><br><span class="line"></span><br><span class="line">Fetch the logs of a container</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      --details        Show extra details provided to logs</span><br><span class="line">  -f, --follow         Follow <span class="built_in">log</span> output</span><br><span class="line">      --<span class="built_in">help</span>           Print usage</span><br><span class="line">      --since string   Show logs since timestamp</span><br><span class="line">      --tail string    Number of lines to show from the end of the logs (default <span class="string">"all"</span>)</span><br><span class="line">  -t, --timestamps     Show timestamps</span><br></pre></td></tr></table></figure></p>
+<p>附:<br>docker logs —help<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage:	docker logs [OPTIONS] CONTAINER</span><br><span class="line"></span><br><span class="line">Fetch the logs of a container</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      --details        Show extra details provided to logs</span><br><span class="line">  -f, --follow         Follow <span class="built_in">log</span> output</span><br><span class="line">      --<span class="built_in">help</span>           Print usage</span><br><span class="line">      --since string   Show logs since timestamp</span><br><span class="line">      --tail string    Number of lines to show from the end of the logs (default <span class="string">"all"</span>)</span><br><span class="line">  -t, --timestamps     Show timestamps</span><br></pre></td></tr></table></figure></p>
 ]]></content>
       <categories>
         <category>Docker</category>
         <category>wordpress</category>
       </categories>
       <tags>
-        <tag>MySQL</tag>
         <tag>Docker</tag>
+        <tag>MySQL</tag>
         <tag>wordpress</tag>
       </tags>
   </entry>
@@ -1907,7 +1930,7 @@ tunnels:
     <url>/2016/09/13/forget-root-password-mysql5-7/</url>
     <content><![CDATA[<p>MySQL5.7忘记root密码解决方法</p>
 <a id="more"></a>
-<p>1.使用skip-grant-tables取消授权登录 [bash] vi /etc/my.cnf 在mysqld下面添加 skip-grant-tables [mysqld] skip-grant-table [/bash] 2.重启mysqld [bash] sudo /etc/init.d/mysqld restart [/bash] 3.此时不需要密码就能进入mysql交互界面 [bash] [root@ichenfei ~]# mysql mysql&gt; [/bash] 4.命令行修改root [bash] mysql&gt; update mysql.user set authentication_string=password(‘password’) where user=’root’ and Host = ‘localhost’; mysql&gt; flush privileges; mysql&gt; quit; ‘password’为要设置的密码 MySQL 5.7将password替换成了authentication_string. 5.7之前使用password。 [/bash] 5.重启mysqld后就能使用新设置的密码登录了. [bash] sudo /etc/init.d/mysqld restart mysql -uroot -ppassword [/bash] 再进入MySQL操作提示, 这是因为,自MySQL 5.7开始，密码存在有效期的概念， 同时因为安全等级的问题，需要使用使用其它的方式进行设置。 [bash] ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement. [/bash] 可以通过 [bash] ALTER USER USER() IDENTIFIED BY ‘password’; [/bash] 修改密码 报错: ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 这和密码的安全等级相关,此时先设置成包含大小写+特殊字符的密码。 查看安全等级命令如下: [bash] mysql&gt; SHOW VARIABLES LIKE ‘validate_password%’; +————————————–+——–+ | Variable_name | Value | +————————————–+——–+ | validate_password_dictionary_file | | | validate_password_length | 8 | | validate_password_mixed_case_count | 1 | | validate_password_number_count | 1 | | validate_password_policy | MEDIUM | | validate_password_special_char_count | 1 | +————————————–+——–+ [/bash] 通过 SET GLOBAL validate_password_policy=’LOW’; 命令，降低安全等级后，就可以直接使用，限制是必须8个字符以上； 关于安全等级更详细的介绍如下：*   LOW 只测试密码长度。 密码必须至少有8个字符长。</p>
+<p>1.使用skip-grant-tables取消授权登录 [bash] vi /etc/my.cnf 在mysqld下面添加 skip-grant-tables [mysqld] skip-grant-table [/bash] 2.重启mysqld [bash] sudo /etc/init.d/mysqld restart [/bash] 3.此时不需要密码就能进入mysql交互界面 [bash] [root@ichenfei ~]# mysql mysql&gt; [/bash] 4.命令行修改root [bash] mysql&gt; update mysql.user set authentication_string=password(‘password’) where user=’root’ and Host = ‘localhost’; mysql&gt; flush privileges; mysql&gt; quit; ‘password’为要设置的密码 MySQL 5.7将password替换成了authentication_string. 5.7之前使用password。 [/bash] 5.重启mysqld后就能使用新设置的密码登录了. [bash] sudo /etc/init.d/mysqld restart mysql -uroot -ppassword [/bash] 再进入MySQL操作提示, 这是因为,自MySQL 5.7开始，密码存在有效期的概念， 同时因为安全等级的问题，需要使用使用其它的方式进行设置。 [bash] ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement. [/bash] 可以通过 [bash] ALTER USER USER() IDENTIFIED BY ‘password’; [/bash] 修改密码 报错: ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 这和密码的安全等级相关,此时先设置成包含大小写+特殊字符的密码。 查看安全等级命令如下: [bash] mysql&gt; SHOW VARIABLES LIKE ‘validate_password%’; +———————————————————+————+ | Variable_name | Value | +———————————————————+————+ | validate_password_dictionary_file | | | validate_password_length | 8 | | validate_password_mixed_case_count | 1 | | validate_password_number_count | 1 | | validate_password_policy | MEDIUM | | validate_password_special_char_count | 1 | +———————————————————+————+ [/bash] 通过 SET GLOBAL validate_password_policy=’LOW’; 命令，降低安全等级后，就可以直接使用，限制是必须8个字符以上； 关于安全等级更详细的介绍如下：*   LOW 只测试密码长度。 密码必须至少有8个字符长。</p>
 <ul>
 <li>MEDIUM 密码必须包含至少1数字字符,1大写和小写字符,和1特殊字符。</li>
 <li>STRONG 密码子字符串长度为4的或更长时间不能匹配 单词在字典文件中,如果一个人被指定。<br>关于密码有效期相关的更多信息。 <a href="http://dev.mysql.com/doc/refman/5.7/en/password-expiration-policy.html" target="_blank" rel="noopener">http://dev.mysql.com/doc/refman/5.7/en/password-expiration-policy.html</a></li>
@@ -2086,7 +2109,7 @@ tunnels:
 <li><p>硬盘 90G</p>
 </li>
 </ul>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>查看系统版本信息 uname -a [bash] Linux vultr.guest 3.2.0-95-generic #135-Ubuntu SMP Tue Nov 10 13:33:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux [/bash] 1. 更新apt-get [bash] sudo apt-get update -y sudo apt-get upgrade -y sudo reboot [/bash] 2. 安装系统依赖 [bash] sudo apt-get install -y build-essential software-properties-common python-software-properties curl git-core libxml2-dev libxslt1-dev libfreetype6-dev python-pip python-apt python-dev libxmlsec1-dev swig sudo pip install –upgrade pip sudo pip install –upgrade virtualenv [/bash] 3. 从github 克隆安装脚本 [bash] cd /var/tmp git clone <a href="https://github.com/edx/configuration" target="_blank" rel="noopener">https://github.com/edx/configuration</a> [/bash] 4.修改配置文件设置允许ssh通过密码登录 [bash] sudo vi /var/tmp/configuration/playbooks/roles/common_vars/defaults/main.yml [/bash] 找到 COMMON_SSH_PASSWORD_AUTH: “no”,将其修改为”yes”;不然一不小心重启后就要杯具了。 5.安装依赖环境 [bash] cd /var/tmp/configuration sudo pip install -r requirements.txt [/bash] 安装依赖时遇到了 EnvironmentError: mysql_config not found 这个错误 解决方法：安装 libmysqlclient-dev [bash] sudo apt-get install libmysqlclient-dev [/bash] 6. 执行安装时遇到 pkg_resources.DistributionNotFound: paramiko 的报错 参考解决方法如下： [bash] pip install paramiko==1.10 pip install fabric==1.8.1 [/bash] 7. 执行安装脚本 [bash] cd /var/tmp/configuration/playbooks &amp;&amp; sudo ansible-playbook -c local ./edx_sandbox.yml -i “localhost,” [/bash] 默认安装的是master版本,如果要执行lms，cms域名及其端口还有版本。请参考下面的脚本 [bash] cd /var/tmp/configuration/playbooks/edx-east sudo ansible-playbook -c local –limit “localhost:127.0.0.1” ../edx_sandbox.yml \ -i “localhost,” -e ‘EDXAPP_PREVIEW_LMS_BASE=preview.example.com EDXAPP_LMS_BASE=example.com EDXAPP_LMS_PREVIEW_NGINX_PORT=80 EDXAPP_CMS_NGINX_PORT=80 EDXAPP_LMS_NGINX_PORT=80 edx_platform_version=master ‘ [/bash] 顺利的话出现下图提示就表示安装成功了 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/QQ截图20151211131507.png" alt="edx安装成功"> 8. 此时访问浏览器还不能访问到服务器 查看edx各服务允许状态如下： [bash] sudo /edx/bin/supervisorctl status [/bash] <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx服务器允许状态.png" alt="检查edx各服务器运行状态"> 发现浏览器http访问被301重定向到了https。猜是因为这个导致的无法访问。 查看lms的Nginx配置文件 [bash]sudo vi /edx/app/nginx/sites-available/lms[/bash] 发现最后有句 [bash] if ($scheme != “https”) { rewrite ^ https://$host$uri permanent; } [/bash] 将其注释掉或者删除都行，同理在修改cms。重启nginx服务器。 [bash] sudo service nginx restart [/bash] 同时清除浏览器缓存再次访问 出现了welcome to open edX!界面 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx首页.png" alt="openedx首页"> 安装服务器完成，接下来需要的就只是配置了。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>查看系统版本信息 uname -a [bash] Linux vultr.guest 3.2.0-95-generic #135-Ubuntu SMP Tue Nov 10 13:33:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux [/bash] 1. 更新apt-get [bash] sudo apt-get update -y sudo apt-get upgrade -y sudo reboot [/bash] 2. 安装系统依赖 [bash] sudo apt-get install -y build-essential software-properties-common python-software-properties curl git-core libxml2-dev libxslt1-dev libfreetype6-dev python-pip python-apt python-dev libxmlsec1-dev swig sudo pip install —upgrade pip sudo pip install —upgrade virtualenv [/bash] 3. 从github 克隆安装脚本 [bash] cd /var/tmp git clone <a href="https://github.com/edx/configuration" target="_blank" rel="noopener">https://github.com/edx/configuration</a> [/bash] 4.修改配置文件设置允许ssh通过密码登录 [bash] sudo vi /var/tmp/configuration/playbooks/roles/common_vars/defaults/main.yml [/bash] 找到 COMMON_SSH_PASSWORD_AUTH: “no”,将其修改为”yes”;不然一不小心重启后就要杯具了。 5.安装依赖环境 [bash] cd /var/tmp/configuration sudo pip install -r requirements.txt [/bash] 安装依赖时遇到了 EnvironmentError: mysql_config not found 这个错误 解决方法：安装 libmysqlclient-dev [bash] sudo apt-get install libmysqlclient-dev [/bash] 6. 执行安装时遇到 pkg_resources.DistributionNotFound: paramiko 的报错 参考解决方法如下： [bash] pip install paramiko==1.10 pip install fabric==1.8.1 [/bash] 7. 执行安装脚本 [bash] cd /var/tmp/configuration/playbooks &amp;&amp; sudo ansible-playbook -c local ./edx_sandbox.yml -i “localhost,” [/bash] 默认安装的是master版本,如果要执行lms，cms域名及其端口还有版本。请参考下面的脚本 [bash] cd /var/tmp/configuration/playbooks/edx-east sudo ansible-playbook -c local —limit “localhost:127.0.0.1” ../edx_sandbox.yml \ -i “localhost,” -e ‘EDXAPP_PREVIEW_LMS_BASE=preview.example.com EDXAPP_LMS_BASE=example.com EDXAPP_LMS_PREVIEW_NGINX_PORT=80 EDXAPP_CMS_NGINX_PORT=80 EDXAPP_LMS_NGINX_PORT=80 edx_platform_version=master ‘ [/bash] 顺利的话出现下图提示就表示安装成功了 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/QQ截图20151211131507.png" alt="edx安装成功"> 8. 此时访问浏览器还不能访问到服务器 查看edx各服务允许状态如下： [bash] sudo /edx/bin/supervisorctl status [/bash] <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx服务器允许状态.png" alt="检查edx各服务器运行状态"> 发现浏览器http访问被301重定向到了https。猜是因为这个导致的无法访问。 查看lms的Nginx配置文件 [bash]sudo vi /edx/app/nginx/sites-available/lms[/bash] 发现最后有句 [bash] if ($scheme != “https”) { rewrite ^ <a href="https://$host$uri" target="_blank" rel="noopener">https://$host$uri</a> permanent; } [/bash] 将其注释掉或者删除都行，同理在修改cms。重启nginx服务器。 [bash] sudo service nginx restart [/bash] 同时清除浏览器缓存再次访问 出现了welcome to open edX!界面 <img src="http://7xlbe9.com1.z0.glb.clouddn.com/edx首页.png" alt="openedx首页"> 安装服务器完成，接下来需要的就只是配置了。</p>
 ]]></content>
       <categories>
         <category>Open edx</category>
@@ -2109,7 +2132,12 @@ tunnels:
 <p>2.安装nginx</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install nginx</span><br></pre></td></tr></table></figure>
-<p>3.启动nginx<br><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure><br><br></p><p>此时浏览器输入你的服务器ip会看到如下界面</p><br><p>4. 安装mysql</p>
+<p>3.启动nginx
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure>
+
+</p><p>此时浏览器输入你的服务器ip会看到如下界面</p>
+<p>4. 安装mysql</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install mysql-server php5-mysql</span><br></pre></td></tr></table></figure>
 <p>5. 安装php</p>
@@ -2118,9 +2146,9 @@ tunnels:
 <p>6. 配置PHP</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/php5/fpm/php.ini</span><br></pre></td></tr></table></figure>
-<p>找到cgi.fix_pathinfo=1,把1改成0,并去掉；号<span style="color:#66ccff;">(如果vim编辑器的上下左右键变成了ABCD可以使用下面的命令重装vim解决)</span></p>
+<p>找到cgi.fix_pathinfo=1,把1改成0,并去掉；号<span style="color:#66ccff;">(如果vim编辑器的上下左右键变成了ABCD可以使用下面的命令重装vim解决)&lt;/span &gt;</span></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get remove vim-common </span><br><span class="line">sudo apt-get install vim</span><br></pre></td></tr></table></figure>
-<p></p><p></p>
+<p>&lt;/p&gt;</p>
 <p>7. 启动php-fpm</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service php5-fpm restart</span><br></pre></td></tr></table></figure>
@@ -2133,14 +2161,20 @@ tunnels:
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install phpmyadmin  </span><br><span class="line">sudo ln -s /usr/share/phpmyadmin/ /usr/share/nginx/html/phpmyadmin</span><br></pre></td></tr></table></figure>
 <p>安装中会要求输入密码<br>浏览器访问phpmyadmin:ip/phpmyadmin<br>登录账号为root，密码为设置的密码</p>
-<p>10 建立名为wordpress的数据库</p><br><span style="color:#66ccff;">(如果你擅长SQL语句，可以直接用SQL语句创建数据库 create database wordpress;)</span><br><p>11. 下载wordpress,解压，转移到nginx目录,更改文件所有者</p>
+<p>10 建立名为wordpress的数据库</p>
+<span style="color:#66ccff;">(如果你擅长SQL语句，可以直接用SQL语句创建数据库 create database wordpress;)</span>
+<p>11. 下载wordpress,解压，转移到nginx目录,更改文件所有者</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/share/nginx/html/    <span class="comment">#有的是www而不是html</span></span><br><span class="line">sudo wget https://cn.wordpress.org/wordpress-4.3.1-zh_CN.tar.gz</span><br><span class="line">sudo tar -zxvf wordpress-*.tar.gz </span><br><span class="line">sudo mv wordpress/* .</span><br><span class="line">sudo rm index.html</span><br><span class="line">sudo chown -R www-data:www-data *</span><br><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
-<p>12. 此时浏览器输入ip访问会出现如下页面</p><br>点击现在就开始,填表,提交。<br><p>如果提示<span style="color:red">抱歉，但是向导在您的文件系统中没有足够的权限写入wp-config.php文件。</span>,使用下面的命令可直接修改写入wp-config.php</p>
+<p>12. 此时浏览器输入ip访问会出现如下页面</p>
+点击现在就开始,填表,提交。
+<p>如果提示<span style="color:red">抱歉，但是向导在您的文件系统中没有足够的权限写入wp-config.php文件。</span>,使用下面的命令可直接修改写入wp-config.php</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp  wp-config-sample.php wp-config.php </span><br><span class="line">sudo vi  wp-config.php</span><br></pre></td></tr></table></figure>
 <p><img src="http://www.ichenfei.com/wp-content/uploads/2015/12/QQ截图20160115103946-2.jpg" alt="QQ截图20160115103946" width="675" height="280" class="aligncenter size-full wp-image-293"></p>
-<p style="color:#red;">填写站点信息完成安装</p><br><p>13. 此时nginx更改固定链接会提示404,在nginx配置文件加入rewrite规则可解决.</p><br><p>解决：</p>
+<p style="color:#red;">填写站点信息完成安装</p>
+<p>13. 此时nginx更改固定链接会提示404,在nginx配置文件加入rewrite规则可解决.</p>
+<p>解决：</p>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/nginx/sites-available/default</span><br><span class="line">写入</span><br><span class="line">        <span class="keyword">if</span> (-f <span class="variable">$request_filename</span>/index.html)&#123;</span><br><span class="line">                rewrite (.*) <span class="variable">$1</span>/index.html <span class="built_in">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (-f <span class="variable">$request_filename</span>/index.php)&#123;</span><br><span class="line">                rewrite (.*) <span class="variable">$1</span>/index.php;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!-f <span class="variable">$request_filename</span>)&#123;</span><br><span class="line">                rewrite (.*) /index.php;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 <p></p><p>此时固定链接就正常了。</p><br>至此wordpress安装完成。<p></p>
@@ -2181,7 +2215,7 @@ Ctrl + b + %         分割出来一个小窗口(左右分隔)
 Ctrl + b + o         跳转到下一个小窗口    
 Ctrl + b + 方向键    在小窗口中上下左右切换
 Ctrl + b + !         关闭所有小窗口    
-Ctrl + b + x         关闭当前光标处的小窗口    
+Ctrl + b + x         关闭当前光标处的小窗口
 </code></pre><p><strong>正确的使用姿势为：先按住 Ctrl + b,然后放开，间隔一秒后在按下第三个键(bcd”%!)</strong> </p>
 ]]></content>
       <categories>

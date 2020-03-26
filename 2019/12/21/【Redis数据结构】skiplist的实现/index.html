@@ -48,7 +48,7 @@
 </script>
 
   <meta name="description" content="跳表(skiplist)是一种基于有序链表的用于方便快速查找/插入/删除的数据结构， 查询效率(平均O(logN), 最差O(N)) 堪比红黑树， 然而实现与维护却要比红黑树要简单的多。 跳表的每个节点都维护了多个指向其他节点的指针，所以在查找、插入、删除操作时可以跳过一些节点，快速找到操作需要的节点。">
-<meta name="keywords" content="redis,源码学习,跳表">
+<meta name="keywords" content="redis,跳表,源码学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Redis数据结构】skiplist的实现">
 <meta property="og:url" content="http://blog.ichenfei.com/2019/12/21/【Redis数据结构】skiplist的实现/index.html">
@@ -320,8 +320,8 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/redis/" rel="tag"># redis</a>
-              <a href="/tags/源码学习/" rel="tag"># 源码学习</a>
               <a href="/tags/跳表/" rel="tag"># 跳表</a>
+              <a href="/tags/源码学习/" rel="tag"># 源码学习</a>
           </div>
 
         
@@ -389,14 +389,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -448,12 +448,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">110k</span>
+    <span title="站点总字数">114k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:40</span>
+    <span title="站点阅读时长">1:43</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
   </div>
@@ -552,6 +552,56 @@ show_date_time();
 
 
   
+
+  
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 
